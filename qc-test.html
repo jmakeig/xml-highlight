@@ -15,7 +15,9 @@
       var isElementStartOpen = false; // keep track of whether a element is self-closing
       var p = new SAXParser(true);
       var isSent = false;
-      var options = options || {}, truncate = options.truncate || -1;
+      var options = options || {}, 
+        truncate = options.truncate || -1,
+        textCollapse = options.textCollapse || 100;
       function bail(position) {
         if(-1 === truncate) return true;
         if(!isSent && position > truncate) {
@@ -72,14 +74,16 @@
       }
       p.ontext = function(text) {
         if(bail(p.position + text.length)) {
+          // Whether to collapse a simple text node (still wonky)
+          var shortFlag = !WHITE.test(text) && text.length < textCollapse ? " short" : ""; 
           if(isElementStartOpen) {
-            accumulator.push("&gt;</span><div class='element-value'>"); // close preceding element open tag
+            accumulator.push("&gt;</span><div class='element-value" + shortFlag + "'>"); // close preceding element open tag
             //<div class='element-value'>
           }
           console.log(text);
           //console.log(!WHITE.test(text));
           if(!WHITE.test(text)) { // if it's only whitespace. This feels dangerous.
-            accumulator.push("<div class='text'>" + text + "</div>");
+            accumulator.push("<div class='text" + shortFlag + "'>" + text + "</div>");
           }
           isElementStartOpen = false;
         }
@@ -118,9 +122,6 @@
       display: inline;
       color: brown;
     }
-    .element > .text {
-      
-    }
     /* Inline elements */
     .text + .element,
     .text + .element .element-value {
@@ -136,10 +137,16 @@
       padding: 2px;
       margin: 2px;
       margin-left: 0.75em;
-      
-      
-      
     }
+    /*
+    .element-value.short {
+      display: inline;
+      margin-left: 2px;
+    }
+    .element-value.short > .text {
+      color: red;
+    }
+    */
     .attribute {}
     .attribute-name {
       color: green;
@@ -155,7 +162,7 @@
     <div>
       <div>
         <textarea id="input-xml"></textarea>
-        <div><input id="truncate" value="20000"/></div>
+        <div><input id="truncate" value="-1"/></div>
         <div>
           <button id="run">Run</button>
         </div>
