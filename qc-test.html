@@ -124,14 +124,8 @@
     }, false);
   </script>
   <style type="text/css">
-    textarea {
-      width: 80%;
-      height: 200px;
-      font-family: Inconsolata;
-      padding: 0.5em;
-    }
     #output {
-      font-family: Inconsolata;
+      font-family: Inconsolata, Consolas, monospace;
     }
     .element {
       cursor: default;
@@ -198,15 +192,31 @@
       cursor: text;
     }
   </style>
+  <style type="text/css">
+    body {
+      padding: 2em;
+      font-family: Helvetica, sans-serif;
+    }
+    label {
+      font-weight: bold;
+    }
+    textarea {
+      width: 80%;
+      height: 200px;
+      font-family: Inconsolata, Consolas, monospace;
+      padding: 0.5em;
+    }
+  </style>
 </head>
 <body>
   <div>
     <div>
       <div>
+        <div><label for="input-xml">Input XML</label></div>
         <textarea id="input-xml"></textarea>
-        <div><input id="truncate" value="-1"/></div>
+        <div><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span>Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
         <div>
-          <button id="run">Run</button>
+          <button id="run">Highlight</button>
         </div>
       </div>
     </div>
