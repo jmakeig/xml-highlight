@@ -30,6 +30,16 @@
       function send() {
         handler(accumulator.join(""));
       }
+      // Parse a qname into its prefix and local parts
+      function parsePrefix(qname) {
+        var tokens = qname.split(":");
+        if(2 === tokens.length) {
+          return "<span class='namespace-prefix'>" + tokens[0] + "</span>:" + parsePrefix(tokens[1]);
+        } else {
+          return "<span class='local-name'>" + qname + "</span>";
+        }
+      }
+      
       p.onopentag = function(node) {
         if(bail(p.position)) {
           var attrs = []
@@ -42,10 +52,10 @@
               }
               ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
             } else {
-              attrs.push(" <span class='attribute'><span class='attribute-name'>" + a + "</span>=&quot;<span class='attribute-value'>" + node.attributes[a] + "</span>&quot;</span>");
+              attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + node.attributes[a] + "</span>&quot;</span>");
             }
           }
-          accumulator.push("<div class='element'><span class='element-open'>&lt;<span class='element-name'>" + node.name + "</span>" + attrs.join(" ") + ns.join(" ")); //+ "&gt;</span>");
+          accumulator.push("<div class='element'><span class='element-open'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join(" ") + ns.join(" ")); //+ "&gt;</span>");
           isElementStartOpen = true;
         }
       }
@@ -85,7 +95,7 @@
         highlight(xml, function(output) {
           //console.log(output);
           document.getElementById("output").innerHTML =  output;
-        });
+        }, {truncate: parseInt(document.getElementById("truncate").value)});
       });
     });
   </script>
@@ -103,27 +113,22 @@
       margin-left: 1em;
     }
     .text {
-      display: block;
+      display: inline;
       margin-left: 0.5em;
+      color: brown;
     }
     .element-name {
       color: purple;
       font-weight: bold;
     }
-    .namespace-prefix {
+    .attribute {}
+    .attribute-name {
       color: green;
     }
-    .xmlns {
-    }
-    .namespace-prefix {
-    }
-    .namespace-uri {
-      color: #333;
-    }
-    .attribute, .namespace {
-      display: inline;
-      /*margin-left: 0.5em;*/
-    }
+    .attribute-vale {}
+    .xmlns { color: #666; }
+    .namespace-prefix {}
+    .namespace-uri {}
   </style>
 </head>
 <body>
@@ -131,6 +136,7 @@
     <div>
       <div>
         <textarea id="input-xml"></textarea>
+        <div><input id="truncate" value="20000"/></div>
         <div>
           <button id="run">Run</button>
         </div>
