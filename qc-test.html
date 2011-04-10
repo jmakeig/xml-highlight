@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<title>Untitled</title>
-	<script type="text/javascript">
-	  exports = {}
-	</script>
-	<script type="text/javascript" src="lib/jquery-1.5.2-min.js"></script>
-	<script type="text/javascript" src="lib/sax.js"></script>
+  <meta charset="utf-8" />
+  <title>Untitled</title>
+  <script type="text/javascript">
+    exports = {}
+    // Firefox 3.6 doesn't implement the Object.create function. Let's do it ourselves in the case where it doesn't exist already. Requires the non-standard __proto__ property.
+    if(typeof Object.create !== "function") {
+      Object.create = function(proto) {
+        var obj = new Object();
+        obj.__proto__ = proto;
+        return obj;
+      }
+    }
+  </script>
+  <script type="text/javascript" src="lib/jquery-1.5.2-min.js"></script>
+  <script type="text/javascript" src="lib/sax.js"></script>
   <script type="text/javascript">
     function highlight(xml, handler, options) {
       var WHITE = /^\s+$/m; // all whitespace
