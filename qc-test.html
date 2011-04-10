@@ -6,6 +6,7 @@
 	<script type="text/javascript">
 	  exports = {}
 	</script>
+	<script type="text/javascript" src="lib/jquery-1.5.2-min.js"></script>
 	<script type="text/javascript" src="lib/sax.js"></script>
   <script type="text/javascript">
     function highlight(xml, handler, options) {
@@ -56,15 +57,14 @@
               attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + node.attributes[a] + "</span>&quot;</span>");
             }
           }
-          accumulator.push("<div class='element'><span class='element-open'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join(" ") + ns.join(" ")); //+ "&gt;</span>");
+          accumulator.push("<div class='element'><span class='element-open'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join(" ") + ns.join(" "));
           isElementStartOpen = true;
         }
       }
       p.onclosetag = function(name) {
         if(bail(p.position)) {
           if(isElementStartOpen) {
-            accumulator.push("/");
-            accumulator.push("&gt;</span></div>"); // close preceding element
+            accumulator.push("/&gt;</span></div>"); // close preceding element
           } else {
             accumulator.push("</div><span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
             //</div>
@@ -105,10 +105,22 @@
         }, {truncate: parseInt(document.getElementById("truncate").value)});
       }, false);
       
+      
       // Capture click events to do the collapsing
-      document.getElementById("output").addEventListener("click", function(evt) {
-        console.log(evt.target.className);
-      }, false);
+      //document.getElementById("output").addEventListener("click", function(evt) {
+      //  console.log(evt.target.className);
+      //}, false);
+      $("#output").delegate(".element-name", "click", function(evt) {
+        $(evt.currentTarget).closest(".element").has(".element-value").toggleClass("collapsed");
+        evt.stopPropagation();
+      });
+      $("#collapse-all").click(function(evt) {
+        $("#output .element").has(".element-value").addClass("collapsed");
+      });
+      $("#expand-all").click(function(evt) {
+        $("#output .element").removeClass("collapsed");
+      });
+      
     }, false);
   </script>
   <style type="text/css">
@@ -120,6 +132,9 @@
     }
     #output {
       font-family: Inconsolata;
+    }
+    .element {
+      cursor: default;
     }
     .element > .element,
     .element-value > .element,
@@ -148,6 +163,13 @@
       */
       margin-left: 0.75em;
     }
+    .element.collapsed .element-value {
+      display: none;
+    }
+    .element.collapsed .element-open:after {
+      display: inline;
+      content: "…";
+    }
     /*
     .element-value.short {
       display: inline;
@@ -172,6 +194,9 @@
     .comment-value {
       font-style: italic;
     }
+    .text, .attribute-value, .comment-value {
+      cursor: text;
+    }
   </style>
 </head>
 <body>
@@ -184,6 +209,10 @@
           <button id="run">Run</button>
         </div>
       </div>
+    </div>
+    <div>
+      <button id="collapse-all">Collapse All</button>
+      <button id="expand-all">Expand All</button>
     </div>
     <div id="output"></div>
   </div>
