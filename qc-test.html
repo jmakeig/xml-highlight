@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Untitled</title>
+	<script type="text/javascript">
+	  exports = {}
+	</script>
+	<script type="text/javascript" src="lib/sax.js"></script>
+  <script type="text/javascript">
+    function highlight(xml, handler, options) {
+      var WHITE = /^\s+$/m; // all whitespace
+      //console.log(xml);
+      var accumulator = [];
+      var isElementStartOpen = false; // keep track of whether a element is self-closing
+      var p = new SAXParser(true);
+      var isSent = false;
+      var options = options || {}, truncate = options.truncate || -1;
+      function bail(position) {
+        if(-1 === truncate) return true;
+        if(!isSent && position > truncate) {
+          accumulator.push("…<div class='more'><a href='asdf'>Check out the text version</a></div>");
+          send();
+          isSent = true;
+          return false;
+        }
+        return true;
+      }
+      
+      function send() {
+        handler(accumulator.join(""));
+      }
+      p.onopentag = function(node) {
+        if(bail(p.position)) {
+          var attrs = []
+          var ns = []
+          for(a in node.attributes) {
+            if(a.substr(0, 5) === "xmlns") {
+              var prefix = "";
+              if(":" === a[5]) {
+                prefix = ":<span class='namespace-prefix'>" + a.substring(6) + "</span>";
+              }
+              ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
+            } else {
+              attrs.push(" <span class='attribute'><span class='attribute-name'>" + a + "</span>=&quot;<span class='attribute-value'>" + node.attributes[a] + "</span>&quot;</span>");
+            }
+          }
+          accumulator.push("<div class='element'><span class='element-open'>&lt;<span class='element-name'>" + node.name + "</span>" + attrs.join(" ") + ns.join(" ")); //+ "&gt;</span>");
+          isElementStartOpen = true;
+        }
+      }
+      p.onclosetag = function(name) {
+        if(bail(p.position)) {
+          if(isElementStartOpen) {
+            accumulator.push("/");
+            accumulator.push("&gt;</span></div>"); // close preceding element
+          } else {
+            accumulator.push("<span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
+          }
+          isElementStartOpen = false;
+        }
+      }
+      p.ontext = function(text) {
+        if(bail(p.position + text.length)) {
+          if(isElementStartOpen) {
+            accumulator.push("&gt;</span>"); // close preceding element open tag
+          }
+          console.log(text);
+          //console.log(!WHITE.test(text));
+          if(!WHITE.test(text)) { // if it's only whitespace. This feels dangerous.
+            accumulator.push("<div class='text'>" + text + "</div>");
+          }
+          isElementStartOpen = false;
+        }
+      }
+      p.onend = function() {
+        if(!isSent) send();
+      }
+      p.write(xml).close();
+    }
+  
+    document.addEventListener("DOMContentLoaded", function(evt) {
+      document.getElementById("run").addEventListener("click", function(evt) {
+        var xml = document.getElementById("input-xml").value;
+        highlight(xml, function(output) {
+          //console.log(output);
+          document.getElementById("output").innerHTML =  output;
+        });
+      });
+    });
+  </script>
+  <style type="text/css">
+    textarea {
+      width: 80%;
+      height: 200px;
+      font-family: Inconsolata;
+      padding: 0.5em;
+    }
+    #output {
+      font-family: Inconsolata;
+    }
+    .element > .element {
+      margin-left: 1em;
+    }
+    .text {
+      display: block;
+      margin-left: 0.5em;
+    }
+    .element-name {
+      color: purple;
+      font-weight: bold;
+    }
+    .namespace-prefix {
+      color: green;
+    }
+    .xmlns {
+    }
+    .namespace-prefix {
+    }
+    .namespace-uri {
+      color: #333;
+    }
+    .attribute, .namespace {
+      display: inline;
+      /*margin-left: 0.5em;*/
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div>
+      <div>
+        <textarea id="input-xml"></textarea>
+        <div>
+          <button id="run">Run</button>
+        </div>
+      </div>
+    </div>
+    <div id="output"></div>
+  </div>
+</body>
+</html>
