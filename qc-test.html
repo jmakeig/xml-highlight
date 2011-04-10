@@ -93,13 +93,17 @@
     }
   
     document.addEventListener("DOMContentLoaded", function(evt) {
-    //window.addEventListener("load", function(evt) {
       document.getElementById("run").addEventListener("click", function(evt) {
         var xml = document.getElementById("input-xml").value;
         highlight(xml, function(output) {
           //console.log(output);
           document.getElementById("output").innerHTML =  output;
         }, {truncate: parseInt(document.getElementById("truncate").value)});
+      }, false);
+      
+      // Capture click events to do the collapsing
+      document.getElementById("output").addEventListener("click", function(evt) {
+        console.log(evt.target.className);
       }, false);
     }, false);
   </script>
