@@ -39,7 +39,6 @@
           return "<span class='local-name'>" + qname + "</span>";
         }
       }
-      
       p.onopentag = function(node) {
         if(bail(p.position)) {
           var attrs = []
@@ -65,7 +64,8 @@
             accumulator.push("/");
             accumulator.push("&gt;</span></div>"); // close preceding element
           } else {
-            accumulator.push("<span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
+            accumulator.push("</div><span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
+            //</div>
           }
           isElementStartOpen = false;
         }
@@ -73,7 +73,8 @@
       p.ontext = function(text) {
         if(bail(p.position + text.length)) {
           if(isElementStartOpen) {
-            accumulator.push("&gt;</span>"); // close preceding element open tag
+            accumulator.push("&gt;</span><div class='element-value'>"); // close preceding element open tag
+            //<div class='element-value'>
           }
           console.log(text);
           //console.log(!WHITE.test(text));
@@ -109,23 +110,41 @@
     #output {
       font-family: Inconsolata;
     }
-    .element > .element {
+    .element > .element,
+    .element-value > .element {
       margin-left: 1em;
     }
     .text {
       display: inline;
-      margin-left: 0.5em;
       color: brown;
+    }
+    .element > .text {
+      
+    }
+    /* Inline elements */
+    .text + .element,
+    .text + .element .element-value {
+      display: inline;
+      margin-left: 0;
     }
     .element-name {
       color: purple;
       font-weight: bold;
     }
+    .element-value {
+      border: solid 1px #ccc;
+      padding: 2px;
+      margin: 2px;
+      margin-left: 0.75em;
+      
+      
+      
+    }
     .attribute {}
     .attribute-name {
       color: green;
     }
-    .attribute-vale {}
+    .attribute-value {}
     .xmlns { color: #666; }
     .namespace-prefix {}
     .namespace-uri {}
