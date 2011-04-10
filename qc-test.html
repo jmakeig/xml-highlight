@@ -86,11 +86,15 @@
           isElementStartOpen = false;
         }
       }
+      p.oncomment = function(comment) {
+        accumulator.push("<div class='comment'>&lt;-- <span class='comment-value'>" + comment + "</span> --&gt;</div>");
+      }
       p.onend = function() {
         if(!isSent) send();
       }
       p.write(xml).close();
     }
+    
   
     document.addEventListener("DOMContentLoaded", function(evt) {
       document.getElementById("run").addEventListener("click", function(evt) {
@@ -118,7 +122,8 @@
       font-family: Inconsolata;
     }
     .element > .element,
-    .element-value > .element {
+    .element-value > .element,
+    .element-value > .comment {
       margin-left: 1em;
     }
     .text {
@@ -127,7 +132,8 @@
     }
     /* Inline elements */
     .text + .element,
-    .text + .element .element-value {
+    .text + .element .element-value,
+    .text + .comment {
       display: inline;
       margin-left: 0;
     }
@@ -135,9 +141,11 @@
       color: purple;
     }
     .element-value {
-      border: solid 1px #ccc;
+      /*
+      border: solid 1px #eee;
       padding: 2px;
       margin: 2px;
+      */
       margin-left: 0.75em;
     }
     /*
@@ -158,6 +166,12 @@
     .xmlns {}
     .namespace-prefix {}
     .namespace-uri {}
+    .comment {
+      color: #666;
+    }
+    .comment-value {
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
