@@ -80,8 +80,6 @@
             accumulator.push("&gt;</span><div class='element-value" + shortFlag + "'>"); // close preceding element open tag
             //<div class='element-value'>
           }
-          console.log(text);
-          //console.log(!WHITE.test(text));
           if(!WHITE.test(text)) { // if it's only whitespace. This feels dangerous.
             accumulator.push("<div class='text" + shortFlag + "'>" + text + "</div>");
           }
@@ -95,14 +93,15 @@
     }
   
     document.addEventListener("DOMContentLoaded", function(evt) {
+    //window.addEventListener("load", function(evt) {
       document.getElementById("run").addEventListener("click", function(evt) {
         var xml = document.getElementById("input-xml").value;
         highlight(xml, function(output) {
           //console.log(output);
           document.getElementById("output").innerHTML =  output;
         }, {truncate: parseInt(document.getElementById("truncate").value)});
-      });
-    });
+      }, false);
+    }, false);
   </script>
   <style type="text/css">
     textarea {
@@ -130,7 +129,6 @@
     }
     .element-name {
       color: purple;
-      font-weight: bold;
     }
     .element-value {
       border: solid 1px #ccc;
@@ -152,7 +150,8 @@
       color: green;
     }
     .attribute-value {}
-    .xmlns { color: #666; }
+    .namespace { color: #666; }
+    .xmlns {}
     .namespace-prefix {}
     .namespace-uri {}
   </style>
