@@ -18,7 +18,7 @@
   <script type="text/javascript" src="lib/sax.js"></script>
   <script type="text/javascript">
     function highlight(xml, handler, options) {
-      var WHITE = /^\s+$/m; // all whitespace
+      var WHITE = /^\s+$/; // all whitespace
       //console.log(xml);
       var accumulator = [];
       var isElementStartOpen = false; // keep track of whether a element is self-closing
@@ -86,10 +86,9 @@
           var shortFlag = !WHITE.test(text) && text.length < textCollapse ? " short" : ""; 
           if(isElementStartOpen) {
             accumulator.push("&gt;</span><div class='element-value" + shortFlag + "'>"); // close preceding element open tag
-            //<div class='element-value'>
           }
           if(!WHITE.test(text)) { // if it's only whitespace. This feels dangerous.
-            accumulator.push("<div class='text" + shortFlag + "'>" + text + "</div>");
+            accumulator.push("<div class='text" + shortFlag + "'>" + text.replace(/</gm, "&lt;").replace(/\n/gm, "<br/>") + "</div>");
           }
           isElementStartOpen = false;
         }
