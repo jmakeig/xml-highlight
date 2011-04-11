@@ -80,6 +80,9 @@
           isElementStartOpen = false;
         }
       }
+      function prepareText(text) {
+        return text.replace(/</gm, "&lt;").replace(/\n/gm, "<br/>")
+      }
       p.ontext = function(text) {
         if(bail(p.position)) {
           // Whether to collapse a simple text node (still wonky)
@@ -88,13 +91,13 @@
             accumulator.push("&gt;</span><div class='element-value" + shortFlag + "'>"); // close preceding element open tag
           }
           if(!WHITE.test(text)) { // if it's only whitespace. This feels dangerous.
-            accumulator.push("<div class='text" + shortFlag + "'>" + text.replace(/</gm, "&lt;").replace(/\n/gm, "<br/>") + "</div>");
+            accumulator.push("<div class='text" + shortFlag + "'>" + prepareText(text) + "</div>");
           }
           isElementStartOpen = false;
         }
       }
       p.oncomment = function(comment) {
-        accumulator.push("<div class='comment'>&lt;-- <span class='comment-value'>" + comment + "</span> --&gt;</div>");
+        accumulator.push("<div class='comment'>&lt;-- <span class='comment-value'>" + prepareText(comment) + "</span> --&gt;</div>");
       }
       p.onend = function() {
         if(!isSent) send();
@@ -133,6 +136,7 @@
   <style type="text/css">
     #output {
       font-family: Inconsolata, Consolas, monospace;
+      font-size: 110%;
     }
     .element {
       cursor: default;
@@ -144,7 +148,7 @@
     }
     .text {
       display: inline;
-      color: brown;
+      color: black;
     }
     /* Inline elements */
     .text + .element,
@@ -154,7 +158,7 @@
       margin-left: 0;
     }
     .element-name {
-      color: purple;
+      color: blue;
     }
     .element-value {
       /*
@@ -182,9 +186,11 @@
     */
     .attribute {}
     .attribute-name {
-      color: green;
+      color: purple;
     }
-    .attribute-value {}
+    .attribute-value {
+      color: brown;
+    }
     .namespace { color: #666; }
     .xmlns {}
     .namespace-prefix {}
@@ -234,7 +240,7 @@
 
 
 
-&amp;lt;p&amp;gt;Here is some escaped &amp;lt;strong&amp;gt;HTML&amp;lt;/strgon&amp;gt; as well.&amp;lt;/p&amp;gt;&lt;/escaped>
+&amp;lt;p&amp;gt;Here is some escaped &amp;lt;strong&amp;gt;HTML&amp;lt;/strong&amp;gt; as well.&amp;lt;/p&amp;gt;&lt;/escaped>
 
 
 &lt;p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis egestas mi sem, id porttitor neque. Integer faucibus, dolor id mollis feugiat, tellus erat dapibus nibh, at placerat eros risus vitae purus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce ut dui ac ipsum vestibulum elementum. Nulla nec vulputate lorem. Etiam tempus ligula ut lorem vestibulum adipiscing. Maecenas rutrum cursus turpis et consectetur. Sed et eros leo. Donec scelerisque congue libero, id aliquam sem mollis tincidunt. Nulla eleifend justo quis odio laoreet ut adipiscing ligula adipiscing. Aliquam aliquam, risus a lobortis porta, odio leo feugiat augue, eu blandit sem leo a quam. Cras malesuada est vel turpis ultrices tristique. Nullam pharetra hendrerit arcu ac porttitor. Quisque consequat sapien non eros semper vitae pulvinar tortor ultricies.&lt;/p>
@@ -242,9 +248,9 @@
 &lt;p>Duis eget pulvinar lorem. Mauris sed diam sed elit congue cursus. Ut vitae metus est. Proin lorem metus, accumsan nec condimentum id, mattis et nunc. Morbi tristique aliquet nibh id semper. Sed convallis volutpat rutrum. Donec pharetra massa eu sapien commodo tempus. Praesent at metus urna, sed scelerisque arcu. Phasellus dictum mi vel lacus venenatis quis mattis ligula hendrerit. Nulla ligula tellus, aliquam et dapibus ac, blandit id metus. Praesent iaculis lacinia felis, a fringilla mauris bibendum ac. Donec feugiat, odio eu consectetur euismod, neque lacus aliquam nunc, in accumsan neque dui semper mauris. Quisque orci diam, condimentum id dictum eget, elementum eu lacus. Integer in neque non elit eleifend imperdiet sed fringilla erat. Pellentesque pellentesque odio vel orci varius mattis vulputate lacus sodales. Integer sed ligula ut lectus pellentesque blandit eget eu ligula. Nullam sagittis nisi a libero aliquam nec hendrerit nisi condimentum. Suspendisse sed tortor ut est tincidunt commodo. Ut nisl nisi, elementum in porttitor at, posuere non nisl.&lt;/p>
 
 &lt;p>Nam lorem justo, viverra nec vehicula sit amet, dignissim vitae orci. Nulla consequat lacinia adipiscing. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce sodales nisl et lacus mollis in eleifend velit convallis. Quisque sed nibh nibh, at adipiscing ipsum. Sed justo nulla, auctor sed congue ultricies, commodo in felis. Donec ornare est gravida purus ultricies auctor. Suspendisse sollicitudin pretium tortor ac tincidunt. In magna velit, elementum sed venenatis faucibus, rhoncus ut dolor. Vivamus tempor ultricies arcu, sit amet consectetur nulla sollicitudin id.&lt;/p>
-
+&lt;!-- 
 &lt;p>Vivamus eleifend consequat purus, at volutpat arcu mollis eu. Nunc augue mauris, vehicula ut lacinia non, facilisis eu nisi. Praesent ut facilisis elit. Sed ac est vel nunc luctus semper at vel mauris. Pellentesque auctor ante lobortis elit consectetur ornare. Ut faucibus adipiscing massa, et blandit elit ultricies ac. Duis quam libero, rhoncus in tincidunt non, tempus quis mi. Sed sit amet libero eget justo ultricies mollis. Phasellus quis semper felis. Aliquam eget est lectus, id accumsan erat. Fusce sapien elit, fermentum a porta eget, accumsan sed velit. Aenean mauris lacus, accumsan eget lacinia eget, tincidunt ac tellus. Quisque at justo eget sapien sodales tincidunt.&lt;/p>
-
+ --&gt;
 &lt;p>Praesent non mauris id dui tempor egestas. Donec id ipsum erat, sit amet semper orci. Vivamus et mi non arcu viverra sodales vitae ac elit. Quisque auctor quam ut velit condimentum tincidunt. In enim nisl, malesuada ac semper quis, gravida imperdiet justo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus convallis, massa vitae sagittis rutrum, eros justo vulputate erat, semper pellentesque quam nisl a lorem. Nunc imperdiet quam at risus tempor aliquam. Aenean facilisis blandit quam ut posuere. Maecenas consectetur aliquet felis vel hendrerit. Praesent eu velit nec magna commodo blandit. Sed eros orci, consequat non porta a, interdum non purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed ultrices elit vel augue cursus feugiat. Praesent eros lacus, aliquam eget ultrices at, porttitor cursus tellus. Sed vel interdum turpis. Quisque quis purus in turpis ullamcorper laoreet.&lt;/p>
 
 &lt;p>Phasellus sit amet metus tempus purus vehicula consectetur. Proin eu tellus tortor, et dapibus eros. Morbi fringilla dapibus tortor. Quisque scelerisque, tellus ut tristique mattis, mi quam tincidunt augue, nec feugiat orci magna sit amet massa. Suspendisse rutrum nisi eget sapien tempus et dictum eros facilisis. Vestibulum et est tellus. Mauris eleifend, orci vel placerat sagittis, felis urna condimentum nunc, a ultrices est dui vel nisl. Quisque quam metus, ultricies quis viverra et, consequat ac lectus. Praesent accumsan nibh non erat tempus a rhoncus nibh egestas. Sed auctor diam a elit blandit ac aliquet turpis imperdiet.&lt;/p>
