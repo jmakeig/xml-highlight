@@ -62,7 +62,7 @@
               }
               ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
             } else {
-              attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + node.attributes[a] + "</span>&quot;</span>");
+              attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
             }
           }
           accumulator.push("<div class='element'><span class='element-open'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join(" ") + ns.join(" "));
@@ -112,6 +112,7 @@
         highlight(xml, function(output) {
           //console.log(output);
           document.getElementById("output").innerHTML =  output;
+          $(".element::not(:has(.text))").addClass("empty");
         }, {truncate: parseInt(document.getElementById("truncate").value)});
       }, false);
       
@@ -120,12 +121,14 @@
       //document.getElementById("output").addEventListener("click", function(evt) {
       //  console.log(evt.target.className);
       //}, false);
-      $("#output").delegate(".element-name", "click", function(evt) {
-        $(evt.currentTarget).closest(".element").has(".element-value").toggleClass("collapsed");
+      $("#output").delegate(".element-open, .element-close", "click", function(evt) {
+        $(evt.currentTarget).closest(".element")/*.has(".element-value")*/
+          .toggleClass("collapsed");
         evt.stopPropagation();
       });
       $("#collapse-all").click(function(evt) {
-        $("#output .element").has(".element-value").addClass("collapsed");
+        $("#output .element")/*.has(".element-value")*/
+          .addClass("collapsed");
       });
       $("#expand-all").click(function(evt) {
         $("#output .element").removeClass("collapsed");
@@ -142,6 +145,8 @@
       cursor: default;
       color: blue;
     }
+    /* self-closing */
+    .element.empty {}
     .element > .element,
     .element-value > .element,
     .element-value > .comment {
@@ -160,29 +165,45 @@
     }
     .element-name {}
     .element-value {
-      /*
-      border: solid 1px #eee;
-      padding: 2px;
-      margin: 2px;
-      */
       margin-left: 0.75em;
     }
     .element.collapsed .element-value {
       display: none;
     }
+    .element-open, .element-close {
+      background-color: rgba(59, 137, 208, 0.5);
+      padding: 0.1em 0.4em;
+      line-height: 1.4;
+    }
+    .element-open {
+      border-top-left-radius: 0.5em;
+      border-bottom-left-radius: 0.5em;
+    }
+    .element-close,
+    .element.empty .element-open {
+      border-top-right-radius: 0.5em;
+      border-bottom-right-radius: 0.5em;
+    }
+    .element.empty .element-open {
+      padding-right: 0.4em;
+    }
+    .element.collapsed .attribute,
+    .element.collapsed .namespace {
+      display: none;
+    }
+    .element.collapsed .element-open {
+      padding-right: 0.05em;
+    }
+    .element.collapsed .element-close {
+      padding-left: 0.05em;
+    }
     .element.collapsed .element-open:after {
       display: inline;
       content: "…";
     }
-    /*
-    .element-value.short {
-      display: inline;
-      margin-left: 2px;
+    .element.empty.collapsed .element-open:after {
+      content: "";
     }
-    .element-value.short > .text {
-      color: red;
-    }
-    */
     .attribute {
       color: purple;
     }
@@ -219,6 +240,7 @@
       width: 80%;
       height: 200px;
       font-family: Inconsolata, Consolas, monospace;
+      font-size: 16px;
       padding: 0.5em;
     }
   </style>
@@ -228,9 +250,13 @@
     <div>
       <div>
         <div><label for="input-xml">Input XML</label></div>
-        <textarea id="input-xml">&lt;body>
+        <textarea id="input-xml">&lt;body an="attribute" xmlns="some://namespace-uri">
   &lt;meta name="test" value="self-closing">&lt;/meta>
-                                 
+                                 &lt;meta name="test" value="self-closing"  some="attribute
+        
+        
+        with whitespace">&lt;/meta>
+                        &lt;meta name="test" value="self-closing">&lt;/meta> 
 
 
               &lt;mixed> Here is some &lt;em>mixed&lt;/em> content with a &lt;!-- comment -->, no less&lt;/mixed>
@@ -249,7 +275,7 @@
 &lt;p>Nam lorem justo, viverra nec vehicula sit amet, dignissim vitae orci. Nulla consequat lacinia adipiscing. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce sodales nisl et lacus mollis in eleifend velit convallis. Quisque sed nibh nibh, at adipiscing ipsum. Sed justo nulla, auctor sed congue ultricies, commodo in felis. Donec ornare est gravida purus ultricies auctor. Suspendisse sollicitudin pretium tortor ac tincidunt. In magna velit, elementum sed venenatis faucibus, rhoncus ut dolor. Vivamus tempor ultricies arcu, sit amet consectetur nulla sollicitudin id.&lt;/p>
 &lt;!-- 
 &lt;p>Vivamus eleifend consequat purus, at volutpat arcu mollis eu. Nunc augue mauris, vehicula ut lacinia non, facilisis eu nisi. Praesent ut facilisis elit. Sed ac est vel nunc luctus semper at vel mauris. Pellentesque auctor ante lobortis elit consectetur ornare. Ut faucibus adipiscing massa, et blandit elit ultricies ac. Duis quam libero, rhoncus in tincidunt non, tempus quis mi. Sed sit amet libero eget justo ultricies mollis. Phasellus quis semper felis. Aliquam eget est lectus, id accumsan erat. Fusce sapien elit, fermentum a porta eget, accumsan sed velit. Aenean mauris lacus, accumsan eget lacinia eget, tincidunt ac tellus. Quisque at justo eget sapien sodales tincidunt.&lt;/p>
- --&gt;
+ -->
 &lt;p>Praesent non mauris id dui tempor egestas. Donec id ipsum erat, sit amet semper orci. Vivamus et mi non arcu viverra sodales vitae ac elit. Quisque auctor quam ut velit condimentum tincidunt. In enim nisl, malesuada ac semper quis, gravida imperdiet justo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus convallis, massa vitae sagittis rutrum, eros justo vulputate erat, semper pellentesque quam nisl a lorem. Nunc imperdiet quam at risus tempor aliquam. Aenean facilisis blandit quam ut posuere. Maecenas consectetur aliquet felis vel hendrerit. Praesent eu velit nec magna commodo blandit. Sed eros orci, consequat non porta a, interdum non purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed ultrices elit vel augue cursus feugiat. Praesent eros lacus, aliquam eget ultrices at, porttitor cursus tellus. Sed vel interdum turpis. Quisque quis purus in turpis ullamcorper laoreet.&lt;/p>
 
 &lt;p>Phasellus sit amet metus tempus purus vehicula consectetur. Proin eu tellus tortor, et dapibus eros. Morbi fringilla dapibus tortor. Quisque scelerisque, tellus ut tristique mattis, mi quam tincidunt augue, nec feugiat orci magna sit amet massa. Suspendisse rutrum nisi eget sapien tempus et dictum eros facilisis. Vestibulum et est tellus. Mauris eleifend, orci vel placerat sagittis, felis urna condimentum nunc, a ultrices est dui vel nisl. Quisque quam metus, ultricies quis viverra et, consequat ac lectus. Praesent accumsan nibh non erat tempus a rhoncus nibh egestas. Sed auctor diam a elit blandit ac aliquet turpis imperdiet.&lt;/p>
