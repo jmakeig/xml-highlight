@@ -85,8 +85,8 @@
       }
       p.ontext = function(text) {
         if(bail(p.position)) {
-          // Whether to collapse a simple text node (still wonky)
-          var shortFlag = !WHITE.test(text) && text.length < textCollapse ? " short" : ""; 
+          // Whether to collapse a simple text node (still wonky). Currently implemented at the client
+          var shortFlag = ""; //!WHITE.test(text) && text.length < textCollapse ? " short" : ""; 
           if(isElementStartOpen) {
             accumulator.push("&gt;</span><div class='element-value" + shortFlag + "'>"); // close preceding element open tag
           }
@@ -107,13 +107,25 @@
     
   
     document.addEventListener("DOMContentLoaded", function(evt) {
+    
+      
       document.getElementById("run").addEventListener("click", function(evt) {
+        // Global parse and display options
+        var options = {
+          // The maximum length text node to display as inline for simple content
+          shortMax: parseInt($("#short-max").val()) || 100,
+          truncate: parseInt($("#truncate").val()) || -1
+        }
         var xml = document.getElementById("input-xml").value;
         highlight(xml, function(output) {
           //console.log(output);
           document.getElementById("output").innerHTML =  output;
-          $(".element::not(:has(.text))").addClass("empty");
-        }, {truncate: parseInt(document.getElementById("truncate").value)});
+          $("#output .element::not(:has(.text))").addClass("empty");
+          $("#output .element").not(":has(.element, .comment, br)").each(function(i) {
+            var len = $(this).find(".text").text().length;
+            if(len < options.shortMax) $(this).closest(".element").addClass("short");
+          });
+        }, options);
       }, false);
       
       
@@ -137,6 +149,7 @@
     }, false);
   </script>
   <style type="text/css">
+    
     #output {
       font-family: Inconsolata, Consolas, monospace;
       font-size: 110%;
@@ -159,9 +172,14 @@
     /* Inline elements */
     .text + .element,
     .text + .element .element-value,
-    .text + .comment {
+    .text + .comment, 
+    .element.short .element-value {
       display: inline;
       margin-left: 0;
+    }
+    .element.short .element-value {
+      margin-left: 0.25em;
+      margin-right: 0.25em;
     }
     .element-name {}
     .element-value {
@@ -260,6 +278,7 @@
 
 
               &lt;mixed> Here is some &lt;em>mixed&lt;/em> content with a &lt;!-- comment -->, no less&lt;/mixed>
+&lt;key>value&lt;/key>              
 &lt;escaped>
 
 
@@ -370,6 +389,7 @@
 
 &lt;/body></textarea>
         <div><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span>Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
+        <div><label for="short-max">Max</label> <input id="short-max" value="100"/> <span>asdf</span></div>
         <div>
           <button id="run">Highlight</button>
         </div>
