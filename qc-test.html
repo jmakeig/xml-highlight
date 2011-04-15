@@ -121,14 +121,9 @@
           $("#output").html(output);
           $("#output .element::not(:has(.text))").addClass("empty");
           
-          /* 
-            For all simple elements that don't have line breaks or comments, 
-            figure out which ones have text content whose lenght is less than 
-            the shortMax value in the global options. Flag these with a "short"
-            class on the .element.
-          */
-          $("#output .element").not(":has(.element, .comment, br)").each(function(i) {
+          $("#output .element")/*.not(":has(.element, .comment, br)")*/.each(function(i) {
             var len = $(this).find(".text").text().length;
+            console.log(len + ": " + $(this).find(".text").text());
             var el = $(this).closest(".element");
             el.addClass("simple");
             if(len < options.shortMax) el.addClass("short");
