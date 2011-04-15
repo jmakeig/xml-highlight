@@ -1,4 +1,3 @@
-
 .root {
   font-family: Inconsolata, Consolas, monospace;
   font-size: 110%;
@@ -74,25 +73,23 @@
 }
 .attribute-name {}
 .attribute-value {
-  color: brown;
-  
   display: inline-block;
   vertical-align: top;
   margin-top: 0.2em;
   line-height: 1;
-  
   padding: 0 0.2em;
   border-bottom-left-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
-  
+}
+.attribute-value.multi {
+  padding: 0 0.4em;
+  padding-bottom: 0.2em;
 }
 .namespace { color: #666; }
 .xmlns {}
 .namespace-prefix {}
 .namespace-uri {}
-.comment {
-  color: #666;
-}
+.comment {}
 .comment-value {
   font-style: italic;
 }
@@ -103,13 +100,29 @@
   font-family: Helvetica, sans-serif;
 }
 
+
+
+
+
+
+
+
+/* Colors */
+
+
 .element {
   color: blue;
 }
 .element-open, .element-close,
 .attribute-value {
-  background: #DADBE3;
+  background-color: #DADBE3;
+}
+.attribute-value {
+  color: brown;
 }
 .text {
   color: black;
+}
+.comment {
+  color: #666;
 }

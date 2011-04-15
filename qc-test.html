@@ -106,7 +106,7 @@
     }
     
   
-    document.addEventListener("DOMContentLoaded", function(evt) {
+    $(document).ready(function(evt) {
     
       
       document.getElementById("run").addEventListener("click", function(evt) {
@@ -116,10 +116,9 @@
           shortMax: parseInt($("#short-max").val()) || 100,
           truncate: parseInt($("#truncate").val()) || -1
         }
-        var xml = document.getElementById("input-xml").value;
+        var xml = $("#input-xml").val();
         highlight(xml, function(output) {
-          //console.log(output);
-          document.getElementById("output").innerHTML =  output;
+          $("#output").html(output);
           $("#output .element::not(:has(.text))").addClass("empty");
           
           /* 
@@ -134,8 +133,9 @@
             el.addClass("simple");
             if(len < options.shortMax) el.addClass("short");
           });
+          $("#output .attribute-value:has(br)").addClass("multi");
         }, options);
-      }, false);
+      });
       
       
       $("#output").delegate(".element-open, .element-close", "click", function(evt) {
