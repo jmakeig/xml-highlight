@@ -39,7 +39,7 @@
       }
       
       function send() {
-        handler(accumulator.join(""));
+        handler("<div class='root'>" + accumulator.join("") + "</div>");
       }
       // Parse a qname into its prefix and local parts
       function parsePrefix(qname) {
@@ -121,132 +121,38 @@
           //console.log(output);
           document.getElementById("output").innerHTML =  output;
           $("#output .element::not(:has(.text))").addClass("empty");
+          
+          /* 
+            For all simple elements that don't have line breaks or comments, 
+            figure out which ones have text content whose lenght is less than 
+            the shortMax value in the global options. Flag these with a "short"
+            class on the .element.
+          */
           $("#output .element").not(":has(.element, .comment, br)").each(function(i) {
             var len = $(this).find(".text").text().length;
-            if(len < options.shortMax) $(this).closest(".element").addClass("short");
+            var el = $(this).closest(".element");
+            el.addClass("simple");
+            if(len < options.shortMax) el.addClass("short");
           });
         }, options);
       }, false);
       
       
-      // Capture click events to do the collapsing
-      //document.getElementById("output").addEventListener("click", function(evt) {
-      //  console.log(evt.target.className);
-      //}, false);
       $("#output").delegate(".element-open, .element-close", "click", function(evt) {
         $(evt.currentTarget).closest(".element")/*.has(".element-value")*/
           .toggleClass("collapsed");
         evt.stopPropagation();
       });
       $("#collapse-all").click(function(evt) {
-        $("#output .element")/*.has(".element-value")*/
+        $(".element")/*.has(".element-value")*/
           .addClass("collapsed");
       });
       $("#expand-all").click(function(evt) {
-        $("#output .element").removeClass("collapsed");
+        $(".element").removeClass("collapsed");
       });
       
     }, false);
   </script>
-  <style type="text/css">
-    
-    #output {
-      font-family: Inconsolata, Consolas, monospace;
-      font-size: 110%;
-    }
-    .element {
-      cursor: default;
-      color: blue;
-    }
-    /* self-closing */
-    .element.empty {}
-    .element > .element,
-    .element-value > .element,
-    .element-value > .comment {
-      margin-left: 1em;
-    }
-    .text {
-      display: inline;
-      color: black;
-    }
-    /* Inline elements */
-    .text + .element,
-    .text + .element .element-value,
-    .text + .comment, 
-    .element.short .element-value {
-      display: inline;
-      margin-left: 0;
-    }
-    .element.short .element-value {
-      margin-left: 0.25em;
-      margin-right: 0.25em;
-    }
-    .element-name {}
-    .element-value {
-      margin-left: 0.75em;
-    }
-    .element.collapsed .element-value {
-      display: none;
-    }
-    .element-open, .element-close {
-      background-color: rgba(59, 137, 208, 0.5);
-      padding: 0.1em 0.4em;
-      line-height: 1.4;
-    }
-    .element-open {
-      border-top-left-radius: 0.5em;
-      border-bottom-left-radius: 0.5em;
-    }
-    .element-close,
-    .element.empty .element-open {
-      border-top-right-radius: 0.5em;
-      border-bottom-right-radius: 0.5em;
-    }
-    .element.empty .element-open,
-    .element.empty.collapsed .element-open {
-      padding-right: 0.4em;
-    }
-    .element.collapsed .attribute,
-    .element.collapsed .namespace {
-      display: none;
-    }
-    .element.collapsed .element-open {
-      padding-right: 0.05em;
-    }
-    .element.collapsed .element-close {
-      padding-left: 0.05em;
-    }
-    .element.collapsed .element-open:after {
-      display: inline;
-      content: "…";
-    }
-    .element.empty.collapsed .element-open:after {
-      content: "";
-    }
-    .attribute {
-      color: purple;
-    }
-    .attribute-name {}
-    .attribute-value {
-      color: brown;
-    }
-    .namespace { color: #666; }
-    .xmlns {}
-    .namespace-prefix {}
-    .namespace-uri {}
-    .comment {
-      color: #666;
-    }
-    .comment-value {
-      font-style: italic;
-    }
-    .text, .attribute-value, .comment-value {
-      cursor: text;
-    }
-    .more {
-      font-family: Helvetica, sans-serif;
-    }
-  </style>
   <style type="text/css">
     body {
       padding: 2em;
@@ -262,7 +168,17 @@
       font-size: 16px;
       padding: 0.5em;
     }
+    /* Hide all closing tags for readability, except inline ones where it would be ambiguous. */   
+    /*
+    .element-close {
+      display: none;
+    }
+    .text + .element .element-close {
+      display: inline;
+    }
+    */
   </style>
+  <link type="text/css" rel="stylesheet" href="xml-highlight.css"/>
 </head>
 <body>
   <div>

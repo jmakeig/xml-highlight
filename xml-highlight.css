@@ -1,0 +1,115 @@
+
+.root {
+  font-family: Inconsolata, Consolas, monospace;
+  font-size: 110%;
+}
+.element {
+  cursor: default;
+}
+/* self-closing */
+.element.empty {}
+.element > .element,
+.element-value > .element,
+.element-value > .comment {
+  margin-left: 1em;
+}
+.text {
+  display: inline;
+}
+/* Inline elements */
+.text + .element,
+.text + .element .element-value,
+.text + .comment, 
+.element.short .element-value {
+  display: inline;
+  margin-left: 0;
+}
+.element.short .element-value {
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+}
+.element-name {}
+.element-value {
+  margin-left: 0.75em;
+}
+.element.collapsed .element-value {
+  display: none;
+}
+.element-open, .element-close {
+  padding: 0.1em 0.4em;
+  line-height: 1.4;
+}
+.element-open {
+  border-top-left-radius: 0.5em;
+  border-bottom-left-radius: 0.5em;
+}
+.element-close,
+.element.empty .element-open {
+  border-top-right-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+}
+.element.empty .element-open,
+.element.empty.collapsed .element-open {
+  padding-right: 0.4em;
+}
+.element.collapsed .attribute,
+.element.collapsed .namespace {
+  display: none;
+}
+.element.collapsed .element-open {
+  padding-right: 0.05em;
+}
+.element.collapsed .element-close {
+  padding-left: 0.05em;
+}
+.element.collapsed .element-open:after {
+  display: inline;
+  content: "…";
+}
+.element.empty.collapsed .element-open:after {
+  content: "";
+}
+.attribute {
+  color: purple;
+}
+.attribute-name {}
+.attribute-value {
+  color: brown;
+  
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 0.2em;
+  line-height: 1;
+  
+  padding: 0 0.2em;
+  border-bottom-left-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+  
+}
+.namespace { color: #666; }
+.xmlns {}
+.namespace-prefix {}
+.namespace-uri {}
+.comment {
+  color: #666;
+}
+.comment-value {
+  font-style: italic;
+}
+.text, .attribute-value, .comment-value {
+  cursor: text;
+}
+.more {
+  font-family: Helvetica, sans-serif;
+}
+
+.element {
+  color: blue;
+}
+.element-open, .element-close,
+.attribute-value {
+  background: #DADBE3;
+}
+.text {
+  color: black;
+}
