@@ -97,7 +97,7 @@
         }
       }
       p.oncomment = function(comment) {
-        accumulator.push("<div class='comment'>&lt;-- <span class='comment-value'>" + prepareText(comment) + "</span> --&gt;</div>");
+        accumulator.push("<div class='comment'><span class='comment-open'>&lt;--</span><div class='comment-value'>" + prepareText(comment) + "</div><span class='comment-close'>--&gt;</span></div>");
       }
       p.onend = function() {
         if(!isSent) send();
@@ -138,17 +138,16 @@
       });
       
       
-      $("#output").delegate(".element-open, .element-close", "click", function(evt) {
-        $(evt.currentTarget).closest(".element")/*.has(".element-value")*/
-          .toggleClass("collapsed");
+      $("#output").delegate(".element-open, .element-close, .comment-open, .comment-close", "click", function(evt) {
+        $(evt.currentTarget).closest(".element, .comment").toggleClass("collapsed");
         evt.stopPropagation();
       });
       $("#collapse-all").click(function(evt) {
-        $(".element")/*.has(".element-value")*/
-          .addClass("collapsed");
+        $(".element, .comment").addClass("collapsed");
+        $(".root .element").first().removeClass("collapsed");
       });
       $("#expand-all").click(function(evt) {
-        $(".element").removeClass("collapsed");
+        $(".element, .comment").removeClass("collapsed");
       });
       
       $("#hide-close-tags").change(function(evt) {

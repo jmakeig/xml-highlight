@@ -19,6 +19,7 @@
 .text + .element,
 .text + .element .element-value,
 .text + .comment, 
+.text + .comment .comment-value,
 .element.short .element-value {
   display: inline;
   margin-left: 0;
@@ -28,10 +29,12 @@
   margin-right: 0.25em;
 }
 .element-name {}
-.element-value {
+.element-value,
+.comment-value {
   margin-left: 0.75em;
 }
-.element.collapsed .element-value {
+.element.collapsed .element-value,
+.comment.collapsed .comment-value {
   display: none;
 }
 .element-open, .element-close {
@@ -61,7 +64,8 @@
 .element.collapsed .element-close {
   padding-left: 0.05em;
 }
-.element.collapsed .element-open:after {
+.element.collapsed .element-open:after,
+.comment.collapsed .comment-open:after {
   display: inline;
   content: "…";
 }
