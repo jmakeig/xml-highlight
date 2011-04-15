@@ -109,7 +109,7 @@
     $(document).ready(function(evt) {
     
       
-      document.getElementById("run").addEventListener("click", function(evt) {
+      $("#run").click(function(evt) {
         // Global parse and display options
         var options = {
           // The maximum length text node to display as inline for simple content
@@ -151,7 +151,10 @@
         $(".element").removeClass("collapsed");
       });
       
-    }, false);
+      $("#hide-close-tags").change(function(evt) {
+        $("#output .root").toggleClass("hide-close-tags");
+      });
+    });
   </script>
   <style type="text/css">
     body {
@@ -169,14 +172,12 @@
       padding: 0.5em;
     }
     /* Hide all closing tags for readability, except inline ones where it would be ambiguous. */   
-    /*
-    .element-close {
+    .hide-close-tags .element-close {
       display: none;
     }
-    .text + .element .element-close {
+    .hide-close-tags .text + .element .element-close {
       display: inline;
     }
-    */
   </style>
   <link type="text/css" rel="stylesheet" href="xml-highlight.css"/>
 </head>
@@ -307,6 +308,7 @@
 &lt;/body></textarea>
         <div><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span>Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
         <div><label for="short-max">Max</label> <input id="short-max" value="100"/> <span>asdf</span></div>
+        <div><input type="checkbox" id="hide-close-tags"/><label for="show-close-tags">Hide close tags?</label></div>
         <div>
           <button id="run">Highlight</button>
         </div>
