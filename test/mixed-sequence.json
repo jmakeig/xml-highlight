@@ -1,0 +1,18 @@
+[
+  {
+    "type": "value",
+    "content": 1
+  },
+  {
+    "type": "node",
+    "content": "<asdf my='stuff'/>"
+  },
+  {
+    "type": "value",
+    "content": "A string!"
+  },
+  {
+    "type": "node",
+    "content": "<Incident xmlns=\"http://wits.nctc.gov\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n<ICN>200458158</ICN>\n<Subject>Railway line damaged in bombing in Jacobabad, Sindh, Pakistan</Subject>\n<Summary>On 23 February 2004, in Jacobabad, Sindh, Pakistan, assailants detonated a bomb on a railway line close to the Jacobabad railway station, damaging the track but causing no injuries.  No group claimed responsibility.</Summary>\n<IncidentDate>02/23/2004</IncidentDate>\n<ApproximateDate>No</ApproximateDate>\n<MultipleDays>No</MultipleDays>\n<EventTypeList>\n<EventType>Bombing</EventType>\n</EventTypeList>\n<Assassination>No</Assassination>\n<Suicide>No</Suicide>\n<WeaponTypeList>\n<WeaponType>Explosive</WeaponType>\n</WeaponTypeList>\n<IED>No</IED>\n<Location>\n<Region>South Asia</Region>\n<Country>Pakistan</Country>\n<CityStateProvinceList>\n      <CityStateProvince>\n<City>Jacobabad</City>\n<StateProvince>Sindh</StateProvince>\n</CityStateProvince>\n</CityStateProvinceList>\n</Location>\n<VictimList/>\n<FacilityList>\n<Facility>\n<FacilityType>Transportation Infrastructure</FacilityType>\n      <Combatant>No</Combatant>\n<Nationality>Pakistan</Nationality>\n<DefiningCharacteristicList>\n<DefiningCharacteristic>Unknown</DefiningCharacteristic>\n</DefiningCharacteristicList>\n<TargetedCharacteristicList>\n<TargetedCharacteristic>Unknown</TargetedCharacteristic>\n</TargetedCharacteristicList>\n<Indicator>Targeted</Indicator>\n<Damage>Light</Damage>\n<Quantity>1</Quantity>\n</Facility>\n</FacilityList>\n<PerpetratorList>\n<Perpetrator>\n<Nationality>Unknown</Nationality>\n<Characteristic>Unknown</Characteristic>\n</Perpetrator>\n</PerpetratorList>\n</Incident>"
+  }
+]
