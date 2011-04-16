@@ -16,99 +16,18 @@
   </script>
   <script type="text/javascript" src="lib/jquery-1.5.2-min.js"></script>
   <script type="text/javascript" src="lib/sax.js"></script>
+  <script type="text/javascript" src="xml-highlight.js"></script>
   <script type="text/javascript">
-    function highlight(xml, handler, options) {
-      var WHITE = /^\s+$/; // all whitespace
-      //console.log(xml);
-      var accumulator = [];
-      var isElementStartOpen = false; // keep track of whether a element is self-closing
-      var p = new SAXParser(true);
-      var isSent = false;
-      var options = options || {}, 
-        truncate = options.truncate || -1,
-        textCollapse = options.textCollapse || 100;
-      function bail(position) {
-        if(-1 === truncate) return true;
-        if(!isSent && position > truncate) {
-          accumulator.push("<div class='more'><a href='asdf'>Check out the text version</a></div>");
-          send();
-          isSent = true;
-          return false;
-        }
-        return true;
-      }
-      
-      function send() {
-        handler("<div class='root'>" + accumulator.join("") + "</div>");
-      }
-      // Parse a qname into its prefix and local parts
-      function parsePrefix(qname) {
-        var tokens = qname.split(":");
-        if(2 === tokens.length) {
-          return "<span class='namespace-prefix'>" + tokens[0] + "</span>:" + parsePrefix(tokens[1]);
-        } else {
-          return "<span class='local-name'>" + qname + "</span>";
-        }
-      }
-      p.onopentag = function(node) {
-        if(bail(p.position)) {
-          var attrs = []
-          var ns = []
-          for(a in node.attributes) {
-            if(a.substr(0, 5) === "xmlns") {
-              var prefix = "";
-              if(":" === a[5]) {
-                prefix = ":<span class='namespace-prefix'>" + a.substring(6) + "</span>";
-              }
-              ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
-            } else {
-              attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
-            }
-          }
-          accumulator.push("<div class='element'><span class='element-open'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join(" ") + ns.join(" "));
-          isElementStartOpen = true;
-        }
-      }
-      p.onclosetag = function(name) {
-        if(bail(p.position)) {
-          if(isElementStartOpen) {
-            accumulator.push("/&gt;</span></div>"); // close preceding element
-          } else {
-            accumulator.push("</div><span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
-            //</div>
-          }
-          isElementStartOpen = false;
-        }
-      }
-      function prepareText(text) {
-        return text.replace(/</gm, "&lt;").replace(/\n/gm, "<br/>")
-      }
-      p.ontext = function(text) {
-        if(bail(p.position)) {
-          // Whether to collapse a simple text node (still wonky). Currently implemented at the client
-          var shortFlag = ""; //!WHITE.test(text) && text.length < textCollapse ? " short" : ""; 
-          if(isElementStartOpen) {
-            accumulator.push("&gt;</span><div class='element-value" + shortFlag + "'>"); // close preceding element open tag
-          }
-          if(!WHITE.test(text)) { // if it's only whitespace. This feels dangerous.
-            accumulator.push("<div class='text" + shortFlag + "'>" + prepareText(text) + "</div>");
-          }
-          isElementStartOpen = false;
-        }
-      }
-      p.oncomment = function(comment) {
-        accumulator.push("<div class='comment'><span class='comment-open'>&lt;--</span><div class='comment-value'>" + prepareText(comment) + "</div><span class='comment-close'>--&gt;</span></div>");
-      }
-      p.onend = function() {
-        if(!isSent) send();
-      }
-      p.write(xml).close();
-    }
+
     
   
     $(document).ready(function(evt) {
+      $("#input-xml-source").change(function(evt) {
+        var source = $(this).val();
+        console.log(source);
+        $("#input-xml").css({"display": ("inline" === source ? "block" : "none")});
+      });
     
-      
       $("#run").click(function(evt) {
         // Global parse and display options
         var options = {
@@ -116,20 +35,66 @@
           shortMax: parseInt($("#short-max").val()) || 100,
           truncate: parseInt($("#truncate").val()) || -1
         }
-        var xml = $("#input-xml").val();
-        highlight(xml, function(output) {
-          $("#output").html(output);
-          $("#output .element::not(:has(.text))").addClass("empty");
-          
-          $("#output .element")/*.not(":has(.element, .comment, br)")*/.each(function(i) {
-            var len = $(this).find(".text").text().length;
-            console.log(len + ": " + $(this).find(".text").text());
-            var el = $(this).closest(".element");
-            el.addClass("simple");
-            if(len < options.shortMax) el.addClass("short");
-          });
-          $("#output .attribute-value:has(br)").addClass("multi");
-        }, options);
+        //var xml = $("#input-xml").val();
+        
+        var href = "/test/mixed-sequence.json";
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          // console.log(this.readyState);
+          if (this.readyState === 1) {
+            //loading(true);
+          }
+          if (this.readyState === 4) {
+            if (this.status >= 200 && this.status < 300) {
+              var accumulator = [];
+              //Success
+              var results = JSON.parse(this.responseText); // TODO: Properly parse JSON
+              //console.dir(results);
+              for(var i = 0; i < results.length; i++) {
+                var result = results[i];
+                accumulator.push('<div class="result-item">');
+                if("node" === result.type) {
+                  highlight(result.content, function(output) {
+                    accumulator.push(output);
+                  /*
+                    $("#output").html(output);
+                    $("#output .element::not(:has(.text))").addClass("empty");
+                    $("#output .element").each(function(i) {
+                      var len = $(this).find(".text").text().length;
+                      //console.log(len + ": " + $(this).find(".text").text());
+                      var el = $(this).closest(".element");
+                      el.addClass("simple");
+                      if(len < options.shortMax) el.addClass("short");
+                    });
+                    $("#output .attribute-value:has(br)").addClass("multi");
+                  */
+                  }, options);
+                } else {
+                  accumulator.push(result.content);
+                }
+                accumulator.push('</div>'); // div.result-item
+              }
+              $("#output").html(accumulator.join(""));
+              
+              // Clean up
+              $("#output .element::not(:has(.text))").addClass("empty");
+              $("#output .element").each(function(i) {
+                var len = $(this).find(".text").text().length;
+                //console.log(len + ": " + $(this).find(".text").text());
+                var el = $(this).closest(".element");
+                el.addClass("simple");
+                if(len < options.shortMax) el.addClass("short");
+              });
+              $("#output .attribute-value:has(br)").addClass("multi");
+            } else {
+              //error
+              throw new Error(this.status + ": " + this.statusText);
+            }
+          }
+        }
+        xhr.open("GET", href, true);
+        xhr.setRequestHeader("Accept", "application/json");
+        xhr.send(null);
       });
       
       
@@ -165,6 +130,13 @@
       font-size: 16px;
       padding: 0.5em;
     }
+    #output {
+      margin: 1em 0;
+    }
+    .result-item {
+      padding: 0.5em 0;
+      border-top: solid 1px #ccc;
+    }
     /* Hide all closing tags for readability, except inline ones where it would be ambiguous. */   
     .hide-close-tags .element-close {
       display: none;
@@ -179,6 +151,12 @@
   <div>
     <div>
       <div>
+        <div>
+          <select id="input-xml-source">
+            <option value="inline" selected="selected">Inline below</option>
+            <option value="test/mixed-sequence.json">Mixed sequence</option>
+          </select>
+        </div>
         <div><label for="input-xml">Input XML</label></div>
         <textarea id="input-xml">&lt;body an="attribute" xmlns="some://namespace-uri">
   &lt;meta name="test" value="self-closing">&lt;/meta>
