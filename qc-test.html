@@ -22,15 +22,17 @@
     $(document).ready(function(evt) {
       $("#run").click(function(evt) {
         getInputXML(function(results) {
-          
           formatResults(results, getOptions(), $("#output"));
+          $(".element, .comment").addClass("collapsed");
+          // Expand the root element only
+          $(".root > .element").removeClass("collapsed");
         });
       });
       
       function getOptions() {
         return {
           "truncate": parseInt($("#truncate").val()),
-          "short-max": parseInt($("#short-max").val())
+          "shortMax": parseInt($("#short-max").val())
         }
       }
       
@@ -96,7 +98,7 @@
           var len = $(this).find(".text").text().length;
           //console.log(len + ": " + $(this).find(".text").text());
           var el = $(this).closest(".element");
-          el.addClass("simple");
+          //el.addClass("simple");
           if(len < options.shortMax) el.addClass("short");
         });
         target.find(".attribute-value:has(br)").addClass("multi");
@@ -139,10 +141,13 @@
       display: inline-block;
       vertical-align: top;
       width: 6em;
+      float: left;
+      margin-top: 2px;
     }
     input[type=checkbox] + label {
       width: 12em;
-      margin-left: 1em;
+      margin-left: 0.25em;
+      float: none;
     }
     input, select {
       width: 12em;
@@ -164,15 +169,24 @@
       font-size: 85%;
       color: #999;
       display: block;
-      margin-left: 7.5em;
+      margin-left: 7em;
       margin-top: 0.25em;
     }
+    #output-tools {
+      background: #ccc;
+      padding: 0.5em;
+      margin-top: 1em;
+    }
     #output {
-      margin: 1em 0;
+      border: solid 1px #ccc;
+      padding: 0.5em;
     }
     .result-item {
       padding: 0.5em 0;
       border-top: solid 1px #ccc;
+    }
+    .result-item:first-child {
+      border: none;
     }
     /* Hide all closing tags for readability, except inline ones where it would be ambiguous. */   
     .hide-close-tags .element-close {
@@ -326,7 +340,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div id="output-tools">
       <button id="collapse-all">Collapse All</button>
       <button id="expand-all">Expand All</button>
       <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
