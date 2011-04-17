@@ -131,8 +131,23 @@
       padding: 2em;
       font-family: Helvetica, sans-serif;
     }
+    .control {
+      margin: 1em 0;
+    }
     label {
-      font-weight: bold;
+      display: inline-block;
+      vertical-align: top;
+      width: 6em;
+    }
+    input[type=checkbox] + label {
+      width: 12em;
+      margin-left: 1em;
+    }
+    input, select {
+      width: 12em;
+    }
+    input[type=checkbox] {
+      width: auto;
     }
     textarea {
       width: 80%;
@@ -143,6 +158,13 @@
     }
     textarea:disabled {
       opacity: 0.5;
+    }
+    .guide {
+      font-size: 85%;
+      color: #999;
+      display: block;
+      margin-left: 7.5em;
+      margin-top: 0.25em;
     }
     #output {
       margin: 1em 0;
@@ -165,15 +187,17 @@
   <div>
     <div>
       <div>
-        <div>
+        <div class="control">
+          <label for="input-xml">Source</label>
           <select id="input-xml-source">
             <option value="inline" selected="selected">Inline below</option>
             <option value="test/mixed-sequence.json">Mixed sequence</option>
             <option value="test/many-strings.json">Many strings</option>
           </select>
         </div>
-        <div><label for="input-xml">Input XML</label></div>
-        <textarea id="input-xml">&lt;body an="attribute" xmlns="some://namespace-uri">
+        <div class="control">
+        <div class="label"><label for="input-xml">Input XML</label></div>
+          <textarea id="input-xml">&lt;body an="attribute" xmlns="some://namespace-uri">
   &lt;meta name="test" value="self-closing">&lt;/meta>
                                  &lt;meta name="test" value="self-closing"  some="attribute
         
@@ -293,9 +317,10 @@
 &lt;p>Sed rhoncus, nisi ut imperdiet gravida, eros augue luctus odio, pulvinar varius felis lorem ac diam. Vestibulum fermentum pellentesque dui nec sodales. Ut accumsan eros ac risus facilisis et pretium nulla varius. Vivamus nec leo nunc, quis faucibus ante. Vivamus malesuada consectetur turpis. Praesent eget egestas dui. Ut sit amet interdum nulla. Integer sed varius diam. Aliquam vitae risus mauris. Etiam urna sapien, scelerisque in lacinia ac, semper nec diam. Ut rutrum dignissim dui ultrices tristique. In et libero ac augue condimentum vehicula sit amet a odio. Nullam non magna elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non est id sapien euismod sagittis.&lt;/p>
 
 &lt;/body></textarea>
-        <div><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span>Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
-        <div><label for="short-max">Max</label> <input id="short-max" value="100"/> <span>asdf</span></div>
-        <div><input type="checkbox" id="hide-close-tags"/><label for="show-close-tags">Hide close tags?</label></div>
+        </div>
+        <div class="control"><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span class="guide">Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
+        <div class="control"><label for="short-max">Maximum inline size</label> <input id="short-max" value="100"/> <span class="guide">The maximum number of characters in an element to cause that element’s value to display inline.</span></div>
+        <div class="control"><input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label></div>
         <div>
           <button id="run">Highlight</button>
         </div>
