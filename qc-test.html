@@ -19,34 +19,26 @@
   <script type="text/javascript" src="xml-highlight.js"></script>
   <script type="text/javascript">
 
-    
-  
     $(document).ready(function(evt) {
-      
-      $("#input-xml-source").change(function(evt) {
-        var source = $(this).val();
-        //console.log(source);
-        $("#input-xml").attr("disabled", ("inline" !== source));
-      });
-      
-      
       $("#run").click(function(evt) {
-        // Global parse and display options
-        var options = {
-          // The maximum length text node to display as inline for simple content
-          shortMax: parseInt($("#short-max").val()) || 100,
-          truncate: parseInt($("#truncate").val()) || -1
-        }
-        //var xml = $("#input-xml").val();
+        getInputXML(function(results) {
+          formatResults(results, {}, $("#output"));
+        });
+      });
+    
+      function getInputXML(handler /* function(results<Array<Object<type, content>>>) */) {
         var source = $("#input-xml-source").val()
         if("inline" === source) {
-          results = [
-            {
-              "type": "node",
-              "content": $("#input-xml").val().replace(/\n/g, "\\n")
-            }
-          ]
-        } else {
+          handler(
+            results = [
+              {
+                "type": "node",
+                "content": $("#input-xml").val().replace(/\n/g, "\n")
+              }
+            ]
+          )
+        } 
+        else {
           var href = source;
           var xhr = new XMLHttpRequest();
           xhr.onreadystatechange = function() {
@@ -56,46 +48,8 @@
             }
             if (this.readyState === 4) {
               if (this.status >= 200 && this.status < 300) {
-                var accumulator = [];
                 //Success
-                var results = JSON.parse(this.responseText); // TODO: Properly parse JSON
-                //console.dir(results);
-                for(var i = 0; i < results.length; i++) {
-                  var result = results[i];
-                  accumulator.push('<div class="result-item">');
-                  if("node" === result.type) {
-                    highlight(result.content, function(output) {
-                      accumulator.push(output);
-                    /*
-                      $("#output").html(output);
-                      $("#output .element::not(:has(.text))").addClass("empty");
-                      $("#output .element").each(function(i) {
-                        var len = $(this).find(".text").text().length;
-                        //console.log(len + ": " + $(this).find(".text").text());
-                        var el = $(this).closest(".element");
-                        el.addClass("simple");
-                        if(len < options.shortMax) el.addClass("short");
-                      });
-                      $("#output .attribute-value:has(br)").addClass("multi");
-                    */
-                    }, options);
-                  } else {
-                    accumulator.push(result.content);
-                  }
-                  accumulator.push('</div>'); // div.result-item
-                }
-                $("#output").html(accumulator.join(""));
-                
-                // Clean up
-                $("#output .element::not(:has(.text))").addClass("empty");
-                $("#output .element").each(function(i) {
-                  var len = $(this).find(".text").text().length;
-                  //console.log(len + ": " + $(this).find(".text").text());
-                  var el = $(this).closest(".element");
-                  el.addClass("simple");
-                  if(len < options.shortMax) el.addClass("short");
-                });
-                $("#output .attribute-value:has(br)").addClass("multi");
+                handler(JSON.parse(this.responseText)); // TODO: Properly parse JSON
               } else {
                 //error
                 throw new Error(this.status + ": " + this.statusText);
@@ -106,9 +60,48 @@
           xhr.setRequestHeader("Accept", "application/json");
           xhr.send(null);
         }
+      }
+      
+      function formatResults(results /*Array<Object<type, content>>*/, options, target/*jQuery node*/) {
+        var accumulator = [];
+        var target = $(target);
+        
+        for(var i = 0; i < results.length; i++) {
+          var result = results[i];
+          accumulator.push('<div class="result-item">');
+          if("node" === result.type) {
+            // THIS ISN'T REALLY ASYNC BECAUSE IT ASSUMES THE ORDER OF THE CALLS UPDATING THE ACCUMLATOR
+            highlight(result.content, function(output) {
+              accumulator.push(output);
+            }, options);
+          } 
+          else {
+            accumulator.push(result.content);
+          }
+          accumulator.push('</div>'); // div.result-item
+        }
+        target.html(accumulator.join(""));
+        
+        // Clean up
+        target.find(".element::not(:has(.text))").addClass("empty");
+        target.find(".element").each(function(i) {
+          var len = $(this).find(".text").text().length;
+          //console.log(len + ": " + $(this).find(".text").text());
+          var el = $(this).closest(".element");
+          el.addClass("simple");
+          if(len < options.shortMax) el.addClass("short");
+        });
+        target.find(".attribute-value:has(br)").addClass("multi");
+      }
+      
+      
+      $("#input-xml-source").change(function(evt) {
+        var source = $(this).val();
+        //console.log(source);
+        $("#input-xml").attr("disabled", ("inline" !== source));
       });
       
-      
+      // Do this once and replace the contents of #output
       $("#output").delegate(".element-open, .element-close, .comment-open, .comment-close", "click", function(evt) {
         $(evt.currentTarget).closest(".element, .comment").toggleClass("collapsed");
         evt.stopPropagation();
