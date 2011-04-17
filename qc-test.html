@@ -22,10 +22,18 @@
     $(document).ready(function(evt) {
       $("#run").click(function(evt) {
         getInputXML(function(results) {
-          formatResults(results, {}, $("#output"));
+          
+          formatResults(results, getOptions(), $("#output"));
         });
       });
-    
+      
+      function getOptions() {
+        return {
+          "truncate": parseInt($("#truncate").val()),
+          "short-max": parseInt($("#short-max").val())
+        }
+      }
+      
       function getInputXML(handler /* function(results<Array<Object<type, content>>>) */) {
         var source = $("#input-xml-source").val()
         if("inline" === source) {
