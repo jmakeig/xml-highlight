@@ -116,6 +116,37 @@
         $(evt.currentTarget).closest(".element, .comment").toggleClass("collapsed");
         evt.stopPropagation();
       });
+      
+      $("#output").delegate(".result-item:has(.root)", "mouseenter mouseleave", function(evt) {
+        var item = $(evt.currentTarget).closest(".result-item");
+        switch(evt.type) {
+          case "mouseenter":
+            if(0 === item.has(".more-info").length) {
+              // Turn this into an HTML template
+              item.append("<div class='more-info'><button class='result-item-collapse-all'>Collapse All</button><button class='result-item-expand-all'>Expand All</button></div>");
+            }
+            item.addClass("highlight");
+            break;
+          case "mouseleave":
+            item.removeClass("highlight");
+            break;
+          default:
+            throw new Error(evt.type);
+        }
+      });
+      
+      // Result item-level collapse and expand
+      $("#output").delegate(".result-item .result-item-expand-all", "click", function(evt) {
+        $(evt.currentTarget).closest(".result-item").find(".element").removeClass("collapsed");
+      });
+      
+      $("#output").delegate(".result-item .result-item-collapse-all", "click", function(evt) {
+        var item = $(evt.currentTarget).closest(".result-item");
+        item.find(".element").addClass("collapsed");
+        item.find(".root > .element").removeClass("collapsed");
+      });
+         
+      // Global collapse and expand
       $("#collapse-all").click(function(evt) {
         $(".element, .comment").addClass("collapsed");
         $(".root .element").first().removeClass("collapsed");
@@ -127,12 +158,22 @@
       $("#hide-close-tags").change(function(evt) {
         $("#output .root").toggleClass("hide-close-tags");
       });
+      
+      // UGLY
+      $("#options").click(function(evt) {
+        $(this).next("div").toggle();
+      });
     });
   </script>
   <style type="text/css">
     body {
-      padding: 2em;
+      padding: 0 2em;
       font-family: Helvetica, sans-serif;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      line-height: 1.25;
+      margin: 0;
+      margin-bottom: 0.25em;
     }
     .control {
       margin: 1em 0;
@@ -184,6 +225,7 @@
     .result-item {
       padding: 0.5em 0;
       border-top: solid 1px #ccc;
+      position: relative;
     }
     .result-item:first-child {
       border: none;
@@ -200,28 +242,27 @@
 </head>
 <body>
   <div>
-    <div>
-      <div>
-        <div class="control">
-          <label for="input-xml">Source</label>
-          <select id="input-xml-source">
-            <option value="inline" selected="selected">Inline below</option>
-            <option value="test/mixed-sequence.json">Mixed sequence</option>
-            <option value="test/many-strings.json">Many strings</option>
-          </select>
-        </div>
-        <div class="control">
-        <div class="label"><label for="input-xml">Input XML</label></div>
-          <textarea id="input-xml">&lt;body an="attribute" xmlns="some://namespace-uri">
-  &lt;meta name="test" value="self-closing">&lt;/meta>
-                                 &lt;meta name="test" value="self-closing"  some="attribute
-        
-        
-        with whitespace">&lt;/meta>
-                        &lt;meta name="test" value="self-closing">&lt;/meta> 
+    <h1>Input</h1>
+    <div class="control">
+      <label for="input-xml">Source</label>
+      <select id="input-xml-source">
+        <option value="inline" selected="selected">Inline below</option>
+        <option value="test/mixed-sequence.json">Mixed sequence</option>
+        <option value="test/many-strings.json">Many strings</option>
+      </select>
+    </div>
+    <div class="control">
+    <div class="label"><label for="input-xml">Input XML</label></div>
+      <textarea id="input-xml">&lt;body an="attribute" xmlns="some://namespace-uri">
+&lt;meta name="test" value="self-closing">&lt;/meta>
+                             &lt;meta name="test" value="self-closing"  some="attribute
+    
+    
+    with whitespace">&lt;/meta>
+                    &lt;meta name="test" value="self-closing">&lt;/meta> 
 
 
-              &lt;mixed> Here is some &lt;em>mixed&lt;/em> content with a &lt;!-- comment -->, no less&lt;/mixed>
+          &lt;mixed> Here is some &lt;em>mixed&lt;/em> content with a &lt;!-- comment -->, no less&lt;/mixed>
 &lt;key>value&lt;/key>              
 &lt;escaped>
 
@@ -238,7 +279,7 @@
 &lt;p>Nam lorem justo, viverra nec vehicula sit amet, dignissim vitae orci. Nulla consequat lacinia adipiscing. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce sodales nisl et lacus mollis in eleifend velit convallis. Quisque sed nibh nibh, at adipiscing ipsum. Sed justo nulla, auctor sed congue ultricies, commodo in felis. Donec ornare est gravida purus ultricies auctor. Suspendisse sollicitudin pretium tortor ac tincidunt. In magna velit, elementum sed venenatis faucibus, rhoncus ut dolor. Vivamus tempor ultricies arcu, sit amet consectetur nulla sollicitudin id.&lt;/p>
 &lt;!-- 
 &lt;p>Vivamus eleifend consequat purus, at volutpat arcu mollis eu. Nunc augue mauris, vehicula ut lacinia non, facilisis eu nisi. Praesent ut facilisis elit. Sed ac est vel nunc luctus semper at vel mauris. Pellentesque auctor ante lobortis elit consectetur ornare. Ut faucibus adipiscing massa, et blandit elit ultricies ac. Duis quam libero, rhoncus in tincidunt non, tempus quis mi. Sed sit amet libero eget justo ultricies mollis. Phasellus quis semper felis. Aliquam eget est lectus, id accumsan erat. Fusce sapien elit, fermentum a porta eget, accumsan sed velit. Aenean mauris lacus, accumsan eget lacinia eget, tincidunt ac tellus. Quisque at justo eget sapien sodales tincidunt.&lt;/p>
- -->
+-->
 &lt;p>Praesent non mauris id dui tempor egestas. Donec id ipsum erat, sit amet semper orci. Vivamus et mi non arcu viverra sodales vitae ac elit. Quisque auctor quam ut velit condimentum tincidunt. In enim nisl, malesuada ac semper quis, gravida imperdiet justo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus convallis, massa vitae sagittis rutrum, eros justo vulputate erat, semper pellentesque quam nisl a lorem. Nunc imperdiet quam at risus tempor aliquam. Aenean facilisis blandit quam ut posuere. Maecenas consectetur aliquet felis vel hendrerit. Praesent eu velit nec magna commodo blandit. Sed eros orci, consequat non porta a, interdum non purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed ultrices elit vel augue cursus feugiat. Praesent eros lacus, aliquam eget ultrices at, porttitor cursus tellus. Sed vel interdum turpis. Quisque quis purus in turpis ullamcorper laoreet.&lt;/p>
 
 &lt;p>Phasellus sit amet metus tempus purus vehicula consectetur. Proin eu tellus tortor, et dapibus eros. Morbi fringilla dapibus tortor. Quisque scelerisque, tellus ut tristique mattis, mi quam tincidunt augue, nec feugiat orci magna sit amet massa. Suspendisse rutrum nisi eget sapien tempus et dictum eros facilisis. Vestibulum et est tellus. Mauris eleifend, orci vel placerat sagittis, felis urna condimentum nunc, a ultrices est dui vel nisl. Quisque quam metus, ultricies quis viverra et, consequat ac lectus. Praesent accumsan nibh non erat tempus a rhoncus nibh egestas. Sed auctor diam a elit blandit ac aliquet turpis imperdiet.&lt;/p>
@@ -332,20 +373,21 @@
 &lt;p>Sed rhoncus, nisi ut imperdiet gravida, eros augue luctus odio, pulvinar varius felis lorem ac diam. Vestibulum fermentum pellentesque dui nec sodales. Ut accumsan eros ac risus facilisis et pretium nulla varius. Vivamus nec leo nunc, quis faucibus ante. Vivamus malesuada consectetur turpis. Praesent eget egestas dui. Ut sit amet interdum nulla. Integer sed varius diam. Aliquam vitae risus mauris. Etiam urna sapien, scelerisque in lacinia ac, semper nec diam. Ut rutrum dignissim dui ultrices tristique. In et libero ac augue condimentum vehicula sit amet a odio. Nullam non magna elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non est id sapien euismod sagittis.&lt;/p>
 
 &lt;/body></textarea>
-        </div>
-        <div class="control"><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span class="guide">Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
-        <div class="control"><label for="short-max">Maximum inline size</label> <input id="short-max" value="100"/> <span class="guide">The maximum number of characters in an element to cause that element’s value to display inline.</span></div>
-        <div>
-          <button id="run">Highlight</button>
-        </div>
-      </div>
     </div>
-    <div id="output-tools">
-      <button id="collapse-all">Collapse All</button>
-      <button id="expand-all">Expand All</button>
-      <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
+    <h2 id="options">Options</h2>
+    <div>
+      <div class="control"><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span class="guide">Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
+      <div class="control"><label for="short-max">Maximum inline size</label> <input id="short-max" value="100"/> <span class="guide">The maximum number of characters in an element to cause that element’s value to display inline.</span></div>
     </div>
-    <div id="output"></div>
+    <div>
+      <button id="run">Highlight</button>
+    </div>
   </div>
+  <div id="output-tools">
+    <button id="collapse-all">Collapse All</button>
+    <button id="expand-all">Expand All</button>
+    <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
+  </div>
+  <div id="output"></div>
 </body>
 </html>

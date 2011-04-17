@@ -107,8 +107,20 @@
 
 
 
-
-
+.result-item.highlight {
+  
+}
+.result-item .more-info {
+  display: none;
+}
+.result-item.highlight .more-info {
+  display: block;
+  position: absolute;
+  top: 0.5em;;
+  right: 0;
+  width: 20em;
+  text-align: right;
+}
 
 
 /* Colors */
