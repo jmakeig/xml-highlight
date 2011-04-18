@@ -2,12 +2,14 @@
     var WHITE = /^\s+$/; // all whitespace
     //console.log(xml);
     var accumulator = [];
+    var ti = 0; // tabindex counter
     var isElementStartOpen = false; // keep track of whether a element is self-closing
     var p = new SAXParser(true);
     var isSent = false;
     var options = options || {}, 
       truncate = options.truncate || -1,
-      textCollapse = options.textCollapse || 100;
+      textCollapse = options.textCollapse || 100,
+      tabIndex = options.tabIndex || 1;
     function bail(position) {
       if(-1 === truncate) return true;
       if(!isSent && position > truncate) {
@@ -46,7 +48,7 @@
             attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
           }
         }
-        accumulator.push("<div class='element'><span class='element-open'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join(" ") + ns.join(" "));
+        accumulator.push("<div class='element'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join(" ") + ns.join(" "));
         isElementStartOpen = true;
       }
     }

@@ -32,7 +32,8 @@
       function getOptions() {
         return {
           "truncate": parseInt($("#truncate").val()),
-          "shortMax": parseInt($("#short-max").val())
+          "shortMax": parseInt($("#short-max").val()),
+          "tabIndex": 100
         }
       }
       
@@ -145,7 +146,49 @@
         item.find(".element").addClass("collapsed");
         item.find(".root > .element").removeClass("collapsed");
       });
-         
+      
+      $("#output").keydown(function(evt) {
+        var RIGHT = 39;
+        var LEFT = 37;
+        var DOWN = 40;
+        var UP = 38;
+        
+        var active = $(document.activeElement);
+        if(active.is(".element-open")) {
+          var el = active.closest(".element");
+          switch(evt.which) {
+            case RIGHT:
+              el.removeClass("collapsed");
+              evt.preventDefault();
+              break;
+            case LEFT:
+              el.addClass("collapsed");
+              evt.preventDefault();
+              break;
+            /*
+            case DOWN:
+              var candidates = el.find(".element").length > 0 ? el.find(".element") : el.nextAll(".element")
+              candidates.first().find(".element-open").focus();
+              evt.preventDefault();
+              break;
+            case UP:
+              el.prevAll(".element").first().find(".element-open").focus();
+              evt.preventDefault();
+            */
+            default:
+              break;
+          }
+          
+        }
+      });
+      
+      /*
+      $("#output").delegate(".element-open", "focus", function(evt) {
+        // This actually works. Stash for a hover event  
+        console.log($(this).attr("tabindex"));
+      });
+      */
+      
       // Global collapse and expand
       $("#collapse-all").click(function(evt) {
         $(".element, .comment").addClass("collapsed");
