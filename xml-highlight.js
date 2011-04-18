@@ -64,7 +64,7 @@
       }
     }
     function prepareText(text) {
-      return text.replace(/</gm, "&lt;").replace(/\n/gm, "<br/>")
+      return text.replace(/</gm, "&lt;").replace(/\n/gm, "<br/>").replace(/\t/gm, "&nbsp;&nbsp;");
     }
     p.ontext = function(text) {
       if(bail(p.position)) {
