@@ -54,13 +54,13 @@
           var xhr = new XMLHttpRequest();
           xhr.onreadystatechange = function() {
             // console.log(this.readyState);
-            if (this.readyState === 1) {
+            if(this.readyState === 1) {
               //loading(true);
             }
-            if (this.readyState === 4) {
+            if(this.readyState === 4) {
               if (this.status >= 200 && this.status < 300) {
                 //Success
-                handler(JSON.parse(this.responseText)); // TODO: Properly parse JSON
+                handler(JSON.parse(this.responseText));
               } else {
                 //error
                 throw new Error(this.status + ": " + this.statusText);
