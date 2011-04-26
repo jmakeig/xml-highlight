@@ -45,6 +45,9 @@
   border-top-left-radius: 0.5em;
   border-bottom-left-radius: 0.5em;
 }
+.element.empty .element-close {
+  display: none;
+}
 .element-close,
 .element.empty .element-open {
   border-top-right-radius: 0.5em;
@@ -73,7 +76,6 @@
   content: "";
 }
 .attribute {
-  color: purple;
 }
 .attribute-name {}
 .attribute-value {
@@ -89,13 +91,16 @@
   padding: 0 0.4em;
   padding-bottom: 0.2em;
 }
-.namespace { color: #666; }
+.namespace {}
 .xmlns {}
 .namespace-prefix {}
 .namespace-uri {}
 .comment {}
 .comment-value {
   font-style: italic;
+}
+.attribute, .namespace {
+  margin-left: 0.5em;
 }
 .text, .attribute-value, .comment-value {
   cursor: text;
@@ -129,13 +134,16 @@
 .element {
   color: blue;
 }
-.element-open, .element-close,
-.attribute-value {
-  background-color: #DADBE3;
+.element-open, .element-close, .attribute-value {
+  background: #f2f6f8;
+}
+.attribute {
+  color: purple;
 }
 .attribute-value {
   color: brown;
 }
+.namespace { color: #666; }
 .text {
   color: black;
 }

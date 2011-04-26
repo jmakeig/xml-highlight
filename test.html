@@ -55,7 +55,7 @@
           xhr.onreadystatechange = function() {
             // console.log(this.readyState);
             if(this.readyState === 1) {
-              //loading(true);
+              //console.log("Loading…");
             }
             if(this.readyState === 4) {
               if (this.status >= 200 && this.status < 300) {
@@ -94,7 +94,11 @@
         target.html(accumulator.join(""));
         
         // Clean up
-        target.find(".element::not(:has(.text))").addClass("empty");
+        target.find(".element::not(:has(.text, .element, .comment))").addClass("empty")
+          // Track down the final text node for the element open to update it with a closing slash
+          // This should really be done in the parser? Or should it?
+          .find(".element-open").contents().filter(function() {return this.nodeType == 3 && this.nextSibling == null;}).replaceWith("/>");
+        $(".element.empty > .element-value").remove(); // Remove element-values from empty elements
         target.find(".element").each(function(i) {
           var len = $(this).find(".text").text().length;
           //console.log(len + ": " + $(this).find(".text").text());
@@ -292,6 +296,7 @@
         <option value="inline" selected="selected">Inline below</option>
         <option value="test/mixed-sequence.json">Mixed sequence</option>
         <option value="test/many-strings.json">Many strings</option>
+        <option value="test/element-only.json">Element only</option>
       </select>
     </div>
     <div class="control">

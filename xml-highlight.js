@@ -2,8 +2,8 @@
     var WHITE = /^\s+$/; // all whitespace
     //console.log(xml);
     var accumulator = [];
+    var stack = [];
     var ti = 0; // tabindex counter
-    var isElementStartOpen = false; // keep track of whether a element is self-closing
     var p = new SAXParser(true);
     var isSent = false;
     var options = options || {}, 
@@ -35,6 +35,7 @@
     }
     p.onopentag = function(node) {
       if(bail(p.position)) {
+        //stack.push(node.name);
         var attrs = []
         var ns = []
         for(a in node.attributes) {
@@ -43,40 +44,35 @@
             if(":" === a[5]) {
               prefix = ":<span class='namespace-prefix'>" + a.substring(6) + "</span>";
             }
-            ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
+            ns.push("<span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
           } else {
-            attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
+            attrs.push("<span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
           }
         }
-        accumulator.push("<div class='element'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join(" ") + ns.join(" "));
-        isElementStartOpen = true;
+        accumulator.push("<div class='element'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join("") + ns.join(""));
+        accumulator.push("&gt;</span><div class='element-value'>");
       }
     }
     p.onclosetag = function(name) {
       if(bail(p.position)) {
-        if(isElementStartOpen) {
-          accumulator.push("/&gt;</span></div>"); // close preceding element
-        } else {
-          accumulator.push("</div><span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
-          //</div>
-        }
-        isElementStartOpen = false;
+        //console.dir(stack);
+        accumulator.push("</div>"); // element-value
+        accumulator.push("<span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
       }
     }
     function prepareText(text) {
-      return text.replace(/</gm, "&lt;").replace(/\n/gm, "<br/>").replace(/\t/gm, "&nbsp;&nbsp;");
+      return text
+        .replace(/</gm, "&lt;")
+        .replace(/\n/gm, "<br/>")
+        .replace(/\t/gm, "&nbsp;&nbsp;");
     }
     p.ontext = function(text) {
       if(bail(p.position)) {
         // Whether to collapse a simple text node (still wonky). Currently implemented at the client
         var shortFlag = ""; //!WHITE.test(text) && text.length < textCollapse ? " short" : ""; 
-        if(isElementStartOpen) {
-          accumulator.push("&gt;</span><div class='element-value" + shortFlag + "'>"); // close preceding element open tag
-        }
         if(!WHITE.test(text)) { // if it's only whitespace. This feels dangerous.
           accumulator.push("<div class='text" + shortFlag + "'>" + prepareText(text) + "</div>");
         }
-        isElementStartOpen = false;
       }
     }
     p.oncomment = function(comment) {
