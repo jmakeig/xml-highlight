@@ -44,12 +44,12 @@
             if(":" === a[5]) {
               prefix = ":<span class='namespace-prefix'>" + a.substring(6) + "</span>";
             }
-            ns.push("<span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
+            ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
           } else {
-            attrs.push("<span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
+            attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
           }
         }
-        accumulator.push("<div class='element'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span>" + attrs.join("") + ns.join(""));
+        accumulator.push("<div class='element'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
         accumulator.push("&gt;</span><div class='element-value'>");
       }
     }

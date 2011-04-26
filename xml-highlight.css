@@ -57,8 +57,7 @@
 .element.empty.collapsed .element-open {
   padding-right: 0.4em;
 }
-.element.collapsed .attribute,
-.element.collapsed .namespace {
+.element.collapsed .element-meta {
   display: none;
 }
 .element.collapsed .element-open {
@@ -98,9 +97,6 @@
 .comment {}
 .comment-value {
   font-style: italic;
-}
-.attribute, .namespace {
-  margin-left: 0.5em;
 }
 .text, .attribute-value, .comment-value {
   cursor: text;
