@@ -114,7 +114,8 @@
 .result-item .more-info {
   display: none;
 }
-.result-item.highlight .more-info {
+.result-item.highlight .more-info,
+.result-item .result-type {
   display: block;
   position: absolute;
   top: 0.5em;;

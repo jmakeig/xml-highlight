@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Untitled</title>
+  <title>xml-highlight</title>
   <script type="text/javascript">
     exports = {}
     // Firefox 3.6 doesn't implement the Object.create function. Let's do it ourselves in the case where it doesn't exist already. Requires the non-standard __proto__ property.
@@ -38,49 +38,39 @@
       }
       
       function getInputXML(handler /* function(results<Array<Object<type, content>>>) */) {
-        var source = $("#input-xml-source").val()
-        if("inline" === source) {
-          handler(
-            results = [
-              {
-                "type": "node",
-                "content": $("#input-xml").val().replace(/\n/g, "\n")
-              }
-            ]
-          )
-        } 
-        else {
-          var href = source;
-          var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function() {
-            // console.log(this.readyState);
-            if(this.readyState === 1) {
-              //console.log("Loading…");
-            }
-            if(this.readyState === 4) {
-              if (this.status >= 200 && this.status < 300) {
-                //Success
-                handler(JSON.parse(this.responseText));
-              } else {
-                //error
-                throw new Error(this.status + ": " + this.statusText);
-              }
+        
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          if(this.readyState === 1) { /* Loading */ }
+          if(this.readyState === 4) {
+            if (this.status >= 200 && this.status < 300) {
+              console.log(this.responseText);
+              //Success
+              handler(JSON.parse(this.responseText));
+            } else {
+              //error
+              throw new Error(this.status + ": " + this.statusText);
             }
           }
-          xhr.open("GET", href, true);
-          xhr.setRequestHeader("Accept", "application/json");
-          xhr.send(null);
         }
+        xhr.open("POST", "/eval.xqy", true);
+        xhr.setRequestHeader("Content-Type", "application/xquery");
+        xhr.setRequestHeader("Accept", "application/json");
+        xhr.send($("#input-xml").val());
       }
-      
+     
       function formatResults(results /*Array<Object<type, content>>*/, options, target/*jQuery node*/) {
+        // If it's a single result, wrap it in an array
+        if(!results.length) { results = [results]; }
         var accumulator = [];
         var target = $(target);
         
         for(var i = 0; i < results.length; i++) {
           var result = results[i];
           accumulator.push('<div class="result-item">');
-          if("node" === result.type) {
+          accumulator.push('<div class="result-type">' + result.type + '</div>');
+          // Hack: Need to get rid of "node" and use new typing
+          if("element" === result.type || "document" === result.type) {
             // THIS ISN'T REALLY ASYNC BECAUSE IT ASSUMES THE ORDER OF THE CALLS UPDATING THE ACCUMLATOR
             highlight(result.content, function(output) {
               accumulator.push(output);
