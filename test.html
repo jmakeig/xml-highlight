@@ -21,8 +21,10 @@
 
     $(document).ready(function(evt) {
       $("#run").click(function(evt) {
+        $("#output").html('<div class="status-overlay">Working…</div>');
+        var options = getOptions();
         getInputXML(function(results) {
-          formatResults(results, getOptions(), $("#output"));
+          formatResults(results, options, $("#output"));
           $(".element, .comment").addClass("collapsed");
           // Expand the root element only
           $(".root > .element").removeClass("collapsed");
@@ -33,6 +35,7 @@
         return {
           "truncate": parseInt($("#truncate").val()),
           "shortMax": parseInt($("#short-max").val()),
+          "maxResults": parseInt($("#results-max").val()),
           "tabIndex": 100
         }
       }
@@ -65,7 +68,12 @@
         var accumulator = [];
         var target = $(target);
         
-        for(var i = 0; i < results.length; i++) {
+        // Allow truncation of the total number of results for performance
+        var len = results.length;
+        console.dir(options);
+        if(options.maxResults > 0) Math.min(results.length, options.maxResults);
+        
+        for(var i = 0; i < len; i++) {
           var result = results[i];
           accumulator.push('<div class="result-item">');
           accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
@@ -280,6 +288,7 @@
 <body>
   <div>
     <h1>Input</h1>
+    <!--
     <div class="control">
       <label for="input-xml">Source</label>
       <select id="input-xml-source">
@@ -289,6 +298,7 @@
         <option value="test/element-only.json">Element only</option>
       </select>
     </div>
+    -->
     <div class="control">
     <div class="label"><label for="input-xml">Input XML</label></div>
       <textarea id="input-xml">for $i in (1 to 10) return ("I’m a string!", xdmp:random(), current-dateTime(), 2e-4,  &lt;body an="attribute" xmlns="some://namespace-uri">
@@ -415,6 +425,7 @@
     <h2 id="options">Options</h2>
     <div>
       <div class="control"><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span class="guide">Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
+      <div class="control"><label for="results-max">Maximum number of results</label> <input id="results-max" value="-1"/> <span class="guide">The maximum number of results to display.</span></div>
       <div class="control"><label for="short-max">Maximum inline size</label> <input id="short-max" value="100"/> <span class="guide">The maximum number of characters in an element to cause that element’s value to display inline.</span></div>
     </div>
     <div>
