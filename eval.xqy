@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 declare namespace local="local";
-declare function local:schema-type($results as item()*) as map:map {
+declare function local:serialize($results as item()*) as map:map {
   for $r in $results
   return
     let $m := map:map()
@@ -52,6 +52,6 @@ xdmp:to-json(
   let $result := xdmp:eval(xdmp:get-request-body("text"))
   return
     for $r in $result
-    return local:schema-type($r)
+    return local:serialize($r)
 )
 
