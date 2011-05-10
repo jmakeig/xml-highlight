@@ -41,7 +41,7 @@ declare function local:serialize($results as item()*) as map:map* {
           else if("binary" = $type) then
             "BINARY"
           else if("attribute" = $type) then
-            "ATTRIBUTE"
+            concat(name($r), "=&quot;", data($r), "&quot;")
           else $r
         ),
         $m
