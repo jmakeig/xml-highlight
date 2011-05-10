@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 declare namespace local="local";
-declare function local:serialize($results as item()*) as map:map {
+declare function local:serialize($results as item()*) as map:map* {
   for $r in $results
   return
     let $m := map:map()
@@ -49,11 +49,7 @@ declare function local:serialize($results as item()*) as map:map {
 };
 
 xdmp:to-json(
-  let $result := 
     (: This eval is a total hack, is completely unprotected, and has no error handling. Other than that, it works. :)
-    xdmp:eval(xdmp:get-request-body("text"))
-  return
-    for $r in $result
-    return local:serialize($r)
+    local:serialize(xdmp:eval(xdmp:get-request-body("text")))
 )
 

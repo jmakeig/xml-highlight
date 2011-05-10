@@ -68,7 +68,7 @@
         for(var i = 0; i < results.length; i++) {
           var result = results[i];
           accumulator.push('<div class="result-item">');
-          accumulator.push('<div class="result-type">' + result.type + '</div>');
+          accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
           // Hack: Need to get rid of "node" and use new typing
           if("element" === result.type || "document" === result.type) {
             // THIS ISN'T REALLY ASYNC BECAUSE IT ASSUMES THE ORDER OF THE CALLS UPDATING THE ACCUMLATOR
@@ -77,7 +77,7 @@
             }, options);
           } 
           else {
-            accumulator.push("<div class='value'>" + result.content + "</div>");
+            accumulator.push("<div class='value'>" + (result.content || "&nbsp;") + "</div>");
           }
           accumulator.push('</div>'); // div.result-item
         }
