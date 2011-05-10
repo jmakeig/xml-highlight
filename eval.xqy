@@ -49,7 +49,9 @@ declare function local:serialize($results as item()*) as map:map {
 };
 
 xdmp:to-json(
-  let $result := xdmp:eval(xdmp:get-request-body("text"))
+  let $result := 
+    (: This eval is a total hack, is completely unprotected, and has no error handling. Other than that, it works. :)
+    xdmp:eval(xdmp:get-request-body("text"))
   return
     for $r in $result
     return local:serialize($r)
