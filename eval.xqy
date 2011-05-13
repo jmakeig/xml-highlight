@@ -39,7 +39,7 @@ declare function local:serialize($results as item()*) as map:map* {
           if(("document", "element") = $type) then
             xdmp:quote(root(document {$r})/node())
           else if("binary" = $type) then
-            "BINARY"
+            "Binary"
           else if("attribute" = $type) then
             concat(name($r), "=&quot;", data($r), "&quot;")
           else $r
@@ -49,7 +49,15 @@ declare function local:serialize($results as item()*) as map:map* {
 };
 
 xdmp:to-json(
-    (: This eval is a total hack, is completely unprotected, and has no error handling. Other than that, it works. :)
-    local:serialize(xdmp:eval(xdmp:get-request-body("text")))
+  (: This eval is a total hack, is completely unprotected, and has no error handling. Other than that, it works. :)
+  local:serialize(
+    xdmp:eval(
+      xdmp:get-request-body("text"), 
+      (),
+      (: This is a protection to make sure no updates happen. :)
+      <options xmlns="xdmp:eval">
+        <isolation>same-statement</isolation>
+      </options>
+    )
+  )
 )
-
