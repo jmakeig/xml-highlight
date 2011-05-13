@@ -48,6 +48,7 @@ declare function local:serialize($results as item()*) as map:map* {
       )
 };
 
+xdmp:set-response-content-type("application/json"),
 xdmp:to-json(
   (: This eval is a total hack, is completely unprotected, and has no error handling. Other than that, it works. :)
   local:serialize(

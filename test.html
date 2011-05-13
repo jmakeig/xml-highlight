@@ -88,7 +88,7 @@
             }, options);
           } 
           else {
-            accumulator.push("<div class='value'>" + (result.content || "&nbsp;") + "</div>");
+            accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
           }
           accumulator.push('</div>'); // div.result-item
         }

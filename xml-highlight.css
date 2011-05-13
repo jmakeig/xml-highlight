@@ -1,4 +1,4 @@
-.root {
+.root, .value {
   font-family: Inconsolata, Consolas, monospace;
   font-size: 110%;
 }
