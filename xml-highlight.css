@@ -9,7 +9,8 @@
 .element.empty {}
 .element > .element,
 .element-value > .element,
-.element-value > .comment {
+.element-value > .comment,
+.element-value > .processing-instruction {
   margin-left: 1em;
 }
 .text {
@@ -18,8 +19,10 @@
 /* Inline elements */
 .text + .element,
 .text + .element .element-value,
-.text + .comment, 
+.text + .comment,
+.text + .processing-instruction,
 .text + .comment .comment-value,
+.text + .processing-instruction .processing-instruction-value,
 .element.short .element-value {
   display: inline;
   margin-left: 0;
@@ -30,11 +33,13 @@
 }
 .element-name {}
 .element-value,
-.comment-value {
+.comment-value
+/*.processing-instruction-value*/ {
   margin-left: 0.75em;
 }
 .element.collapsed .element-value,
-.comment.collapsed .comment-value {
+.comment.collapsed .comment-value,
+.processing-instruction.collapsed .processing-instruction-value {
   display: none;
 }
 .element-open, .element-close {
@@ -67,7 +72,8 @@
   padding-left: 0.05em;
 }
 .element.collapsed .element-open:after,
-.comment.collapsed .comment-open:after {
+.comment.collapsed .comment-open:after,
+.processing-instruction.collapsed .processing-instruction-open:after {
   display: inline;
   content: "…";
 }
@@ -98,7 +104,9 @@
 .comment-value {
   font-style: italic;
 }
-.text, .attribute-value, .comment-value {
+.processing-instruction {}
+.processing-instruction-value {}
+.text, .attribute-value, .comment-value, .processing-instruction-value {
   cursor: text;
 }
 .more {
@@ -157,6 +165,6 @@
 .text {
   color: black;
 }
-.comment {
+.comment, .processing-instruction {
   color: #666;
 }

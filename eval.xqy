@@ -10,6 +10,8 @@ declare function local:serialize($results as item()*) as map:map* {
         return "document"
       case element()
         return "element"
+      case text()
+        return "text"
       case attribute()
         return "attribute"
       case xs:float
@@ -32,12 +34,18 @@ declare function local:serialize($results as item()*) as map:map* {
         return "QName"
       case binary()
         return "binary"
+      case comment()
+        return "comment"
+      case processing-instruction()
+        return "processing-instruction"
       default return "Other"
       return (
         map:put($m, "type", $type),
         map:put($m, "content", 
           if(("document", "element") = $type) then
             xdmp:quote(root(document {$r})/node())
+          else if("text" = $type) then
+            data($r)
           else if("binary" = $type) then
             "Binary"
           else if("attribute" = $type) then

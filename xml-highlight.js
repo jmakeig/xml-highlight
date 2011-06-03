@@ -1,4 +1,4 @@
-  function highlight(xml, handler, options) {
+  function highlight(xml, handler, options, errorHandler) {
     var WHITE = /^\s+$/; // all whitespace
     //console.log(xml);
     var accumulator = [];
@@ -32,6 +32,9 @@
       } else {
         return "<span class='local-name'>" + qname + "</span>";
       }
+    }
+    p.onerror = function(error) {
+      errorHandler(error);
     }
     p.onopentag = function(node) {
       if(bail(p.position)) {
@@ -77,6 +80,9 @@
     }
     p.oncomment = function(comment) {
       accumulator.push("<div class='comment'><span class='comment-open'>&lt;--</span><div class='comment-value'>" + prepareText(comment) + "</div><span class='comment-close'>--&gt;</span></div>");
+    }
+    p.onprocessinginstruction = function(pi) {
+      accumulator.push('<div class="processing-instruction"><span class="processing-instruction-open">&lt;?</span><span class="processing-instruction-value"><span class="processing-instruction-name">' + pi.name + '</span> <span class="processing-instruction-body"> ' + pi.body + '</span></span><span class="processing-instruction-close">?></span></div>');
     }
     p.onend = function() {
       if(!isSent) send();

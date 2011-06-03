@@ -27,7 +27,7 @@
           formatResults(results, options, $("#output"));
           $(".element, .comment").addClass("collapsed");
           // Expand the root element only
-          $(".root > .element").removeClass("collapsed");
+          $(".root > .element, .root > .comment").removeClass("collapsed");
         }, function(error) {
           $("#output").html('<div class="error">' + error + '</div>');
         });
@@ -81,12 +81,18 @@
           accumulator.push('<div class="result-item">');
           accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
           // Hack: Need to get rid of "node" and use new typing
-          if("element" === result.type || "document" === result.type) {
+          if("element" === result.type || "document" === result.type || "comment" === result.type || "processing-instruction" === result.type) {
             // THIS ISN'T REALLY ASYNC BECAUSE IT ASSUMES THE ORDER OF THE CALLS UPDATING THE ACCUMLATOR
             highlight(result.content, function(output) {
               accumulator.push(output);
-            }, options);
+            }, options, 
+            /* TODO: Bubble this more intelligently */
+            function() { alert("Error");});
           } 
+          else if("text" === result.type) {
+            accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (result.content || "&nbsp;") + "</span></div>");
+          }
+          // else if("attribute" === result.type) {}
           else {
             accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
           }
@@ -95,7 +101,7 @@
         target.html(accumulator.join(""));
         
         // Clean up
-        target.find(".element::not(:has(.text, .element, .comment))").addClass("empty")
+        target.find(".element::not(:has(.text, .element, .comment, .processing-instruction))").addClass("empty")
           // Track down the final text node for the element open to update it with a closing slash
           // This should really be done in the parser? Or should it?
           .find(".element-open").contents().filter(function() {return this.nodeType == 3 && this.nextSibling == null;}).replaceWith("/>");
@@ -118,8 +124,8 @@
       });
       
       // Do this once and replace the contents of #output
-      $("#output").delegate(".element-open, .element-close, .comment-open, .comment-close", "click", function(evt) {
-        $(evt.currentTarget).closest(".element, .comment").toggleClass("collapsed");
+      $("#output").delegate(".element-open, .element-close, .comment-open, .comment-close, .processing-instruction-open, .processing-instruction-close", "click", function(evt) {
+        $(evt.currentTarget).closest(".element, .comment, .processing-instruction").toggleClass("collapsed");
         evt.stopPropagation();
       });
       
@@ -143,12 +149,12 @@
       
       // Result item-level collapse and expand
       $("#output").delegate(".result-item .result-item-expand-all", "click", function(evt) {
-        $(evt.currentTarget).closest(".result-item").find(".element").removeClass("collapsed");
+        $(evt.currentTarget).closest(".result-item").find(".element, .comment, .processing-instruction").removeClass("collapsed");
       });
       
       $("#output").delegate(".result-item .result-item-collapse-all", "click", function(evt) {
         var item = $(evt.currentTarget).closest(".result-item");
-        item.find(".element").addClass("collapsed");
+        item.find(".element, .comment, .processing-instruction").addClass("collapsed");
         item.find(".root > .element").removeClass("collapsed");
       });
       
@@ -196,11 +202,11 @@
       
       // Global collapse and expand
       $("#collapse-all").click(function(evt) {
-        $(".element, .comment").addClass("collapsed");
+        $(".element, .comment, .processing-instruction").addClass("collapsed");
         $(".root .element").first().removeClass("collapsed");
       });
       $("#expand-all").click(function(evt) {
-        $(".element, .comment").removeClass("collapsed");
+        $(".element, .comment, .processing-instruction").removeClass("collapsed");
       });
       
       $("#hide-close-tags").change(function(evt) {
@@ -277,6 +283,7 @@
     }
     .result-item {
       padding: 0.5em 0;
+      padding-right: 4em;
       border-top: solid 1px #ccc;
       position: relative;
     }
@@ -309,7 +316,17 @@
     -->
     <div class="control">
     <div class="label"><label for="input-xml">Input XML</label></div>
-      <textarea id="input-xml">for $i in (1 to 10) return ("I’m a string!", xdmp:random(), current-dateTime(), 2e-4, binary { xs:hexBinary("BEEF") }, <foo x:bar="baz" xmlns:x="X"/>/@*, &lt;body an="attribute" xmlns="some://namespace-uri">
+      <textarea id="input-xml">for $i in (1 to 10) return (
+"I’m a string!", 
+xdmp:random(), 
+current-dateTime(), 
+2e-4, 
+text { "Bần chỉ là một anh nghèo xác, ngày ngày lang-thang khắp xóm này qua xóm khác xin ăn. Quần áo rách-mướp Bần cũng chả coi sao, chân không có giầy và đầu cũng chẳng có mũ. Giời nắng hay giời mưa Bần không bao giờ quan-tâm. Một ngưòi như Bần thì ai cũng tưởng là không còn có gì là quí-vât nữa. Thế nhưng ta nhầm vì Bần có cái quạt mo, Bần quí lắm. Bần quí và giữ luôn không rời bỏ bao giờ. Giời nắng thì Bần che đầu, giời mưa Bần cũng nhờ nó mà đỡ ướt. Muốn ngồi Bần dùng làm chiếu và đêm đến các chú muỗi vo-ve thì Bần dùng để dánh đuổi các chú ấy."}, 
+comment {"Изучаване и Преподаване на Чужди Езици
+ქართული ენის შესწავლა და სწავლება
+'læŋɡwidʒ 'lɘr:niŋ ænd 'ti:tʃiŋ"},
+binary { xs:hexBinary("BEEF") }, 
+<foo x:bar="baz" xmlns:x="X"/>/@*, &lt;body an="attribute" xmlns="some://namespace-uri">
 &lt;meta name="test" value="self-closing">&lt;/meta>
                              &lt;meta name="test" value="self-closing"  some="attribute
     
