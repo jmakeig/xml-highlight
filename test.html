@@ -165,8 +165,8 @@
         var UP = 38;
         
         var active = $(document.activeElement);
-        if(active.is(".element-open")) {
-          var el = active.closest(".element");
+        if(active.is(".element-open, .comment-open, .processing-instruction-open")) {
+          var el = active.parent();
           switch(evt.which) {
             case RIGHT:
               el.removeClass("collapsed");
