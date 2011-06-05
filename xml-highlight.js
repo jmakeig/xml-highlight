@@ -1,29 +1,18 @@
   function highlight(xml, handler, options, errorHandler) {
-    var WHITE = /^\s+$/; // all whitespace
-    //console.log(xml);
+    var WHITESPACE = /^\s+$/; // all whitespace
+    // Accumulates HTML as the parsing happens. Concatenated in the send function.
     var accumulator = [];
+    // Keeps track of elements whose start tags have been parsed, 
+    // but whose end tags haven't been encountered. This is 
+    // required to clean up the unclosed elements in the case 
+    // that the XML is truncated.
     var stack = [];
-    var ti = 0; // tabindex counter
     var p = new SAXParser(true);
-    var isSent = false;
     var options = options || {}, 
       truncate = options.truncate || -1,
       textCollapse = options.textCollapse || 100,
       tabIndex = options.tabIndex || 1;
-    function bail(position) {
-      if(-1 === truncate) return true;
-      if(!isSent && position > truncate) {
-        accumulator.push("<div class='more'><a href='asdf'>Check out the text version</a></div>");
-        send();
-        isSent = true;
-        return false;
-      }
-      return true;
-    }
-    
-    function send() {
-      handler("<div class='root'>" + accumulator.join("") + "</div>");
-    }
+
     // Parse a qname into its prefix and local parts
     function parsePrefix(qname) {
       var tokens = qname.split(":");
@@ -33,35 +22,36 @@
         return "<span class='local-name'>" + qname + "</span>";
       }
     }
+    p.onready = function() {}
     p.onerror = function(error) {
-      errorHandler(error);
+      console.warn("Truncating result to " + options.truncate + " characters");
+      //console.dir(stack);
+      //errorHandler(error);
     }
     p.onopentag = function(node) {
-      if(bail(p.position)) {
-        //stack.push(node.name);
-        var attrs = []
-        var ns = []
-        for(a in node.attributes) {
-          if(a.substr(0, 5) === "xmlns") {
-            var prefix = "";
-            if(":" === a[5]) {
-              prefix = ":<span class='namespace-prefix'>" + a.substring(6) + "</span>";
-            }
-            ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
-          } else {
-            attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
+      var attrs = []
+      var ns = []
+      for(a in node.attributes) {
+        if(a.substr(0, 5) === "xmlns") {
+          var prefix = "";
+          if(":" === a[5]) {
+            prefix = ":<span class='namespace-prefix'>" + a.substring(6) + "</span>";
           }
+          ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
+        } else {
+          attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
         }
-        accumulator.push("<div class='element'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
-        accumulator.push("&gt;</span><div class='element-value'>");
       }
+      accumulator.push("<div class='element'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
+      accumulator.push("&gt;</span><div class='element-value'>");
+      console.log("Pushing " + node.name);
+      stack.push(node.name);
     }
     p.onclosetag = function(name) {
-      if(bail(p.position)) {
-        //console.dir(stack);
-        accumulator.push("</div>"); // element-value
-        accumulator.push("<span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
-      }
+      accumulator.push("</div>"); // element-value
+      accumulator.push("<span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
+      console.log("Popping " + name);
+      stack.pop();
     }
     function prepareText(text) {
       return text
@@ -70,12 +60,10 @@
         .replace(/\t/gm, "&nbsp;&nbsp;");
     }
     p.ontext = function(text) {
-      if(bail(p.position)) {
-        // Whether to collapse a simple text node (still wonky). Currently implemented at the client
-        var shortFlag = ""; //!WHITE.test(text) && text.length < textCollapse ? " short" : ""; 
-        if(!WHITE.test(text)) { // if it's only whitespace. This feels dangerous.
-          accumulator.push("<div class='text" + shortFlag + "'>" + prepareText(text) + "</div>");
-        }
+      // Whether to collapse a simple text node (still wonky). Currently implemented at the client
+      var shortFlag = "";
+      if(!WHITESPACE.test(text)) { // if it's only whitespace. This feels dangerous.
+        accumulator.push("<div class='text" + shortFlag + "'>" + prepareText(text) + "</div>");
       }
     }
     p.oncomment = function(comment) {
@@ -85,7 +73,31 @@
       accumulator.push('<div class="processing-instruction"><span class="processing-instruction-open" tabindex="' + tabIndex + '">&lt;?</span><span class="processing-instruction-value"><span class="processing-instruction-name">' + pi.name + '</span> <span class="processing-instruction-body"> ' + pi.body + '</span></span><span class="processing-instruction-close">?></span></div>');
     }
     p.onend = function() {
-      if(!isSent) send();
+      send();
     }
-    p.write(xml).close();
+    function send() {
+      var cleanUp = [];
+      var message = "";
+      console.dir(stack);
+      console.log(p.state);
+      if(stack.length > 0) {
+        for(var i = stack.length - 1; i >= 0; i--) {
+          /* Close element and element-value blocks due to truncation */
+          /* TODO: This should happen more elegantly than chopped off elements */
+          /* TODO: There should really be some interactive way to lazily format the next chunk */
+          cleanUp.push('<!-- stack: ' + stack[i] + ' --></div></div>');
+        }
+        message = '<div class="message">For performance reasons, you’re only looking at the first ' + options.truncate + '-character chunk. To see the full result, output the query as raw text.</div>';
+      }
+      handler(
+        "\n\n<!-- START XML-HIGHLIGHT -->" + 
+        "<div class='root'>" + 
+          accumulator.join("") + 
+          cleanUp.join("") + 
+        "</div>"
+        + "<!-- END XML-HIGHLIGHT -->\n\n"
+        + message
+      );
+    }
+    p.write(-1 === options.truncate ? xml : xml.substring(0, options.truncate)).close();
   }

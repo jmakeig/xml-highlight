@@ -25,9 +25,9 @@
         var options = getOptions();
         getInputXML(function(results) {
           formatResults(results, options, $("#output"));
-          $(".element, .comment").addClass("collapsed");
-          // Expand the root element only
-          $(".root > .element, .root > .comment").removeClass("collapsed");
+          //$(".element, .comment").addClass("collapsed");
+          /* Expand the root element only */
+          //$(".root > .element, .root > .comment").removeClass("collapsed");
         }, function(error) {
           $("#output").html('<div class="error">' + error + '</div>');
         });
@@ -51,8 +51,13 @@
           if(this.readyState === 1) { /* Loading */ }
           if(this.readyState === 4) {
             if (this.status >= 200 && this.status < 300) {
-              //console.log(this.responseText);
-              handler(JSON.parse(this.responseText));
+              handler(JSON.parse(this.responseText /*, function(key, value) {
+                if("" !== key) {
+                  console.log("Parsing JSON key: '" + key + "'");
+                  //console.log(value);
+                }
+                return value;
+              }*/));
             } else {
               //console.log(this.responseText);
               errorHandler(this.responseText);
@@ -73,25 +78,26 @@
         
         // Allow truncation of the total number of results for performance
         var len = results.length;
-        console.dir(options);
         if(options.maxResults > 0) Math.min(results.length, options.maxResults);
         
+        var xmlCount = 0;
         for(var i = 0; i < len; i++) {
           var result = results[i];
           accumulator.push('<div class="result-item">');
           accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
-          // Hack: Need to get rid of "node" and use new typing
           if("element" === result.type || "document" === result.type || "comment" === result.type || "processing-instruction" === result.type) {
-            // THIS ISN'T REALLY ASYNC BECAUSE IT ASSUMES THE ORDER OF THE CALLS UPDATING THE ACCUMLATOR
+            // TODO: Proper truncation
             highlight(result.content, function(output) {
               accumulator.push(output);
             }, options, 
             /* TODO: Bubble this more intelligently */
-            function() { alert("Error");});
-          } 
+            function(error) { alert(error);});
+            xmlCount++;
+          }           
           else if("text" === result.type) {
             accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (result.content || "&nbsp;") + "</span></div>");
           }
+          /* TODO: Need to properly format attributes */
           // else if("attribute" === result.type) {}
           else {
             accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
