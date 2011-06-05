@@ -92,6 +92,16 @@
   border-bottom-left-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
 }
+.attribute-value.free-standing /* Naked attributes that don't appear within an element. */ {
+  display: inline;
+  vertical-align: auto;
+  margin-top: 0;
+  padding: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background: transparent;
+}
+
 .attribute-value.multi {
   padding: 0 0.4em;
   padding-bottom: 0.2em;

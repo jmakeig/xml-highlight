@@ -98,7 +98,12 @@
             accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (result.content || "&nbsp;") + "</span></div>");
           }
           /* TODO: Need to properly format attributes */
-          // else if("attribute" === result.type) {}
+          else if("attribute" === result.type) {
+            var tokens = result.content.split("=");
+            var name = tokens[0];
+            var value = tokens[1].substring(1, tokens[1].length - 1);
+            accumulator.push("<span class='attribute'><span class='attribute-name'>" + name + "</span>=&quot;<span class='attribute-value free-standing'>" + value + "</span>&quot;</span>");
+          }
           else {
             accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
           }
