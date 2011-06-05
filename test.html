@@ -102,7 +102,7 @@
             var tokens = result.content.split("=");
             var name = tokens[0];
             var value = tokens[1].substring(1, tokens[1].length - 1);
-            accumulator.push("<span class='attribute'><span class='attribute-name'>" + name + "</span>=&quot;<span class='attribute-value free-standing'>" + value + "</span>&quot;</span>");
+            accumulator.push("<span class='root'><span class='attribute free-standing'><span class='attribute-name'>" + name + "</span>=&quot;<span class='attribute-value'>" + value + "</span>&quot;</span></span>");
           }
           else {
             accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");

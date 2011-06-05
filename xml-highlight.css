@@ -92,7 +92,7 @@
   border-bottom-left-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
 }
-.attribute-value.free-standing /* Naked attributes that don't appear within an element. */ {
+.attribute.free-standing .attribute-value /* Naked attributes that don't appear within an element. */ {
   display: inline;
   vertical-align: auto;
   margin-top: 0;
