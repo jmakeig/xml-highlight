@@ -44,13 +44,13 @@
       }
       accumulator.push("<div class='element'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
       accumulator.push("&gt;</span><div class='element-value'>");
-      console.log("Pushing " + node.name);
+      //console.log("Pushing " + node.name);
       stack.push(node.name);
     }
     p.onclosetag = function(name) {
       accumulator.push("</div>"); // element-value
       accumulator.push("<span class='element-close'>&lt;/<span class='element-name'>" + name + "</span>&gt;</span></div>");
-      console.log("Popping " + name);
+      //console.log("Popping " + name);
       stack.pop();
     }
     function prepareText(text) {
@@ -79,7 +79,7 @@
       var cleanUp = [];
       var message = "";
       console.dir(stack);
-      console.log(p.state);
+      //console.log(p.state);
       if(stack.length > 0) {
         for(var i = stack.length - 1; i >= 0; i--) {
           /* Close element and element-value blocks due to truncation */

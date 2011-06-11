@@ -18,8 +18,50 @@
   <script type="text/javascript" src="lib/sax.js"></script>
   <script type="text/javascript" src="xml-highlight.js"></script>
   <script type="text/javascript">
+    
+    /** http://stackoverflow.com/questions/985272/jquery-selecting-text-in-an-element-akin-to-highlighting-with-your-mouse/2838358#2838358 */
+    function selectElementText(el, win) {
+        win = win || window;
+        var doc = win.document, sel, range;
+        if (win.getSelection && doc.createRange) {
+            sel = win.getSelection();
+            range = doc.createRange();
+            range.selectNodeContents(el);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } else if (doc.body.createTextRange) {
+            range = doc.body.createTextRange();
+            range.moveToElementText(el);
+            range.select();
+        }
+    }
+    
+    /** http://bugs.jquery.com/ticket/3368 */
+    function isJustCommandKey(keyEvent) {
+      var isMac = /^Mac/.test(window.navigator.platform);
+      if(isMac) return keyEvent.metaKey && !keyEvent.ctrlKey;
+      else keyEvent.ctlKey;
+    }
 
     $(document).ready(function(evt) {
+      $("#output").keydown(function(e) {
+        console.dir(e);
+        // Listen to Select All keyboard shortcuts
+        if(65 === e.keyCode && isJustCommandKey(e)) {
+          console.log("select all");
+          // This is a hack because one wouldn't want to 
+          // copy the metadata (i.e. declared types)
+          $(this).find(".result-type").hide();
+          e.preventDefault();
+          selectElementText(this);          
+        }
+      }).blur(function(e) {
+        // Show the declared type metadata upon leaving.
+        // See above. I can't think of a way to capture
+        // the "afterSelectAll" event
+        $(this).find(".result-type").show();
+      });
+    
       $("#run").click(function(evt) {
         $("#output").append('<div class="status-overlay">Working…</div>');
         var options = getOptions();
@@ -492,6 +534,6 @@ binary { xs:hexBinary("BEEF") },
     <button id="expand-all">Expand All</button>
     <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
   </div>
-  <div id="output"></div>
+  <div id="output" tabindex="10"></div>
 </body>
 </html>
