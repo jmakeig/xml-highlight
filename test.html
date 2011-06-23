@@ -18,7 +18,7 @@
   <script type="text/javascript" src="lib/sax.js"></script>
   <script type="text/javascript" src="xml-highlight.js"></script>
   <script type="text/javascript">
-    
+
     /** http://stackoverflow.com/questions/985272/jquery-selecting-text-in-an-element-akin-to-highlighting-with-your-mouse/2838358#2838358 */
     function selectElementText(el, win) {
         win = win || window;
@@ -35,12 +35,16 @@
             range.select();
         }
     }
-    
+
     /** http://bugs.jquery.com/ticket/3368 */
     function isJustCommandKey(keyEvent) {
       var isMac = /^Mac/.test(window.navigator.platform);
       if(isMac) return keyEvent.metaKey && !keyEvent.ctrlKey;
       else keyEvent.ctlKey;
+    }
+
+    function escapeForHTML(str) {
+      return str.replace("&", "&amp;").replace("<", "&lt;");
     }
 
     $(document).ready(function(evt) {
@@ -49,11 +53,11 @@
         // Listen to Select All keyboard shortcuts
         if(65 === e.keyCode && isJustCommandKey(e)) {
           console.log("select all");
-          // This is a hack because one wouldn't want to 
+          // This is a hack because one wouldn't want to
           // copy the metadata (i.e. declared types)
           $(this).find(".result-type").hide();
           e.preventDefault();
-          selectElementText(this);          
+          selectElementText(this);
         }
       }).blur(function(e) {
         // Show the declared type metadata upon leaving.
@@ -61,7 +65,7 @@
         // the "afterSelectAll" event
         $(this).find(".result-type").show();
       });
-    
+
       $("#run").click(function(evt) {
         $("#output").append('<div class="status-overlay">Working…</div>');
         var options = getOptions();
@@ -74,7 +78,7 @@
           $("#output").html('<div class="error">' + error + '</div>');
         });
       });
-      
+
       function getOptions() {
         return {
           "truncate": parseInt($("#truncate").val()),
@@ -83,11 +87,11 @@
           "tabIndex": 100
         }
       }
-      
+
       function getInputXML(
-        handler /* function(results<Array<Object<type, content>>>) */, 
+        handler /* function(results<Array<Object<type, content>>>) */,
         errorHandler /* function(error) */) {
-        
+
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
           if(this.readyState === 1) { /* Loading */ }
@@ -111,17 +115,17 @@
         xhr.setRequestHeader("Accept", "application/json");
         xhr.send($("#input-xml").val());
       }
-     
+
       function formatResults(results /*Array<Object<type, content>>*/, options, target/*jQuery node*/) {
         // If it's a single result, wrap it in an array
         if(!results.length) { results = [results]; }
         var accumulator = [];
         var target = $(target);
-        
+
         // Allow truncation of the total number of results for performance
         var len = results.length;
         if(options.maxResults > 0) Math.min(results.length, options.maxResults);
-        
+
         var xmlCount = 0;
         for(var i = 0; i < len; i++) {
           var result = results[i];
@@ -131,13 +135,13 @@
             // TODO: Proper truncation
             highlight(result.content, function(output) {
               accumulator.push(output);
-            }, options, 
+            }, options,
             /* TODO: Bubble this more intelligently */
             function(error) { alert(error);});
             xmlCount++;
-          }           
+          }
           else if("text" === result.type) {
-            accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (result.content || "&nbsp;") + "</span></div>");
+            accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (escapeForHTML(result.content) || "&nbsp;") + "</span></div>");
           }
           /* TODO: Need to properly format attributes */
           else if("attribute" === result.type) {
@@ -152,7 +156,7 @@
           accumulator.push('</div>'); // div.result-item
         }
         target.html(accumulator.join(""));
-        
+
         // Clean up
         target.find(".element::not(:has(.text, .element, .comment, .processing-instruction))").addClass("empty")
           // Track down the final text node for the element open to update it with a closing slash
@@ -168,20 +172,20 @@
         });
         target.find(".attribute-value:has(br)").addClass("multi");
       }
-      
-      
+
+
       $("#input-xml-source").change(function(evt) {
         var source = $(this).val();
         //console.log(source);
         $("#input-xml").attr("disabled", ("inline" !== source));
       });
-      
+
       // Do this once and replace the contents of #output
       $("#output").delegate(".element-open, .element-close, .comment-open, .comment-close, .processing-instruction-open, .processing-instruction-close", "click", function(evt) {
         $(evt.currentTarget).closest(".element, .comment, .processing-instruction").toggleClass("collapsed");
         evt.stopPropagation();
       });
-      
+
       $("#output").delegate(".result-item:has(.root)", "mouseenter mouseleave", function(evt) {
         var item = $(evt.currentTarget).closest(".result-item");
         switch(evt.type) {
@@ -199,24 +203,24 @@
             throw new Error(evt.type);
         }
       });
-      
+
       // Result item-level collapse and expand
       $("#output").delegate(".result-item .result-item-expand-all", "click", function(evt) {
         $(evt.currentTarget).closest(".result-item").find(".element, .comment, .processing-instruction").removeClass("collapsed");
       });
-      
+
       $("#output").delegate(".result-item .result-item-collapse-all", "click", function(evt) {
         var item = $(evt.currentTarget).closest(".result-item");
         item.find(".element, .comment, .processing-instruction").addClass("collapsed");
         item.find(".root > .element").removeClass("collapsed");
       });
-      
+
       $("#output").keydown(function(evt) {
         var RIGHT = 39;
         var LEFT = 37;
         var DOWN = 40;
         var UP = 38;
-        
+
         var active = $(document.activeElement);
         if(active.is(".element-open, .comment-open, .processing-instruction-open")) {
           var el = active.parent();
@@ -242,17 +246,17 @@
             default:
               break;
           }
-          
+
         }
       });
-      
+
       /*
       $("#output").delegate(".element-open", "focus", function(evt) {
-        // This actually works. Stash for a hover event  
+        // This actually works. Stash for a hover event
         console.log($(this).attr("tabindex"));
       });
       */
-      
+
       // Global collapse and expand
       $("#collapse-all").click(function(evt) {
         $(".element, .comment, .processing-instruction").addClass("collapsed");
@@ -261,11 +265,11 @@
       $("#expand-all").click(function(evt) {
         $(".element, .comment, .processing-instruction").removeClass("collapsed");
       });
-      
+
       $("#hide-close-tags").change(function(evt) {
         $("#output .root").toggleClass("hide-close-tags");
       });
-      
+
       // UGLY
       $("#options").click(function(evt) {
         $(this).next("div").toggle();
@@ -343,7 +347,7 @@
     .result-item:first-child {
       border: none;
     }
-    /* Hide all closing tags for readability, except inline ones where it would be ambiguous. */   
+    /* Hide all closing tags for readability, except inline ones where it would be ambiguous. */
     .hide-close-tags .element-close {
       display: none;
     }
@@ -370,26 +374,26 @@
     <div class="control">
     <div class="label"><label for="input-xml">Input XML</label></div>
       <textarea id="input-xml" spellcheck="false">for $i in (1 to 10) return (
-"I’m a string!", 
-xdmp:random(), 
-current-dateTime(), 
-2e-4, 
-text { "Bần chỉ là một anh nghèo xác, ngày ngày lang-thang khắp xóm này qua xóm khác xin ăn. Quần áo rách-mướp Bần cũng chả coi sao, chân không có giầy và đầu cũng chẳng có mũ. Giời nắng hay giời mưa Bần không bao giờ quan-tâm. Một ngưòi như Bần thì ai cũng tưởng là không còn có gì là quí-vât nữa. Thế nhưng ta nhầm vì Bần có cái quạt mo, Bần quí lắm. Bần quí và giữ luôn không rời bỏ bao giờ. Giời nắng thì Bần che đầu, giời mưa Bần cũng nhờ nó mà đỡ ướt. Muốn ngồi Bần dùng làm chiếu và đêm đến các chú muỗi vo-ve thì Bần dùng để dánh đuổi các chú ấy."}, 
+"I’m a string!",
+xdmp:random(),
+current-dateTime(),
+2e-4,
+text { "Bần chỉ là một anh nghèo xác, ngày ngày lang-thang khắp xóm này qua xóm khác xin ăn. Quần áo rách-mướp Bần cũng chả coi sao, chân không có giầy và đầu cũng chẳng có mũ. Giời nắng hay giời mưa Bần không bao giờ quan-tâm. Một ngưòi như Bần thì ai cũng tưởng là không còn có gì là quí-vât nữa. Thế nhưng ta nhầm vì Bần có cái quạt mo, Bần quí lắm. Bần quí và giữ luôn không rời bỏ bao giờ. Giời nắng thì Bần che đầu, giời mưa Bần cũng nhờ nó mà đỡ ướt. Muốn ngồi Bần dùng làm chiếu và đêm đến các chú muỗi vo-ve thì Bần dùng để dánh đuổi các chú ấy."},
 comment {"Изучаване и Преподаване на Чужди Езици
 ქართული ენის შესწავლა და სწავლება
 'læŋɡwidʒ 'lɘr:niŋ ænd 'ti:tʃiŋ"},
-binary { xs:hexBinary("BEEF") }, 
+binary { xs:hexBinary("BEEF") },
 <foo x:bar="baz" xmlns:x="X"/>/@*, &lt;body an="attribute" xmlns="some://namespace-uri">
 &lt;meta name="test" value="self-closing">&lt;/meta>
                              &lt;meta name="test" value="self-closing"  some="attribute
-    
-    
+
+
     with whitespace">&lt;/meta>
-                    &lt;meta name="test" value="self-closing">&lt;/meta> 
+                    &lt;meta name="test" value="self-closing">&lt;/meta>
 
 
           &lt;mixed> Here is some &lt;em>mixed&lt;/em> content with a &lt;!-- comment -->, no less&lt;/mixed>
-&lt;key>value&lt;/key>              
+&lt;key>value&lt;/key>
 &lt;escaped>
 
 
@@ -422,7 +426,7 @@ binary { xs:hexBinary("BEEF") },
 &lt;p>Duis eget pulvinar lorem. Mauris sed diam sed elit congue cursus. Ut vitae metus est. Proin lorem metus, accumsan nec condimentum id, mattis et nunc. Morbi tristique aliquet nibh id semper. Sed convallis volutpat rutrum. Donec pharetra massa eu sapien commodo tempus. Praesent at metus urna, sed scelerisque arcu. Phasellus dictum mi vel lacus venenatis quis mattis ligula hendrerit. Nulla ligula tellus, aliquam et dapibus ac, blandit id metus. Praesent iaculis lacinia felis, a fringilla mauris bibendum ac. Donec feugiat, odio eu consectetur euismod, neque lacus aliquam nunc, in accumsan neque dui semper mauris. Quisque orci diam, condimentum id dictum eget, elementum eu lacus. Integer in neque non elit eleifend imperdiet sed fringilla erat. Pellentesque pellentesque odio vel orci varius mattis vulputate lacus sodales. Integer sed ligula ut lectus pellentesque blandit eget eu ligula. Nullam sagittis nisi a libero aliquam nec hendrerit nisi condimentum. Suspendisse sed tortor ut est tincidunt commodo. Ut nisl nisi, elementum in porttitor at, posuere non nisl.&lt;/p>
 
 &lt;p>Nam lorem justo, viverra nec vehicula sit amet, dignissim vitae orci. Nulla consequat lacinia adipiscing. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce sodales nisl et lacus mollis in eleifend velit convallis. Quisque sed nibh nibh, at adipiscing ipsum. Sed justo nulla, auctor sed congue ultricies, commodo in felis. Donec ornare est gravida purus ultricies auctor. Suspendisse sollicitudin pretium tortor ac tincidunt. In magna velit, elementum sed venenatis faucibus, rhoncus ut dolor. Vivamus tempor ultricies arcu, sit amet consectetur nulla sollicitudin id.&lt;/p>
-&lt;!-- 
+&lt;!--
 &lt;p>Vivamus eleifend consequat purus, at volutpat arcu mollis eu. Nunc augue mauris, vehicula ut lacinia non, facilisis eu nisi. Praesent ut facilisis elit. Sed ac est vel nunc luctus semper at vel mauris. Pellentesque auctor ante lobortis elit consectetur ornare. Ut faucibus adipiscing massa, et blandit elit ultricies ac. Duis quam libero, rhoncus in tincidunt non, tempus quis mi. Sed sit amet libero eget justo ultricies mollis. Phasellus quis semper felis. Aliquam eget est lectus, id accumsan erat. Fusce sapien elit, fermentum a porta eget, accumsan sed velit. Aenean mauris lacus, accumsan eget lacinia eget, tincidunt ac tellus. Quisque at justo eget sapien sodales tincidunt.&lt;/p>
 -->
 &lt;p>Praesent non mauris id dui tempor egestas. Donec id ipsum erat, sit amet semper orci. Vivamus et mi non arcu viverra sodales vitae ac elit. Quisque auctor quam ut velit condimentum tincidunt. In enim nisl, malesuada ac semper quis, gravida imperdiet justo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus convallis, massa vitae sagittis rutrum, eros justo vulputate erat, semper pellentesque quam nisl a lorem. Nunc imperdiet quam at risus tempor aliquam. Aenean facilisis blandit quam ut posuere. Maecenas consectetur aliquet felis vel hendrerit. Praesent eu velit nec magna commodo blandit. Sed eros orci, consequat non porta a, interdum non purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed ultrices elit vel augue cursus feugiat. Praesent eros lacus, aliquam eget ultrices at, porttitor cursus tellus. Sed vel interdum turpis. Quisque quis purus in turpis ullamcorper laoreet.&lt;/p>
