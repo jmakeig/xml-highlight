@@ -42,8 +42,10 @@
       else keyEvent.ctlKey;
     }
 
+    /* Replace < and & for literal dispaly in HTML */
     function escapeForHTML(str) {
-      return str.replace("&", "&amp;").replace("<", "&lt;");
+      if(typeof str === "undefined") return "";
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;")
     }
 
     $(document).ready(function(evt) {
@@ -147,6 +149,9 @@
             var name = tokens[0];
             var value = tokens[1].substring(1, tokens[1].length - 1);
             accumulator.push("<span class='root'><span class='attribute free-standing'><span class='attribute-name'>" + name + "</span>=&quot;<span class='attribute-value'>" + escapeForHTML(value) + "</span>&quot;</span></span>");
+          }
+          else if("string" === result.type) {
+            accumulator.push("<div class='value type-" + result.type + "'>" + escapeForHTML(result.content || " ") + "</div>");
           }
           else {
             accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
@@ -515,6 +520,7 @@ binary { xs:hexBinary("BEEF") },
 &lt;p>Sed rhoncus, nisi ut imperdiet gravida, eros augue luctus odio, pulvinar varius felis lorem ac diam. Vestibulum fermentum pellentesque dui nec sodales. Ut accumsan eros ac risus facilisis et pretium nulla varius. Vivamus nec leo nunc, quis faucibus ante. Vivamus malesuada consectetur turpis. Praesent eget egestas dui. Ut sit amet interdum nulla. Integer sed varius diam. Aliquam vitae risus mauris. Etiam urna sapien, scelerisque in lacinia ac, semper nec diam. Ut rutrum dignissim dui ultrices tristique. In et libero ac augue condimentum vehicula sit amet a odio. Nullam non magna elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non est id sapien euismod sagittis.&lt;/p>
 
 &lt;/body>)'>Mixed sequence</option>
+        <option value='"Some text &amp;amp; some element-like stuff <foo>bar</foo>…and five <<<<<."'>Special characters (Issue 8)</option>
         <option value="for $i in (1 to 10000) return string(xdmp:random())">Many strings</option>
       </select>
     </div>
