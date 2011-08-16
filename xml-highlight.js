@@ -7,7 +7,7 @@
     // required to clean up the unclosed elements in the case 
     // that the XML is truncated.
     var stack = [];
-    var p = new SAXParser(true);
+    var p = new exports.SAXParser(true, {xmlns: true});
     var options = options || {}, 
       truncate = options.truncate || -1,
       textCollapse = options.textCollapse || 100,
@@ -29,20 +29,23 @@
       //errorHandler(error);
     }
     p.onopentag = function(node) {
+      //console.dir(node.name);
       var attrs = []
       var ns = []
       for(a in node.attributes) {
+        var attr = node.attributes[a];
+        console.dir(attr);
         if(a.substr(0, 5) === "xmlns") {
           var prefix = "";
           if(":" === a[5]) {
             prefix = ":<span class='namespace-prefix'>" + a.substring(6) + "</span>";
           }
-          ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a] + "</span>&quot;</span>")
+          ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a].value + "</span>&quot;</span>")
         } else {
-          attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a]) + "</span>&quot;</span>");
+          attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a].value) + "</span>&quot;</span>");
         }
       }
-      accumulator.push("<div class='element'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
+      accumulator.push("<div class='element' data-namespace-uri='"+node.uri+"' data-namespace-prefix='"+node.prefix+"' data-local-name='"+node.local+"'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
       accumulator.push("&gt;</span><div class='element-value'>");
       //console.log("Pushing " + node.name);
       stack.push(node.name);
@@ -72,13 +75,16 @@
     p.onprocessinginstruction = function(pi) {
       accumulator.push('<div class="processing-instruction"><span class="processing-instruction-open" tabindex="' + tabIndex + '">&lt;?</span><span class="processing-instruction-value"><span class="processing-instruction-name">' + pi.name + '</span> <span class="processing-instruction-body"> ' + pi.body + '</span></span><span class="processing-instruction-close">?></span></div>');
     }
+    p.onopennamespace = function(prefix, uri) {
+        //console.dir(arguments);
+    }
     p.onend = function() {
       send();
     }
     function send() {
       var cleanUp = [];
       var message = "";
-      console.dir(stack);
+      //console.dir(stack);
       //console.log(p.state);
       if(stack.length > 0) {
         for(var i = stack.length - 1; i >= 0; i--) {

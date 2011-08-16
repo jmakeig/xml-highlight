@@ -522,6 +522,8 @@ binary { xs:hexBinary("BEEF") },
 &lt;/body>)'>Mixed sequence</option>
         <option value='"Some text &amp;amp; some element-like stuff <foo>bar</foo>…and five <<<<<."'>Special characters (Issue 8)</option>
         <option value="for $i in (1 to 10000) return string(xdmp:random())">Many strings</option>
+        <option value="<a:A asdf=&quot;qwer&quot; xmlns:a=&quot;AaA&quot;><b:B xmlns:b=&quot;BbB&quot;>B</b:B></a:A>">Namespaces</option>
+        <option value="<p xmlns=&quot;para&quot; xml:lang=&quot;zh&quot;>久有归天愿</p>">XML namespace</option>
       </select>
     </div>
     <div class="control">
