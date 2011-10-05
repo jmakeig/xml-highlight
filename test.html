@@ -14,7 +14,7 @@
       }
     }
   </script>
-  <script type="text/javascript" src="lib/jquery-1.5.2-min.js"></script>
+  <script type="text/javascript" src="lib/jquery-1.6.4-min.js"></script>
   <script type="text/javascript" src="lib/sax.js"></script>
   <script type="text/javascript" src="xml-highlight.js"></script>
   <script type="text/javascript">
@@ -93,6 +93,11 @@
         handler /* function(results<Array<Object<type, content>>>) */,
         errorHandler /* function(error) */) {
 
+/*
+        handler({"type":"document", "content":'<xml:asdf xmlns:xml="XXXXX"/>'});
+        return;
+*/
+
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
           if(this.readyState === 1) { /* Loading */ }
@@ -125,7 +130,7 @@
 
         // Allow truncation of the total number of results for performance
         var len = results.length;
-        if(options.maxResults > 0) Math.min(results.length, options.maxResults);
+        if(options.maxResults > 0) len = Math.min(results.length, options.maxResults);
 
         //var xmlCount = 0;
         for(var i = 0; i < len; i++) {
@@ -137,9 +142,9 @@
             highlight(result.content, function(output) {
               accumulator.push(output);
             }, options,
-            /* TODO: Bubble this more intelligently */
-            function(error) { alert(error);});
-            //xmlCount++;
+            function(error) { 
+                $("#output").html('<div class="error">' + error + '</div>');            
+            });
           }
           else if("text" === result.type) {
             accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (escapeForHTML(result.content) || "&nbsp;") + "</span></div>");

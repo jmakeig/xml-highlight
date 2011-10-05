@@ -24,17 +24,16 @@
     }
     p.onready = function() {}
     p.onerror = function(error) {
-      console.warn("Truncating result to " + options.truncate + " characters");
-      //console.dir(stack);
-      //errorHandler(error);
+      console.error(error);
+      errorHandler(error);
     }
     p.onopentag = function(node) {
       //console.dir(node.name);
       var attrs = []
       var ns = []
       for(a in node.attributes) {
+        console.dir(a);
         var attr = node.attributes[a];
-        console.dir(attr);
         if(a.substr(0, 5) === "xmlns") {
           var prefix = "";
           if(":" === a[5]) {
@@ -79,7 +78,7 @@
         //console.dir(arguments);
     }
     p.onend = function() {
-      send();
+      if(!p.error) send();
     }
     function send() {
       var cleanUp = [];
