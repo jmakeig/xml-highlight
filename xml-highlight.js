@@ -41,10 +41,10 @@
           }
           ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a].value + "</span>&quot;</span>")
         } else {
-          attrs.push(" <span class='attribute'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(node.attributes[a].value) + "</span>&quot;</span>");
+          attrs.push(" <span class='attribute' title='"+attr.name+" ("+attr.uri+")'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(attr.value) + "</span>&quot;</span>");
         }
       }
-      accumulator.push("<div class='element' data-namespace-uri='"+node.uri+"' data-namespace-prefix='"+node.prefix+"' data-local-name='"+node.local+"'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
+      accumulator.push("<div class='element' data-namespace-prefix='"+node.prefix+"' data-local-name='"+node.local+"'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name' title='"+node.name+" ("+node.uri+")' data-namespace-uri='"+node.uri+"'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
       accumulator.push("&gt;</span><div class='element-value'>");
       //console.log("Pushing " + node.name);
       stack.push(node.name);
