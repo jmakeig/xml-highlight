@@ -15,6 +15,7 @@
     }
   </script>
   <script type="text/javascript" src="lib/jquery-1.6.4-min.js"></script>
+  <script type="text/javascript" src="lib/tmpl.js"></script>
   <script type="text/javascript" src="lib/sax.js"></script>
   <script type="text/javascript" src="xml-highlight.js"></script>
   <script type="text/javascript">
@@ -50,7 +51,6 @@
 
     $(document).ready(function(evt) {
       $("#output").keydown(function(e) {
-        console.dir(e);
         // Listen to Select All keyboard shortcuts
         if(65 === e.keyCode && isJustCommandKey(e)) {
           console.log("select all");
@@ -183,10 +183,48 @@
 
       // Delegate click events for expand/collapse to the output container, rather
       // than attaching to each individual node
-      $("#output").delegate(".element-open, .element-close, .comment-open, .comment-close, .processing-instruction-open, .processing-instruction-close", "click", function(evt) {
+      $("#output").delegate(".element-open, .element-close, .comment-open, .comment-close, .processing-instruction-open, .processing-instruction-close", "XXclickXX", function(evt) {
         $(evt.currentTarget).closest(".element, .comment, .processing-instruction").toggleClass("collapsed");
         evt.stopPropagation();
       });
+      
+      $("#output").delegate(".element-open", "click", function(evt) {
+        var el = $(evt.currentTarget).closest(".element");
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          if(this.readyState === 1) { /* Loading */ }
+          if(this.readyState === 4) {
+            if (this.status >= 200 && this.status < 300) {
+              var details;
+              try {
+                details = JSON.parse(this.responseText);
+              } catch(error) {
+                console.error(this.responseText);
+              }
+              renderDetails(details);
+            } else {
+              console.error(this.responseText);
+            }
+          }
+        }
+        console.dir($.param(el.data()));
+        xhr.open("GET", "/node-properties.xqy?" + $.param(el.data()), true);
+        xhr.setRequestHeader("Accept", "application/json");
+        xhr.send();
+      });
+      function renderDetails(details) {
+        //console.dir(details);
+        var rangeIndexes = details["indexes"]["range_element_index"];
+        var accumlator = [];
+        rangeIndexes.forEach(function(item, index, arr) {
+          accumlator.push(item.localname);
+        });
+        //console.log(tmpl("node-details-template", details["indexes"]));
+        $("#node-details").html(
+          tmpl("node_details_template", details["indexes"])
+        );
+      }
+      
       // Handle key events: When an element, comment, or PI opener is actively focused the righ key
       // expands that element and the left key collapses it. Tab selects the next one (using the
       // default @tabindex behavior, not DOM events).
@@ -366,6 +404,10 @@
     }
     .hide-close-tags .text + .element .element-close {
       display: inline;
+    }
+    #node-details {
+      background: yellow;
+      padding: 0.5em;
     }
   </style>
   <link type="text/css" rel="stylesheet" href="xml-highlight.css"/>
@@ -550,6 +592,26 @@ binary { xs:hexBinary("BEEF") },
     <button id="expand-all">Expand All</button>
     <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
   </div>
+  <div id="node-details"></div>
+  <script type="text/html" id="node_details_template">
+    <h2>Element Range Indexes</h2>
+    <table>
+      <tr>
+        <th>Local name</th>
+        <th>Namespace</th>
+        <th>Type</th>
+        <th>Collation</th>
+      </tr>
+    <% for ( var i = 0; i < range_element_index.length; i++ ) { %>
+      <tr>
+        <td><%=range_element_index[i].localname%></td>
+        <td><%=range_element_index[i]["namespace-uri"]%></td>
+        <td><%=range_element_index[i]["scalar-type"]%></td>
+        <td><%=range_element_index[i]["collation"]%></td>
+      </tr>
+    <% } %>
+    </table>
+  </script>
   <div id="output" tabindex="10"></div>
 </body>
 </html>

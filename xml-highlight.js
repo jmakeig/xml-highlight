@@ -32,7 +32,7 @@
       var attrs = []
       var ns = []
       for(a in node.attributes) {
-        console.dir(a);
+        //console.dir(a);
         var attr = node.attributes[a];
         if(a.substr(0, 5) === "xmlns") {
           var prefix = "";
@@ -44,7 +44,7 @@
           attrs.push(" <span class='attribute' title='"+attr.name+" ("+attr.uri+")'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(attr.value) + "</span>&quot;</span>");
         }
       }
-      accumulator.push("<div class='element' data-namespace-prefix='"+node.prefix+"' data-local-name='"+node.local+"'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name' title='"+node.name+" ("+node.uri+")' data-namespace-uri='"+node.uri+"'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
+      accumulator.push("<div class='element' data-name='"+node.name+"' data-namespace-prefix='"+node.prefix+"' data-local-name='"+node.local+"' data-namespace-uri='"+node.uri+"'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name' title='"+node.name+" ("+node.uri+")'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
       accumulator.push("&gt;</span><div class='element-value'>");
       //console.log("Pushing " + node.name);
       stack.push(node.name);
