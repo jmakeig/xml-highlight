@@ -220,6 +220,11 @@
         }
         console.dir($.param(el.data()));
         //xhr.open("GET", "/node-properties.xqy?" + $.param(el.data()), true);
+
+        // Added 
+        //  conv:add-response-header("Access-Control-Allow-Origin","http://localhost:9000"),
+        //  conv:add-response-header("Access-Control-Allow-Credentials","true"),
+        // to /Modules/MarkLogic/manage/converters/converter.xqy line 265 to support CORS
         xhr.open("GET", "http://localhost:8002/manage/v1/databases/Documents/config?format=json", true);
         // Required for CORS
         xhr.withCredentials = "true";

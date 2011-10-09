@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>CORS</title>
+  <script type="text/javascript">
+function testCORS() {
+  var url = "http://localhost:8002/manage/v1/databases/Documents/config?format=json";
+  if(XMLHttpRequest)
+  {
+    var request = new XMLHttpRequest();
+    if("withCredentials" in request)
+    {
+     // Firefox 3.5 and Safari 4
+     request.open('GET', url, true);
+     request.withCredentials = "true";
+     request.onreadystatechange = function() {
+      console.log(this.responseText);
+     };
+     request.send();
+    }
+  }
+}
+  </script>
+</head>
+<body>
+  <button onclick="testCORS()">CORS</button>
+</body>
+</html>
