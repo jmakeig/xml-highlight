@@ -13,6 +13,12 @@
         return obj;
       }
     }
+    function wrapArray(obj) {
+      if(toString.call(obj) === '[object Array]') 
+        return obj;
+      else 
+        return [obj];
+    }
   </script>
   <script type="text/javascript" src="lib/jquery-1.6.4-min.js"></script>
   <script type="text/javascript" src="lib/tmpl.js"></script>
@@ -187,9 +193,10 @@
         $(evt.currentTarget).closest(".element, .comment, .processing-instruction").toggleClass("collapsed");
         evt.stopPropagation();
       });
-      
       $("#output").delegate(".element-open", "click", function(evt) {
         var el = $(evt.currentTarget).closest(".element");
+        var localName = el.data("local-name");
+        var namespaceUri = el.data("namespace-uri");
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
           if(this.readyState === 1) { /* Loading */ }
@@ -197,7 +204,11 @@
             if (this.status >= 200 && this.status < 300) {
               var details;
               try {
-                details = JSON.parse(this.responseText);
+                details = {
+                  "localName": localName,
+                  "namespaceUri": namespaceUri,
+                  "databaseConfig": JSON.parse(this.responseText)["database-config"]
+                }
               } catch(error) {
                 console.error(this.responseText);
               }
@@ -208,21 +219,19 @@
           }
         }
         console.dir($.param(el.data()));
-        xhr.open("GET", "/node-properties.xqy?" + $.param(el.data()), true);
+        //xhr.open("GET", "/node-properties.xqy?" + $.param(el.data()), true);
+        xhr.open("GET", "http://localhost:8002/manage/v1/databases/Documents/config?format=json", true);
+        // Required for CORS
+        xhr.withCredentials = "true";
         xhr.setRequestHeader("Accept", "application/json");
         xhr.send();
       });
+      
+      $("#node-details").hide();
       function renderDetails(details) {
-        //console.dir(details);
-        var rangeIndexes = details["indexes"]["range_element_index"];
-        var accumlator = [];
-        rangeIndexes.forEach(function(item, index, arr) {
-          accumlator.push(item.localname);
-        });
-        //console.log(tmpl("node-details-template", details["indexes"]));
         $("#node-details").html(
-          tmpl("node_details_template", details["indexes"])
-        );
+          tmpl("node_details_template", details)
+        ).show();
       }
       
       // Handle key events: When an element, comment, or PI opener is actively focused the righ key
@@ -406,7 +415,18 @@
       display: inline;
     }
     #node-details {
-      background: yellow;
+      outline: solid 2px yellow;
+      padding: 0.5em;
+      width: 40%;
+    }
+    #node-details table {
+    }
+    table {
+      border-collapse: collapse;
+    }
+    td, th {
+      text-align: left;
+      border-bottom: solid 1px #ccc;
       padding: 0.5em;
     }
   </style>
@@ -592,8 +612,45 @@ binary { xs:hexBinary("BEEF") },
     <button id="expand-all">Expand All</button>
     <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
   </div>
-  <div id="node-details"></div>
-  <script type="text/html" id="node_details_template">
+  <div id="node-details"><!-- Populated by rendered #node_details_template --></div>
+  <script type="text/html;template" id="node_details_template">
+    <h3 class="detail-localname"><%=localName%></h3>
+    <div class="detail-localname"><%=namespaceUri%></div>
+    <h4>Element Range Indexes</h4>
+    <table>
+      <tr><th>Type</th><th>Positions</th></tr>
+      <%
+        var ri = wrapArray(databaseConfig["config-properties"]["range-element-indexes"]["range-element-index"]).filter(function(item) {
+          return item["localname"] === localName && item["namespace-uri"] === namespaceUri;
+        });
+        for(var i=0; i < ri.length; i++) {
+      %>
+      <tr>
+        <td><%=ri[i]["scalar-type"]%> 
+          <%= ri[i].collation ? '<span class="details-collation">(' + ri[i].collation + ")</span>" : "" %></td>
+        <td><%=ri[i]["range-value-positions"]%></td>
+      </tr>
+      <% } %>
+    </table>
+    <h4>Fields</h4>
+    <table>
+      <tr><th>Name</th><th>Includes</th><th>Excludes</th><th>Range Indexes</th></tr>
+      <%
+        var fields = wrapArray(databaseConfig["config-properties"]["fields"]["field"]).filter(function(item) {
+          return true;
+        });
+        for(var i=0; i < fields.length; i++) {
+      %>
+      <tr>
+        <td><%=fields[i]["field-name"]%></td>
+        <td><ul><li></li></ul></td>
+        <td><ul><li></li></ul></td>
+        <td></td>
+      </tr>
+      <% } %>
+    </table>
+  </script>
+  <script type="text/html" id="node_details_template_ORIG">
     <h2>Element Range Indexes</h2>
     <table>
       <tr>
