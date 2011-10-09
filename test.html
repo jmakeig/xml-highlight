@@ -21,6 +21,14 @@
     }
   </script>
   <script type="text/javascript" src="lib/jquery-1.6.4-min.js"></script>
+  <script type="text/javascript">
+    jQuery.fn.center = function() {
+      this.css("position", "absolute");
+      this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
+      this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+      return this;
+    }
+  </script>
   <script type="text/javascript" src="lib/tmpl.js"></script>
   <script type="text/javascript" src="lib/sax.js"></script>
   <script type="text/javascript" src="xml-highlight.js"></script>
@@ -193,7 +201,7 @@
         $(evt.currentTarget).closest(".element, .comment, .processing-instruction").toggleClass("collapsed");
         evt.stopPropagation();
       });
-      $("#output").delegate(".element-open", "click", function(evt) {
+      $("#output").delegate(".element-open", "click" /*"click focus"*/, function(evt) {
         var el = $(evt.currentTarget).closest(".element");
         var localName = el.data("local-name");
         var namespaceUri = el.data("namespace-uri");
@@ -204,42 +212,41 @@
             if (this.status >= 200 && this.status < 300) {
               var details;
               try {
-                details = {
-                  "localName": localName,
-                  "namespaceUri": namespaceUri,
-                  "databaseConfig": JSON.parse(this.responseText)["database-config"]
-                }
+                details = JSON.parse(this.responseText)
               } catch(error) {
                 console.error(this.responseText);
               }
-              renderDetails(details);
+              renderDetails(details, el);
             } else {
               console.error(this.responseText);
             }
           }
         }
         console.dir($.param(el.data()));
-        //xhr.open("GET", "/node-properties.xqy?" + $.param(el.data()), true);
-
+        xhr.open("GET", "/node-properties.xqy?" + $.param(el.data()), true);
         // Added 
         //  conv:add-response-header("Access-Control-Allow-Origin","http://localhost:9000"),
         //  conv:add-response-header("Access-Control-Allow-Credentials","true"),
         // to /Modules/MarkLogic/manage/converters/converter.xqy line 265 to support CORS
-        xhr.open("GET", "http://localhost:8002/manage/v1/databases/Documents/config?format=json", true);
+        //xhr.open("GET", "http://localhost:8002/manage/v1/databases/Documents/config?format=json", true);
         // Required for CORS
-        xhr.withCredentials = "true";
-        xhr.setRequestHeader("Accept", "application/json");
+        //xhr.withCredentials = "true";
+        //xhr.setRequestHeader("Accept", "application/json");
         xhr.send();
       });
       
       $("#node-details").hide();
-      function renderDetails(details) {
+      $("#node-details").delegate(".detail-close", "click", function(evt) {
+        $("#node-details").hide();
+      });
+      function renderDetails(details, el) {
+        console.log($(el).position().top);
         $("#node-details").html(
-          tmpl("node_details_template", details)
-        ).show();
+          tmpl("node_details_template", details.node)
+        ).css({top: $(el).offset().top + "px", right: "2em"}).show();
       }
       
-      // Handle key events: When an element, comment, or PI opener is actively focused the righ key
+      // Handle key events: When an element, comment, or PI opener is actively focused the right key
       // expands that element and the left key collapses it. Tab selects the next one (using the
       // default @tabindex behavior, not DOM events).
       $("#output").keydown(function(evt) {
@@ -311,7 +318,8 @@
       /*
       $("#output").delegate(".element-open", "focus", function(evt) {
         // This actually works. Stash for a hover event
-        console.log($(this).attr("tabindex"));
+        //console.log($(this).attr("tabindex"));
+        renderDetails()
       });
       */
 
@@ -420,11 +428,21 @@
       display: inline;
     }
     #node-details {
-      outline: solid 2px yellow;
+      position: absolute;
+      z-index: 100;
+      background: #fff;
+      border: solid 1px #ccc;
+      box-shadow: 5px 5px 5px #ccc;
       padding: 0.5em;
       width: 40%;
     }
     #node-details table {
+    }
+    #node-details .detail-close {
+      cursor: pointer;
+      float: right;
+      width: 2em;
+      text-align: right;
     }
     table {
       border-collapse: collapse;
@@ -619,15 +637,15 @@ binary { xs:hexBinary("BEEF") },
   </div>
   <div id="node-details"><!-- Populated by rendered #node_details_template --></div>
   <script type="text/html;template" id="node_details_template">
-    <h3 class="detail-localname"><%=localName%></h3>
-    <div class="detail-localname"><%=namespaceUri%></div>
+    <div class="detail-close">X</div>
+    <h3 class="detail-localname"><%=element.localname%></h3>
+    <div class="detail-localname"><%=element["namespace-uri"]%></div>
+    <div class="detail-estimate"><%=element.estimate%></div>
     <h4>Element Range Indexes</h4>
     <table>
       <tr><th>Type</th><th>Positions</th></tr>
       <%
-        var ri = wrapArray(databaseConfig["config-properties"]["range-element-indexes"]["range-element-index"]).filter(function(item) {
-          return item["localname"] === localName && item["namespace-uri"] === namespaceUri;
-        });
+        var ri = database["range-element-indexes"];
         for(var i=0; i < ri.length; i++) {
       %>
       <tr>
@@ -641,9 +659,7 @@ binary { xs:hexBinary("BEEF") },
     <table>
       <tr><th>Name</th><th>Includes</th><th>Excludes</th><th>Range Indexes</th></tr>
       <%
-        var fields = wrapArray(databaseConfig["config-properties"]["fields"]["field"]).filter(function(item) {
-          return true;
-        });
+        var fields = database.fields;
         for(var i=0; i < fields.length; i++) {
       %>
       <tr>
