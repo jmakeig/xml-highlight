@@ -44,7 +44,7 @@
           attrs.push(" <span class='attribute' title='"+attr.name+" ("+attr.uri+")'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(attr.value) + "</span>&quot;</span>");
         }
       }
-      accumulator.push("<div class='element' data-name='"+node.name+"' data-namespace-prefix='"+node.prefix+"' data-local-name='"+node.local+"' data-namespace-uri='"+node.uri+"'><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name' title='"+node.name+" ("+node.uri+")'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
+      accumulator.push("<div class='element' data-name='"+node.name+"' data-namespace-prefix='"+node.prefix+"' data-local-name='"+node.local+"' data-namespace-uri='"+node.uri+"'><span class='toggle'></span><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name' title='"+node.name+" ("+node.uri+")'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
       accumulator.push("&gt;</span><div class='element-value'>");
       //console.log("Pushing " + node.name);
       stack.push(node.name);
@@ -69,10 +69,10 @@
       }
     }
     p.oncomment = function(comment) {
-      accumulator.push("<div class='comment'><span class='comment-open' tabindex='" + tabIndex + "'>&lt;--</span><div class='comment-value'>" + prepareText(comment) + "</div><span class='comment-close'>--&gt;</span></div>");
+      accumulator.push("<div class='comment'><span class='toggle'></span><span class='comment-open' tabindex='" + tabIndex + "'>&lt;--</span><div class='comment-value'>" + prepareText(comment) + "</div><span class='comment-close'>--&gt;</span></div>");
     }
     p.onprocessinginstruction = function(pi) {
-      accumulator.push('<div class="processing-instruction"><span class="processing-instruction-open" tabindex="' + tabIndex + '">&lt;?</span><span class="processing-instruction-value"><span class="processing-instruction-name">' + pi.name + '</span> <span class="processing-instruction-body"> ' + pi.body + '</span></span><span class="processing-instruction-close">?></span></div>');
+      accumulator.push('<div class="processing-instruction"><span class="toggle"></span><span class="processing-instruction-open" tabindex="' + tabIndex + '">&lt;?</span><span class="processing-instruction-value"><span class="processing-instruction-name">' + pi.name + '</span> <span class="processing-instruction-body"> ' + pi.body + '</span></span><span class="processing-instruction-close">?></span></div>');
     }
     p.onopennamespace = function(prefix, uri) {
         //console.dir(arguments);

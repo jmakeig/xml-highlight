@@ -197,11 +197,13 @@
 
       // Delegate click events for expand/collapse to the output container, rather
       // than attaching to each individual node
-      $("#output").delegate(".element-open, .element-close, .comment-open, .comment-close, .processing-instruction-open, .processing-instruction-close", "XXclickXX", function(evt) {
+      //$("#output").delegate(".element-open, .element-close, .comment-open, .comment-close, .processing-instruction-open, .processing-instruction-close", "XXclickXX", function(evt) {
+      $("#output").delegate(".toggle, .processing-instruction-close", "click", function(evt) {
         $(evt.currentTarget).closest(".element, .comment, .processing-instruction").toggleClass("collapsed");
+        $(evt.currentTarget).next(".element-open, .comment-open, .processing-instruction-open").focus();
         evt.stopPropagation();
       });
-      $("#output").delegate(".element-open", "click" /*"click focus"*/, function(evt) {
+      $("#output").delegate(".element-name", "click" /*"click focus"*/, function(evt) {
         var el = $(evt.currentTarget).closest(".element");
         var localName = el.data("local-name");
         var namespaceUri = el.data("namespace-uri");
@@ -233,6 +235,8 @@
         //xhr.withCredentials = "true";
         //xhr.setRequestHeader("Accept", "application/json");
         xhr.send();
+        
+        evt.stopPropagation();
       });
       
       $("#node-details").hide();
@@ -407,6 +411,28 @@
       min-height: 8em;
       border: solid 1px #ccc;
       padding: 0.5em;
+    }
+    .toggle, .element-name {
+      cursor: pointer;
+    }
+    .toggle {
+      display: inline-block;
+      width: 9px;
+      height: 7px;
+      background-image: url("/img/minus.png");
+      background-repeat: no-repeat;
+      background-position: 0 -2px;
+    }
+    .collapsed .toggle {
+      background-image: url("/img/plus.png");
+    }
+    #output:focus {
+      outline: none;
+    }
+    #output *:focus {
+      border: dashed 1px #999;
+      border-radius: 4px;
+      outline: none;
     }
     .error {
       color: red;
