@@ -642,6 +642,7 @@ binary { xs:hexBinary("BEEF") },
     <div class="detail-localname"><%=element["namespace-uri"]%></div>
     <div class="detail-estimate"><%=element.estimate%></div>
     <h4>Element Range Indexes</h4>
+    <% if("range-element-indexes" in database) {%>
     <table>
       <tr><th>Type</th><th>Positions</th></tr>
       <%
@@ -655,7 +656,9 @@ binary { xs:hexBinary("BEEF") },
       </tr>
       <% } %>
     </table>
+    <% } %>
     <h4>Fields</h4>
+    <% if("fields" in database) {%>
     <table>
       <tr><th>Name</th><th>Includes</th><th>Excludes</th><th>Range Indexes</th></tr>
       <%
@@ -670,6 +673,7 @@ binary { xs:hexBinary("BEEF") },
       </tr>
       <% } %>
     </table>
+    <% } %>
   </script>
   <script type="text/html" id="node_details_template_ORIG">
     <h2>Element Range Indexes</h2>

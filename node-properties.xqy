@@ -26,18 +26,19 @@ return
     let $xsl := <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dbm="http://marklogic.com/manage/databases">
       <xsl:template match="/dbm:database-config">
         <database>
+          <test/><!-- Hack to force the database object not to render as null -->
           <xsl:apply-templates select="//(dbm:range-element-indexes|dbm:fields|dbm:range-field-indexes)"/>
         </database>
       </xsl:template>
       <xsl:template match="dbm:range-element-indexes">
-        <xsl:apply-templates select="dbm:range-element-index[dbm:localname='key' and dbm:namespace-uri='some://namespace-uri']"/>
+        <xsl:apply-templates select="dbm:range-element-index[dbm:localname='{$element-local}' and dbm:namespace-uri='{$element-nsuri}']"/>
       </xsl:template>
       <xsl:template match="dbm:range-field-indexes">
-        <xsl:variable name="fields" select="//dbm:field[//dbm:included-element/dbm:localname='key' and //dbm:included-element/dbm:namespace-uri='some://namespace-uri']/dbm:field-name/data(.)"/>
+        <xsl:variable name="fields" select="//dbm:field[//dbm:included-element/dbm:localname='{$element-local}' and //dbm:included-element/dbm:namespace-uri='{$element-nsuri}']/dbm:field-name/data(.)"/>
         <xsl:apply-templates select="dbm:range-field-index[dbm:field-name = $fields]"/>
       </xsl:template>
       <xsl:template match="dbm:fields">
-          <xsl:apply-templates select="dbm:field[.//dbm:included-element/dbm:localname='key' and .//dbm:included-element/dbm:namespace-uri='some://namespace-uri']"/>
+          <xsl:apply-templates select="dbm:field[.//dbm:included-element/dbm:localname='{$element-local}' and .//dbm:included-element/dbm:namespace-uri='{$element-nsuri}']"/>
       </xsl:template>
       <xsl:template match="dbm:included-elements|dbm:excluded-elements">
         <xsl:apply-templates/>
