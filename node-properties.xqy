@@ -14,18 +14,27 @@ let $element-nsuri := xdmp:url-decode(xdmp:get-request-field("elementNamespaceUr
 let $attribute-local := xdmp:get-request-field("attributeLocalname")
 let $attribute-nsuri := xdmp:url-decode(xdmp:get-request-field("attributeNamespaceUri", ""))
 let $attribute-value := xdmp:get-request-field("attributeValue")
-
+(:
+let $node := (
+  QName($element-nsuri, $element-local),
+  if($attribute-local) then (
+    QName($attribute-nsuri, $attribute-local),
+    $attribute-value
+  ) else ()
+)
+:)
 
 return 
   if("GET" eq xdmp:get-request-method()) then (
     let $response := xdmp:http-get(concat("http://localhost:8002/manage/v1/databases/", xdmp:database-name(xdmp:database()), "/config?format=xml"),
       <options xmlns="xdmp:http">
        <authentication method="digest">
-         <username>admin</username>
-         <password>admin</password>
+         <username>manage-reader</username>
+         <password>asdfasdf</password>
        </authentication>
       </options>)
     let $db-config := if(data($response[1]/http:code) != 200) then error(xs:QName("ERROR"), "HTTP error") else $response[2]
+    (: Missing element word query through, phrase through, element word lexicons, geospatial * indexes :)
     let $xsl := <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dbm="http://marklogic.com/manage/databases">
       <xsl:template match="/dbm:database-config">
         <database>
@@ -35,6 +44,44 @@ return
       </xsl:template>
       <xsl:template match="dbm:range-element-indexes">
         <xsl:apply-templates select="dbm:range-element-index[dbm:localname='{$element-local}' and dbm:namespace-uri='{$element-nsuri}']"/>
+      </xsl:template>
+      <xsl:template match="dbm:range-field-indexes">
+        <xsl:variable name="fields" select="//dbm:field[//dbm:included-element/dbm:localname='{$element-local}' and //dbm:included-element/dbm:namespace-uri='{$element-nsuri}']/dbm:field-name/data(.)"/>
+        <xsl:apply-templates select="dbm:range-field-index[dbm:field-name = $fields]"/>
+      </xsl:template>
+      <xsl:template match="dbm:fields">
+          <xsl:apply-templates select="dbm:field[.//dbm:included-element/dbm:localname='{$element-local}' and .//dbm:included-element/dbm:namespace-uri='{$element-nsuri}']"/>
+      </xsl:template>
+      <xsl:template match="dbm:included-elements|dbm:excluded-elements">
+        <xsl:apply-templates/>
+      </xsl:template>
+      <xsl:template match="dbm:range-element-index|dbm:field|dbm:range-field-index|dbm:included-element|dbm:excluded-element">
+        <xsl:element name="{{concat(local-name(), if(ends-with(local-name(), 'x')) then 'es' else 's')}}">
+          <xsl:copy-of select="@*"/>
+          <xsl:attribute name="array">true</xsl:attribute>
+          <xsl:apply-templates/>
+        </xsl:element>
+      </xsl:template>
+      <xsl:template match="element()">
+        <xsl:copy>
+          <xsl:apply-templates select="@*,node()"/>
+        </xsl:copy>
+      </xsl:template>
+      <xsl:template match="attribute()|text()|comment()|processing-instruction()">
+        <xsl:copy/>
+      </xsl:template>
+    </xsl:stylesheet>
+    let $xsl-attr := <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dbm="http://marklogic.com/manage/databases">
+      <xsl:template match="/dbm:database-config">
+        <database>
+          <test/><!-- Hack to force the database object not to render as null -->
+          <xsl:apply-templates select="//(dbm:range-element-indexes|dbm:fields|dbm:range-field-indexes)"/>
+        </database>
+      </xsl:template>
+      <xsl:template match="dbm:range-element-attribute-indexes">
+        <xsl:apply-templates select="dbm:range-element-attribute-index[
+          dbm:localname='{$element-local}' and dbm:namespace-uri='{$element-nsuri}'
+        ]"/>
       </xsl:template>
       <xsl:template match="dbm:range-field-indexes">
         <xsl:variable name="fields" select="//dbm:field[//dbm:included-element/dbm:localname='{$element-local}' and //dbm:included-element/dbm:namespace-uri='{$element-nsuri}']/dbm:field-name/data(.)"/>
