@@ -197,16 +197,13 @@
 
       // Delegate click events for expand/collapse to the output container, rather
       // than attaching to each individual node
-      //$("#output").delegate(".element-open, .element-close, .comment-open, .comment-close, .processing-instruction-open, .processing-instruction-close", "XXclickXX", function(evt) {
       $("#output").delegate(".toggle, .processing-instruction-close", "click", function(evt) {
         $(evt.currentTarget).closest(".element, .comment, .processing-instruction").toggleClass("collapsed");
         $(evt.currentTarget).next(".element-open, .comment-open, .processing-instruction-open").focus();
         evt.stopPropagation();
       });
-      $("#output").delegate(".element-name", "click" /*"click focus"*/, function(evt) {
-        var el = $(evt.currentTarget).closest(".element");
-        var localName = el.data("local-name");
-        var namespaceUri = el.data("namespace-uri");
+      
+      function getDetails(elData, attrData, handler, errorHandler) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
           if(this.readyState === 1) { /* Loading */ }
@@ -218,37 +215,43 @@
               } catch(error) {
                 console.error(this.responseText);
               }
-              renderDetails(details, el);
+              handler(details, elData, attrData);
             } else {
               console.error(this.responseText);
+              if(errorHandler) errorHandler(this.responseText);
             }
           }
         }
-        console.dir($.param(el.data()));
-        xhr.open("GET", "/node-properties.xqy?" + $.param(el.data()), true);
-        // Added 
-        //  conv:add-response-header("Access-Control-Allow-Origin","http://localhost:9000"),
-        //  conv:add-response-header("Access-Control-Allow-Credentials","true"),
-        // to /Modules/MarkLogic/manage/converters/converter.xqy line 265 to support CORS
-        //xhr.open("GET", "http://localhost:8002/manage/v1/databases/Documents/config?format=json", true);
-        // Required for CORS
-        //xhr.withCredentials = "true";
-        //xhr.setRequestHeader("Accept", "application/json");
+        xhr.open("GET", "/node-properties.xqy?" + $.param(elData) + (attrData ? "&" + $.param(attrData) : ""), true);
         xhr.send();
-        
-        evt.stopPropagation();
+      }
+      
+      function renderDetails(details, $el, $attr) {
+        console.dir(details);
+        $("#node-details").html(
+          tmpl("node_details_template", details.node)
+        ).css({top: $($el).offset().top + "px", right: "2em"}).show();
+      }
+      
+      $("#output").delegate(".element-name", "click", function(evt) {
+        var el = $(evt.currentTarget).closest(".element");
+        getDetails(el.data(), null, function(details, e, a) {
+          renderDetails(details, el);
+        });
+      });
+      
+      $("#output").delegate(".attribute-name", "click", function(evt) {
+        var attr = $(evt.currentTarget).closest(".attribute");
+        var el = attr.closest(".element");
+        getDetails(el.data(), attr.data(), function(details, e, a) {
+          renderDetails(details, el);
+        });
       });
       
       $("#node-details").hide();
       $("#node-details").delegate(".detail-close", "click", function(evt) {
         $("#node-details").hide();
       });
-      function renderDetails(details, el) {
-        console.log($(el).position().top);
-        $("#node-details").html(
-          tmpl("node_details_template", details.node)
-        ).css({top: $(el).offset().top + "px", right: "2em"}).show();
-      }
       
       // Handle key events: When an element, comment, or PI opener is actively focused the right key
       // expands that element and the left key collapses it. Tab selects the next one (using the
@@ -412,7 +415,7 @@
       border: solid 1px #ccc;
       padding: 0.5em;
     }
-    .toggle, .element-name {
+    .toggle, .element-name, .attribute-name {
       cursor: pointer;
     }
     .toggle {

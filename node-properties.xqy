@@ -9,8 +9,11 @@ declare namespace dbm="http://marklogic.com/manage/databases";
 
 declare option xdmp:mapping "false";
 
-let $element-local := xdmp:get-request-field("localName")
-let $element-nsuri := xdmp:url-decode(xdmp:get-request-field("namespaceUri"))
+let $element-local := xdmp:get-request-field("elementLocalname")
+let $element-nsuri := xdmp:url-decode(xdmp:get-request-field("elementNamespaceUri"))
+let $attribute-local := xdmp:get-request-field("attributeLocalname")
+let $attribute-nsuri := xdmp:url-decode(xdmp:get-request-field("attributeNamespaceUri", ""))
+let $attribute-value := xdmp:get-request-field("attributeValue")
 
 
 return 
@@ -87,8 +90,11 @@ return
             }
           :)}
         </element>
-        <!-- attribute -->
-        <!-- attribute value? -->
+        <attribute>
+          <localname>{$attribute-local}</localname>
+          <namespace-uri>{$attribute-nsuri}</namespace-uri>
+          <value>{$attribute-value}</value>
+        </attribute>
       {
       xdmp:xslt-eval($xsl, $db-config)/element()
       }
