@@ -232,11 +232,12 @@
         console.dir(details);
         $("#node-details").html(
           tmpl("node_details_template", details.node)
-        ).css({top: $($el).offset().top + "px", right: "2em"}).show();
+        ).css({top: $($el).offset().top + "px", right: "2em"});
       }
       
       $("#output").delegate(".element-name", "click", function(evt) {
         var el = $(evt.currentTarget).closest(".element");
+         $("#node-details").show();
         getDetails(el.data(), null, function(details, e, a) {
           renderDetails(details, el);
         });

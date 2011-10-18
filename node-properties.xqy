@@ -75,12 +75,26 @@ return
       <xsl:template match="/dbm:database-config">
         <database>
           <test/><!-- Hack to force the database object not to render as null -->
-          <xsl:apply-templates select="//(dbm:range-element-indexes|dbm:fields|dbm:range-field-indexes)"/>
+          <xsl:apply-templates select="//(dbm:range-element-attribute-indexes|dbm:fields|dbm:range-field-indexes)"/>
         </database>
       </xsl:template>
+      <!--
+        <range-element-attribute-indexes>
+          <range-element-attribute-index>
+            <scalar-type>string</scalar-type>
+            <collation>http://marklogic.com/collation/it</collation>
+            <parent-namespace-uri>http://PARENT</parent-namespace-uri>
+            <parent-localname>parent</parent-localname>
+            <namespace-uri>http://ATTRIBUTE</namespace-uri>
+            <localname>attr</localname>
+          <range-value-positions>true</range-value-positions>
+          </range-element-attribute-index>
+        </range-element-attribute-indexes>
+      -->
       <xsl:template match="dbm:range-element-attribute-indexes">
         <xsl:apply-templates select="dbm:range-element-attribute-index[
-          dbm:localname='{$element-local}' and dbm:namespace-uri='{$element-nsuri}'
+              dbm:parent-localname='{$element-local}' and dbm:parent-namespace-uri='{$element-nsuri}'
+          and dbm:localname='{$attribute-local}' and dbm:namespace-uri='{$attribute-nsuri}'
         ]"/>
       </xsl:template>
       <xsl:template match="dbm:range-field-indexes">
@@ -143,7 +157,7 @@ return
           <value>{$attribute-value}</value>
         </attribute>
       {
-      xdmp:xslt-eval($xsl, $db-config)/element()
+      xdmp:xslt-eval(if($attribute-local) then $xsl-attr else $xsl, $db-config)/element()
       }
       </node>
     )
