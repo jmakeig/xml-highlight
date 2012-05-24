@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Panel</title>
+	<style type="text/css">
+body {
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  line-height: 1;
+  font-weight: normal;
+}
+.panel {
+  position: absolute;
+  top: 1em; left: 1em;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 0.5em;
+}
+.container {
+  position: relative;
+  padding: 1em 0.5em;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+}
+.container+.container {
+  margin-top: 0.5em;
+}
+.container h3 {
+  margin-bottom: 0.5em;
+  margin-right: 5em;
+}
+.container table {
+  width: 100%
+}
+.container th, 
+.container td {
+  padding: 0.25em 0;
+}
+/* UGLY: only the right-most td should be right-aligned */
+.container td+td, .container th+td {
+  text-align: right;
+  
+  /* Truncate with ellipsis */
+  max-width: 8em;
+  overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.container th {
+  text-align: left;
+  font-weight: bold;
+}
+.container_count {
+  position: absolute;
+  top: 1em;
+  right: 0.75em;
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  border-radius: 2em;
+  font-size: 85%;
+  background-color: #000;
+  color: #fff;
+}
+.included, .excluded {}
+.included:after, .excluded:after {
+  padding-left: 0.25em;
+  line-height: 0.01;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.included:after {
+  content: "•";
+  font-size: 245%;
+  
+}
+.excluded:after {
+  content: "◦";
+  font-size: 125%;
+}
+.bar {
+  background-color: rgba(255, 39, 199, 0.4);
+  color: #fff;
+  box-sizing: border-box;
+  width: 100%;
+  white-space: nowrap;
+  padding: 0.2em 0.25em;
+}
+.bar:hover {
+  background-color: rgba(255, 39, 199, 0.8);
+}
+.node_header {
+}
+#NodeInfo {
+  width: 400px;
+}
+	</style>
+</head>
+<body>
+  <div>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+  </div>
+  <div id="NodeInfo" class="panel" draggable="true">
+    <div class="container node_header">
+      <h2 class="local_name">key</h2>
+      <div class="namespace_uri">some://namespace-uri</div>
+      <div class="container_count">403,099</div>
+    </div>
+    <div class="container sample_content">
+      <h3>Sample Content</h3>
+      <div class="container_count">1</div>
+      <div class="container_body">
+        <table>
+          <tr>
+            <td><div class="bar" style="width: 100%;">value</div></td>
+            <td>8,811</td>
+          </tr>
+          <tr>
+            <td><div class="bar" style="width: 43%;">lorem ipsum dolor sit ament netus…</div></td>
+            <td>3,792</td>
+          </tr>
+          <tr>
+            <td><div class="bar" style="width: 15%;">another</div></td>
+            <td>1,290</td>
+          </tr>
+          <tr>
+            <td><div class="bar" style="width: 6%;">lorem ipsum dolor sit…</div></td>
+            <td>543</td>
+          </tr>
+        </table>
+        <div class="more">49 more</div>
+      </div>
+    </div>
+    <div class="container">
+      <h3>Range Indexes</h3>
+      <div class="container_count">1</div>
+      <div class="container_body">
+        <table>
+          <tr>
+            <th>Type</th>
+            <td>string</td>
+          </tr>
+          <tr>
+            <th>Collation</th>
+            <td>http://marklogic.com/collation/codepoint</td>
+          </tr>
+          <tr>
+            <th>Positions</th>
+            <td type="boolean">on</td>
+          </tr>
+        </table>
+        <div class="actions">
+          <button>Add…</button>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <h3>Fields</h3>
+      <div class="container_count">3</div>
+      <div class="container_body">
+        <table>
+          <tr>
+            <th>dignissim vitae </th>
+            <td><span class="included">included</span></td>
+          </tr>
+          <tr>
+            <th>sollicitudin</th>
+            <td><span class="included">included</span></td>
+          </tr>
+          <tr>
+            <th>quis mattis</th>
+            <td><span class="excluded">excluded</span></td>
+          </tr>
+        </table>
+        <div class="actions">
+          <button>Add…</button>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <h3>Word Lexicons</h3>
+      <div class="container_count">1</div>
+      <div class="container_body">
+        <table>
+          <tr>
+            <th>Collation</th>
+            <td>http://marklogic.com/collation</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
