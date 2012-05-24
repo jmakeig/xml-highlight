@@ -29,8 +29,8 @@ return
     let $response := xdmp:http-get(concat("http://localhost:8002/manage/v1/databases/", xdmp:database-name(xdmp:database()), "/config?format=xml"),
       <options xmlns="xdmp:http">
        <authentication method="digest">
-         <username>manage-reader</username>
-         <password>asdfasdf</password>
+         <username>admin</username>
+         <password>admin</password>
        </authentication>
       </options>)
     let $db-config := if(data($response[1]/http:code) != 200) then error(xs:QName("ERROR"), "HTTP error") else $response[2]
@@ -139,7 +139,7 @@ return
               )
             )}
           </estimate>
-          {(:
+          {
             try {
               for $v in cts:element-values(QName($element-nsuri, $element-local), (), ("frequency-order", "truncate=10"))
               return <samples>
@@ -149,16 +149,17 @@ return
             } catch($err) {
               ()
             }
-          :)}
+          }
         </element>
-        <attribute>
-          <localname>{$attribute-local}</localname>
-          <namespace-uri>{$attribute-nsuri}</namespace-uri>
-          <value>{$attribute-value}</value>
-        </attribute>
-      {
-      xdmp:xslt-eval(if($attribute-local) then $xsl-attr else $xsl, $db-config)/element()
-      }
+        {if($attribute-local) then
+          <attribute>
+            <localname>{$attribute-local}</localname>
+            <namespace-uri>{$attribute-nsuri}</namespace-uri>
+            <value>{$attribute-value}</value>
+          </attribute>
+        else ()}
+      {xdmp:log(xdmp:xslt-eval(if($attribute-local) then $xsl-attr else $xsl, $db-config)/element())}
+      {xdmp:xslt-eval(if($attribute-local) then $xsl-attr else $xsl, $db-config)/element()}
       </node>
     )
   ) else if("POST" eq xdmp:get-request-method()) then
