@@ -79,6 +79,7 @@
 }
 .element.empty.collapsed .element-open:after {
   content: "";
+  display: none;
 }
 .attribute {
 }
