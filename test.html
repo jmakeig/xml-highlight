@@ -20,7 +20,7 @@
         return [obj];
     }
   </script>
-  <script type="text/javascript" src="lib/jquery-1.6.4-min.js"></script>
+  <script type="text/javascript" src="lib/jquery-1.7.2-min.js"></script>
   <script type="text/javascript">
     jQuery.fn.center = function() {
       this.css("position", "absolute");
@@ -82,10 +82,14 @@
       });
 
       $("#run").click(function(evt) {
+        console.time("fetch results");
         $("#output").append('<div class="status-overlay">Working…</div>');
         var options = getOptions();
         getInputXML(function(results) {
+          console.timeEnd("fetch results");
+          console.time("render");
           formatResults(results, options, $("#output"));
+          console.timeEnd("render");
           //$(".element, .comment").addClass("collapsed");
           /* Expand the root element only */
           //$(".root > .element, .root > .comment").removeClass("collapsed");
@@ -106,24 +110,12 @@
       function getInputXML(
         handler /* function(results<Array<Object<type, content>>>) */,
         errorHandler /* function(error) */) {
-
-/*
-        handler({"type":"document", "content":'<xml:asdf xmlns:xml="XXXXX"/>'});
-        return;
-*/
-
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
           if(this.readyState === 1) { /* Loading */ }
           if(this.readyState === 4) {
             if (this.status >= 200 && this.status < 300) {
-              handler(JSON.parse(this.responseText /*, function(key, value) {
-                if("" !== key) {
-                  console.log("Parsing JSON key: '" + key + "'");
-                  //console.log(value);
-                }
-                return value;
-              }*/));
+              handler(JSON.parse(this.responseText));
             } else {
               //console.log(this.responseText);
               errorHandler(this.responseText);
@@ -135,7 +127,7 @@
         xhr.setRequestHeader("Accept", "application/json");
         xhr.send($("#input-xml").val());
       }
-
+      
       function formatResults(results /*Array<Object<type, content>>*/, options, target/*jQuery node*/) {
         // If it's a single result, wrap it in an array
         if(!results.length) { results = [results]; }
@@ -146,9 +138,8 @@
         var len = results.length;
         if(options.maxResults > 0) len = Math.min(results.length, options.maxResults);
         
-        accumulator.push('<div class="results-meta">Displaying '+ len +' results  </div>');
+        accumulator.push('<div class="results-meta">Displaying '+ len +' results</div>');
         
-        //var xmlCount = 0;
         for(var i = 0; i < len; i++) {
           var result = results[i];
           accumulator.push('<div class="result-item">');
@@ -173,6 +164,9 @@
           }
           else if("string" === result.type) {
             accumulator.push("<div class='value type-" + result.type + "'>" + escapeForHTML(result.content || " ") + "</div>");
+          }
+          else if("json" === result.type) {
+            accumulator.push("SOME JSON");
           }
           else {
             accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
@@ -229,7 +223,7 @@
       }
       
       function renderDetails(details, $el, $attr) {
-        console.dir(details);
+        //console.dir(details);
         $("#node-details").html(
           tmpl("node_details_template", details.node)
         ).css({top: $($el).offset().top + "px", right: "2em"});
@@ -356,7 +350,9 @@
         $(this).next("div").toggle();
       });
       $("#options").next("div").toggle();
-
+      
+      
+      $('#run').click();
     });
   </script>
   <style type="text/css">
@@ -436,8 +432,10 @@
       outline: none;
     }
     #output *:focus {
+      /*
       border: dashed 1px #999;
       border-radius: 4px;
+      */
       outline: none;
     }
     .error {
@@ -650,6 +648,10 @@ binary { xs:hexBinary("BEEF") },
         <option value="for $i in (1 to 10000) return string(xdmp:random())">Many strings</option>
         <option value="<a:A asdf=&quot;qwer&quot; xmlns:a=&quot;AaA&quot;><b:B xmlns:b=&quot;BbB&quot;>B</b:B></a:A>">Namespaces</option>
         <option value="<p xmlns=&quot;para&quot; xml:lang=&quot;zh&quot;>久有归天愿</p>">XML namespace</option>
+        <option value="let $m := map:map()
+let $_ := map:put($m, &quot;asdf&quot;, (1 to 100))
+let $_ := map:put($m, &quot;blah&quot;, 'baz bar foo')
+return $m">JSON (hack)</option>
       </select>
     </div>
     <div class="control">
@@ -669,6 +671,7 @@ binary { xs:hexBinary("BEEF") },
   <div id="output-tools">
     <button id="collapse-all">Collapse All</button>
     <button id="expand-all">Expand All</button>
+    <span class="total"></span>
     <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
   </div>
   <div id="node-details"><!-- Populated by rendered #node_details_template --></div>
