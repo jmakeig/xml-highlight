@@ -3,11 +3,8 @@ function highlightJSON(json, handler, options, errorHandler) {
   var WHITESPACE = /^\s+$/; // all whitespace
   // Accumulates HTML as the parsing happens. Concatenated in the send function.
   var accumulator = [];
-  // Keeps track of elements whose start tags have been parsed, 
-  // but whose end tags haven't been encountered. This is 
-  // required to clean up the unclosed elements in the case 
-  // that the XML is truncated.
-  var stack = []; var justOpenedArray = false;
+  // Local state
+  var stack = [], justOpenedArray = false;
   console.dir(exports);
   var parser = exports.parser(options);
   var options = options || {}, 
@@ -23,12 +20,16 @@ function highlightJSON(json, handler, options, errorHandler) {
   }
   
   
-  parser.onvalue = function (v) {
+  parser.onvalue = function(v) {
     // got some value.  v is the value. cant be string, int, bool, and null.
     //console.log("value: " + v);
     console.log(stack.join(", "));
     if(stack[stack.length - 1] === "array" && !justOpenedArray) accumulator.push(", ");
-    accumulator.push('<span class="json-value">"<span class="json-value-X">' + v + '</span>"</span>');
+    var quote = '';
+    var type = typeof v;
+    if("object" === type && !v) type = "null";
+    if("string" === type) quote = '"'
+    accumulator.push('<span class="json-value">' + quote + '<span class="json-value json-' + type + '">' + v + '</span>' + quote + '</span>');
     justOpenedArray = false;
   };
   parser.onopenobject = function(key) {

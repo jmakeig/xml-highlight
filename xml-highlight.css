@@ -2,7 +2,8 @@
   font-family: Inconsolata, Consolas, monospace;
   font-size: 110%;
 }
-.element {
+.element, 
+.json-object {
   cursor: default;
 }
 /* self-closing */
@@ -10,10 +11,11 @@
 .element > .element,
 .element-value > .element,
 .element-value > .comment,
-.element-value > .processing-instruction {
+.element-value > .processing-instruction,
+.json-object > .json-object {
   margin-left: 1em;
 }
-.text {
+.text, .json-value {
   display: inline;
 }
 /* Inline elements */
@@ -42,11 +44,13 @@
 .processing-instruction.collapsed .processing-instruction-value {
   display: none;
 }
-.element-open, .element-close {
+.element-open, .element-close,
+.json-object-open, .json-object-close {
   padding: 0.1em 0.4em;
   line-height: 1.4;
 }
-.element-open {
+.element-open, 
+.json-object-open {
   border-top-left-radius: 0.5em;
   border-bottom-left-radius: 0.5em;
 }
@@ -54,7 +58,8 @@
   display: none;
 }
 .element-close,
-.element.empty .element-open {
+.element.empty .element-open, 
+.json-object-close {
   border-top-right-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
 }
@@ -73,7 +78,8 @@
 }
 .element.collapsed .element-open:after,
 .comment.collapsed .comment-open:after,
-.processing-instruction.collapsed .processing-instruction-open:after {
+.processing-instruction.collapsed .processing-instruction-open:after,
+.json-object.collapsed .json-object-open:after {
   display: inline;
   content: "…";
 }
@@ -81,10 +87,13 @@
   content: "";
   display: none;
 }
-.attribute {
+.attribute,
+.json-key {
 }
-.attribute-name {}
-.attribute-value {
+.attribute-name,
+.json-key-name {}
+.attribute-value,
+.json-value {
   display: inline-block;
   vertical-align: top;
   margin-top: 0.2em;
@@ -160,16 +169,19 @@
 /* Colors */
 
 
-.element {
+.element, .json-object {
   color: blue;
 }
-.element-open, .element-close, .attribute-value {
+.element-open, .element-close, .attribute-value,
+.json-object-open, .json-object-close {
   background: #f2f6f8;
 }
-.attribute {
+.attribute, 
+.json-key {
   color: purple;
 }
-.attribute-value {
+.attribute-value,
+.json-value {
   color: brown;
 }
 .namespace { color: #666; }
