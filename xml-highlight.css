@@ -38,11 +38,11 @@
 .element-value,
 .comment-value,
 .json-object-value,
-.json-array-value
+.json-array-values
 /*.processing-instruction-value*/ {
   margin-left: 0.75em;
 }
-.json-array-value > .json-value {
+.json-array-values > .json-value {
   display: block;
 }
 .element.collapsed .element-value,
