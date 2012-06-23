@@ -6,13 +6,14 @@
 .json-object {
   cursor: default;
 }
+
 /* self-closing */
 .element.empty {}
 .element > .element,
 .element-value > .element,
 .element-value > .comment,
 .element-value > .processing-instruction,
-.json-object > .json-object {
+{
   margin-left: 1em;
 }
 .text, .json-value {
@@ -35,9 +36,14 @@
 }
 .element-name {}
 .element-value,
-.comment-value
+.comment-value,
+.json-object-value,
+.json-array-value
 /*.processing-instruction-value*/ {
   margin-left: 0.75em;
+}
+.json-array-value > .json-value {
+  display: block;
 }
 .element.collapsed .element-value,
 .comment.collapsed .comment-value,
@@ -92,8 +98,7 @@
 }
 .attribute-name,
 .json-key-name {}
-.attribute-value,
-.json-value {
+.attribute-value {
   display: inline-block;
   vertical-align: top;
   margin-top: 0.2em;

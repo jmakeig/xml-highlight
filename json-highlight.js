@@ -12,10 +12,23 @@ function highlightJSON(json, handler, options, errorHandler) {
     textCollapse = options.textCollapse || 100,
     tabIndex = options.tabIndex || 1;
 
+  function isInArray() {
+    if(stack.length < 1) return false;
+    return top() === "array";
+  }
+  function isInObject() {
+    if(stack.length < 1) return false;
+    return top() === "object";
+  }
+  function top() {
+    if(stack.length < 1) return undefined;
+    return stack[stack.length - 1]; 
+  }
   
   parser.onready = function() { console.log("ready!")}
   parser.onerror = function(error) {
     console.error(error);
+    // TODO: Unroll stack here
     errorHandler(error);
   }
   
@@ -24,52 +37,67 @@ function highlightJSON(json, handler, options, errorHandler) {
     // got some value.  v is the value. cant be string, int, bool, and null.
     //console.log("value: " + v);
     console.log(stack.join(", "));
-    if(stack[stack.length - 1] === "array" && !justOpenedArray) accumulator.push(", ");
+    if(isInArray() && !justOpenedArray) accumulator.push(", ");
     var quote = '';
     var type = typeof v;
     if("object" === type && !v) type = "null";
     if("string" === type) quote = '"'
     accumulator.push('<span class="json-value">' + quote + '<span class="json-value json-' + type + '">' + v + '</span>' + quote + '</span>');
     justOpenedArray = false;
+    popKV();
   };
+  function popKV() {
+    if(top() === "key-value") {
+      accumulator.push("</div>");
+      stack.pop();
+    }
+  }
   parser.onopenobject = function(key) {
     // opened an object. key is the first key.
     //console.log("openobject: " + key);
-    if(stack[stack.length - 1] === "array") accumulator.push(", ");
+    //if(stack[stack.length - 1] === "array") accumulator.push(", ");
     stack.push("object");
-    accumulator.push('<div class="json-object"><span class="json-object-open">{</span>');
+    accumulator.push('<div class="json-object"><span class="json-object-open">{</span><div class="json-object-value">');
     if(key) accumulator.push(doKey(key));
     justOpenedArray = false;
-  };
-  function doKey(key) {
-    accumulator.push('<span class="json-key">"<span class="json-key-name">' + key + '</span>": </span>');
-  }
-  parser.onkey = function(key) {
-    // got a key in an object.
-    //console.log("key: " + key);
-    accumulator.push(', ');
-    doKey(key);
   };
   parser.oncloseobject = function () {
     // closed an object.
     //console.log("closeobject");
-    accumulator.push('<span class="json-object-close">}</span></div>');
     console.log("Popping (object) " + stack.pop());
     console.log("> " + stack.join(", "));
+    accumulator.push('</div><span class="json-object-close">}</span>');
+    if(isInArray()) accumulator.push(", ");
+    accumulator.push('</div>');
+    popKV();
   };
+  
+  parser.onkey = function(key) {
+    // Got a key in an object, numbers 2 to n. The first key is in the openobject event, curiously.
+    //console.log("key: " + key);
+    doKey(key);
+  };
+  function doKey(key) {
+    stack.push("key-value");
+    accumulator.push('<div class="json-key-value">'); // closed in popKV()
+    accumulator.push('<span class="json-key">"<span class="json-key-name">' + key + '</span>": </span>');
+  }
   parser.onopenarray = function () {
     // opened an array.
     //console.log("openarray");
     stack.push("array");
     accumulator.push('<div class="json-array"><span class="json-array-open">[</span>');
+    accumulator.push('<div class="json-array-value">')
     justOpenedArray = true;
   };
   parser.onclosearray = function () {
     // closed an array.
     //console.log("closearray");
+    accumulator.push('</div>'); // closing div.json-array-value
     accumulator.push('<span class="json-array-close">]</span></div>');
     console.log("Popping (array) " + stack.pop());
     console.log("> " + stack.join(", "));
+    popKV();
   };
   
   
@@ -137,13 +165,14 @@ function highlightJSON(json, handler, options, errorHandler) {
     //console.dir(stack);
     //console.log(p.state);
     if(stack.length > 0) {
+      console.error(stack.join(", "));
       for(var i = stack.length - 1; i >= 0; i--) {
         // Close element and element-value blocks due to truncation
         // TODO: This should happen more elegantly than chopped off elements
         // TODO: There should really be some interactive way to lazily format the next chunk
-        cleanUp.push('<!-- stack: ' + stack[i] + ' --></div></div>');
+        //cleanUp.push('<!-- stack: ' + stack[i] + ' --></div></div>');
       }
-      message = '<div class="message">For performance reasons, you’re only looking at the first ' + options.truncate + '-character chunk. To see the full result, output the query as raw text.</div>';
+      //message = '<div class="message">For performance reasons, you’re only looking at the first ' + options.truncate + '-character chunk. To see the full result, output the query as raw text.</div>';
     }
     handler(
       "\n\n<!-- START JSON-HIGHLIGHT -->" + 
