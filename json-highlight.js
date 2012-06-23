@@ -11,13 +11,9 @@ function highlightJSON(json, handler, options, errorHandler) {
     textCollapse = options.textCollapse || 100,
     tabIndex = options.tabIndex || 1;
 
-  function isInArray() {
+  function isIn(type) {
     if(stack.length < 1) return false;
-    return top() === "array";
-  }
-  function isInObject() {
-    if(stack.length < 1) return false;
-    return top() === "object";
+    return top() === type;
   }
   function top() {
     if(stack.length < 1) return undefined;
@@ -42,7 +38,6 @@ function highlightJSON(json, handler, options, errorHandler) {
     var type = typeof v;
     if("object" === type && !v) type = "null";
     if("string" === type) quote = '"'
-    //if(isInArray()) array = "array-";
     accumulator.push('<span class="json-value">' + quote + '<span class="json-' + type + '">' + v + '</span>' + quote);
     accumulator.push('<span class="json-separator">, </span>');
     accumulator.push('</span>');
@@ -86,7 +81,7 @@ function highlightJSON(json, handler, options, errorHandler) {
     // Hack to remove the last trailing comma on the child key-value pairs
     popLastSeparator();
     accumulator.push('</div><span class="json-object-close">}</span>');
-    if(isInArray()) accumulator.push('<span class="json-separator">, </span>');
+    if(isIn("array") || isIn("key-value")) accumulator.push('<span class="json-separator">, </span>');
     accumulator.push('</div>');
     popKV();
   };
