@@ -10,7 +10,7 @@ function highlightJSON(json, handler, options, errorHandler) {
   // Accumulates HTML as the parsing happens. Concatenated in the send function.
   var accumulator = [];
   // Local state
-  var stack = [], justOpenedArray = false;
+  var stack = [];
   var parser = exports.parser(options);
   var options = options || {}, 
     truncate = options.truncate || -1,
@@ -66,7 +66,6 @@ function highlightJSON(json, handler, options, errorHandler) {
     accumulator.push('<span class="json-value">' + quote + '<span class="json-' + type + '">' + v + '</span>' + quote);
     accumulator.push('<span class="json-separator">, </span>');
     accumulator.push('</span>');
-    justOpenedArray = false;
     popKV();
   };
   parser.onopenobject = function(key) {
@@ -77,7 +76,6 @@ function highlightJSON(json, handler, options, errorHandler) {
     accumulator.push('<span class="json-object-open">{</span>');
     accumulator.push('<div class="json-object"><div class="json-object-value">');
     if(key) accumulator.push(doKey(key));
-    justOpenedArray = false;
   };
   parser.oncloseobject = function () {
     // closed an object.
@@ -112,7 +110,6 @@ function highlightJSON(json, handler, options, errorHandler) {
     accumulator.push('<span class="json-array-open">[</span>');
     accumulator.push('<div class="json-array">');
     accumulator.push('<div class="json-array-values">')
-    justOpenedArray = true;
   };
   parser.onclosearray = function () {
     // closed an array.
