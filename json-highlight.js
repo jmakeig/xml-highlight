@@ -1,6 +1,12 @@
+/**
+ * Turns JSON into semantic HTML for display (and beyond).
+ * json <String>: The JSON to
+ * handler <Function<String>>: The function to call upon successful conversion
+ * options <Object>
+ * errorHandler <Function<Object>>: The function to call in the event of an error
+ */
 function highlightJSON(json, handler, options, errorHandler) {
   "use strict"
-  var WHITESPACE = /^\s+$/; // all whitespace
   // Accumulates HTML as the parsing happens. Concatenated in the send function.
   var accumulator = [];
   // Local state
@@ -10,42 +16,21 @@ function highlightJSON(json, handler, options, errorHandler) {
     truncate = options.truncate || -1,
     textCollapse = options.textCollapse || 100,
     tabIndex = options.tabIndex || 1;
-
+  
+  /* Utils */
+  // Checks the stack to see what the top is. Possible values are 
+  // "object", "array", or "key-value"
   function isIn(type) {
+    function top() {
+      if(stack.length < 1) return undefined;
+      return stack[stack.length - 1]; 
+    }
     if(stack.length < 1) return false;
     return top() === type;
   }
-  function top() {
-    if(stack.length < 1) return undefined;
-    return stack[stack.length - 1]; 
-  }
-  
-  parser.onready = function() { 
-    //console.log("ready!")
-  }
-  parser.onerror = function(error) {
-    console.error(error);
-    // TODO: Unroll stack here
-    errorHandler(error);
-  }
-  
-  
-  parser.onvalue = function(v) {
-    // got some value.  v is the value. cant be string, int, bool, and null.
-    //console.log("value: " + v);
-    //console.log(stack.join(", "));
-    var quote = '', array = '';
-    var type = typeof v;
-    if("object" === type && !v) type = "null";
-    if("string" === type) quote = '"'
-    accumulator.push('<span class="json-value">' + quote + '<span class="json-' + type + '">' + v + '</span>' + quote);
-    accumulator.push('<span class="json-separator">, </span>');
-    accumulator.push('</span>');
-    justOpenedArray = false;
-    popKV();
-  };
+  // If we're processing a key-value, close its div and pop it off the stack
   function popKV() {
-    if(top() === "key-value") {
+    if(isIn("key-value")) {
       accumulator.push("</div>");
       stack.pop();
     }
@@ -61,6 +46,29 @@ function highlightJSON(json, handler, options, errorHandler) {
       }
     }
   }
+  
+  /* Parsers handlers */
+  parser.onready = function() { 
+    //console.log("ready!")
+  }
+  parser.onerror = function(error) {
+    console.error(error);
+    // TODO: Unroll stack here
+    errorHandler(error);
+  }
+  parser.onvalue = function(v) {
+    //console.log("value: " + v);
+    //console.log(stack.join(", "));
+    var quote = '', array = '';
+    var type = typeof v;
+    if("object" === type && !v) type = "null";
+    if("string" === type) quote = '"'
+    accumulator.push('<span class="json-value">' + quote + '<span class="json-' + type + '">' + v + '</span>' + quote);
+    accumulator.push('<span class="json-separator">, </span>');
+    accumulator.push('</span>');
+    justOpenedArray = false;
+    popKV();
+  };
   parser.onopenobject = function(key) {
     // opened an object. key is the first key.
     //console.log("openobject: " + key);
@@ -81,7 +89,8 @@ function highlightJSON(json, handler, options, errorHandler) {
     // Hack to remove the last trailing comma on the child key-value pairs
     popLastSeparator();
     accumulator.push('</div><span class="json-object-close">}</span>');
-    if(isIn("array") || isIn("key-value")) accumulator.push('<span class="json-separator">, </span>');
+    if(isIn("array") || isIn("key-value")) 
+      accumulator.push('<span class="json-separator">, </span>');
     accumulator.push('</div>');
     popKV();
   };
@@ -127,6 +136,7 @@ function highlightJSON(json, handler, options, errorHandler) {
     //console.log(p.state);
     if(stack.length > 0) {
       console.error(stack.join(", "));
+      console.warn("TODO: Need to implement stack unroll in the case of truncation");
       for(var i = stack.length - 1; i >= 0; i--) {
         // Close element and element-value blocks due to truncation
         // TODO: This should happen more elegantly than chopped off elements
