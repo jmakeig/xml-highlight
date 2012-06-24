@@ -104,7 +104,6 @@ function highlightJSON(json, handler, options, errorHandler) {
     accumulator.push('<span class="json-key">"<span class="json-key-name">' + key + '</span>": </span>');
   }
   parser.onopenarray = function () {
-    // opened an array.
     //console.log("openarray");
     stack.push("array");
     accumulator.push('<span class="json-array-open">[</span>');

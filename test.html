@@ -31,7 +31,9 @@
   </script>
   <script type="text/javascript" src="lib/tmpl.js"></script>
   <script type="text/javascript" src="lib/sax.js"></script>
+  <script type="text/javascript" src="lib/clarinet.js"></script>
   <script type="text/javascript" src="xml-highlight.js"></script>
+  <script type="text/javascript" src="json-highlight.js"></script>
   <script type="text/javascript">
     /** http://stackoverflow.com/questions/985272/jquery-selecting-text-in-an-element-akin-to-highlighting-with-your-mouse/2838358#2838358 */
     function selectElementText(el, win) {
@@ -147,6 +149,7 @@
           if("element" === result.type || "document" === result.type || "comment" === result.type || "processing-instruction" === result.type) {
             // TODO: Proper truncation
             highlight(result.content, function(output) {
+              //console.log(output);
               accumulator.push(output);
             }, options,
             function(error) { 
@@ -166,7 +169,12 @@
             accumulator.push("<div class='value type-" + result.type + "'>" + escapeForHTML(result.content || " ") + "</div>");
           }
           else if("json" === result.type) {
-            accumulator.push("SOME JSON");
+            highlightJSON(result.content, function(output) {
+              accumulator.push(output);
+            }, null, 
+            function(error) { 
+                $("#output").html('<div class="error">' + error + '</div>');            
+            });
           }
           else {
             accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
@@ -648,10 +656,29 @@ binary { xs:hexBinary("BEEF") },
         <option value="for $i in (1 to 10000) return string(xdmp:random())">Many strings</option>
         <option value="<a:A asdf=&quot;qwer&quot; xmlns:a=&quot;AaA&quot;><b:B xmlns:b=&quot;BbB&quot;>B</b:B></a:A>">Namespaces</option>
         <option value="<p xmlns=&quot;para&quot; xml:lang=&quot;zh&quot;>久有归天愿</p>">XML namespace</option>
-        <option value="let $m := map:map()
-let $_ := map:put($m, &quot;asdf&quot;, (1 to 100))
-let $_ := map:put($m, &quot;blah&quot;, 'baz bar foo')
-return $m">JSON (hack)</option>
+        <option value="<json type=&quot;array&quot; xmlns=&quot;http://marklogic.com/xdmp/json/basic&quot;>
+  <json type=&quot;object&quot;>
+    <lastName type=&quot;string&quot;>Gretzky</lastName>
+    <firstName type=&quot;string&quot;>Wayne</firstName>
+    <active type=&quot;boolean&quot;>false</active>
+    <teams type=&quot;array&quot;>
+      <item type=&quot;string&quot;>Edmonton</item>
+      <item type=&quot;string&quot;>Los Angeles</item>
+      <item type=&quot;string&quot;>St. Louis</item>
+      <item type=&quot;string&quot;>New York</item>
+    </teams>
+    <jerseyNumber type=&quot;number&quot;>99</jerseyNumber>
+  </json>
+  <json type=&quot;object&quot;>
+    <lastName type=&quot;string&quot;>Lemieux</lastName>
+    <firstName type=&quot;string&quot;>Mario</firstName>
+    <active type=&quot;boolean&quot;>false</active>
+    <teams type=&quot;array&quot;>
+      <item type=&quot;string&quot;>Pittsburgh</item>
+    </teams>
+    <jerseyNumber type=&quot;number&quot;>66</jerseyNumber>
+  </json>
+</json>">JSON (hack)</option>
       </select>
     </div>
     <div class="control">

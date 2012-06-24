@@ -1,4 +1,6 @@
 xquery version "1.0-ml";
+import module namespace json = "http://marklogic.com/xdmp/json" at "/MarkLogic/json/json.xqy";
+declare namespace js="http://marklogic.com/xdmp/json/basic";
 declare namespace local="local";
 declare function local:serialize($results as item()*) as map:map* {
   for $r in $results
@@ -6,6 +8,8 @@ declare function local:serialize($results as item()*) as map:map* {
     let $m := map:map()
     let $type := 
     typeswitch($r)
+      case element(js:json)
+        return "json"
       case document-node()
         return "document"
       case element()
@@ -38,8 +42,10 @@ declare function local:serialize($results as item()*) as map:map* {
         return "comment"
       case processing-instruction()
         return "processing-instruction"
-      default return "Other"
+      default 
+        return "other"
       return (
+        xdmp:log($type),
         map:put($m, "type", $type),
         map:put($m, "content", 
           if(("document", "element") = $type) then
@@ -50,6 +56,8 @@ declare function local:serialize($results as item()*) as map:map* {
             "Binary"
           else if("attribute" = $type) then
             concat(name($r), "=&quot;", data($r), "&quot;")
+          else if("json" = $type) then
+            json:transform-to-json($r)
           else $r
         ),
         $m
