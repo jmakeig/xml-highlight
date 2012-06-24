@@ -140,7 +140,7 @@
         var len = results.length;
         if(options.maxResults > 0) len = Math.min(results.length, options.maxResults);
         
-        accumulator.push('<div class="results-meta">Displaying '+ len +' results</div>');
+        accumulator.push('<div class="results-meta">Displaying '+ len +' result' + (len > 1 ? 's' : '') +'</div>');
         
         for(var i = 0; i < len; i++) {
           var result = results[i];

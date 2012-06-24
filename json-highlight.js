@@ -115,10 +115,11 @@ function highlightJSON(json, handler, options, errorHandler) {
     //console.log("closearray");
     popLastSeparator();
     accumulator.push('</div>'); // closing div.json-array-values
-    accumulator.push('<span class="json-array-close">]</span></div>');
-    //console.log("Popping (array) " + 
-      stack.pop()
-    //);
+    accumulator.push('<span class="json-array-close">]</span>');
+    stack.pop();
+    if(isIn("array") || isIn("key-value")) 
+      accumulator.push('<span class="json-separator">, </span>');
+    accumulator.push('</div>');
     //console.log("> " + stack.join(", "));
     popKV();
   };

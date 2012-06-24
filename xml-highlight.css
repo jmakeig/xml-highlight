@@ -51,12 +51,14 @@
   display: none;
 }
 .element-open, .element-close,
-.json-object-open, .json-object-close {
+.json-object-open, .json-object-close,
+.json-array-open, .json-array-close {
   padding: 0.1em 0.4em;
   line-height: 1.4;
 }
 .element-open, 
-.json-object-open {
+.json-object-open, 
+.json-array-open {
   border-top-left-radius: 0.5em;
   border-bottom-left-radius: 0.5em;
 }
@@ -65,7 +67,8 @@
 }
 .element-close,
 .element.empty .element-open, 
-.json-object-close {
+.json-object-close,
+.json-array-close {
   border-top-right-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
 }
@@ -174,11 +177,14 @@
 /* Colors */
 
 
-.element, .json-object {
+.element, 
+.json-object,
+.json-array {
   color: blue;
 }
 .element-open, .element-close, .attribute-value,
-.json-object-open, .json-object-close {
+.json-object-open, .json-object-close,
+.json-array-open, .json-array-close {
   background: #f2f6f8;
 }
 .attribute, 
