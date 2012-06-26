@@ -59,22 +59,24 @@ function highlightJSON(json, handler, options, errorHandler) {
   parser.onvalue = function(v) {
     //console.log("value: " + v);
     //console.log(stack.join(", "));
-    var quote = '', array = '';
+    var quote = '';
     var type = typeof v;
     if("object" === type && !v) type = "null";
     if("string" === type) quote = '"'
+    if(isIn("array")) accumulator.push('<div class="json-array-item">');
     accumulator.push('<span class="json-value">' + quote + '<span class="json-' + type + '">' + v + '</span>' + quote);
     accumulator.push('<span class="json-separator">, </span>');
     accumulator.push('</span>');
+    if(isIn("array")) accumulator.push('</div>'); // closes .json-array-item
     popKV();
   };
   parser.onopenobject = function(key) {
     // opened an object. key is the first key.
-    //console.log("openobject: " + key);
-    //if(stack[stack.length - 1] === "array") accumulator.push(", ");
+    if(isIn("array")) accumulator.push('<div class="json-array-item">');
     stack.push("object");
-    accumulator.push('<span class="json-object-open">{</span>');
-    accumulator.push('<div class="json-object"><div class="json-object-value">');
+    accumulator.push('<div class="json-object">');
+    accumulator.push('<span class="toggle"></span><span class="json-object-open">{</span>');
+    accumulator.push('<div class="json-object-value">');
     if(key) accumulator.push(doKey(key));
   };
   parser.oncloseobject = function () {
@@ -91,6 +93,7 @@ function highlightJSON(json, handler, options, errorHandler) {
       accumulator.push('<span class="json-separator">, </span>');
     accumulator.push('</div>');
     popKV();
+    if(isIn("array")) accumulator.push('</div>'); // closes .json-array-item
   };
   
   parser.onkey = function(key) {
@@ -105,16 +108,16 @@ function highlightJSON(json, handler, options, errorHandler) {
   }
   parser.onopenarray = function () {
     //console.log("openarray");
+    if(isIn("array")) accumulator.push('<div class="json-array-item">');
     stack.push("array");
-    accumulator.push('<span class="json-array-open">[</span>');
-    accumulator.push('<div class="json-array">');
-    accumulator.push('<div class="json-array-values">')
+    accumulator.push('<div class="json-array"><span class="toggle"></span><span class="json-array-open">[</span>');
+    accumulator.push('<div class="json-array-value">')
   };
   parser.onclosearray = function () {
     // closed an array.
     //console.log("closearray");
     popLastSeparator();
-    accumulator.push('</div>'); // closing div.json-array-values
+    accumulator.push('</div>'); // closing div.json-array-value
     accumulator.push('<span class="json-array-close">]</span>');
     stack.pop();
     if(isIn("array") || isIn("key-value")) 
@@ -122,6 +125,7 @@ function highlightJSON(json, handler, options, errorHandler) {
     accumulator.push('</div>');
     //console.log("> " + stack.join(", "));
     popKV();
+    if(isIn("array")) accumulator.push('</div>'); // closes .json-array-item
   };
   parser.onend = function() {
     if(!parser.error) send();

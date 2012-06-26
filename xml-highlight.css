@@ -3,10 +3,15 @@
   font-size: 110%;
 }
 .element, 
-.json-object {
+.json-object, 
+.json-array {
   cursor: default;
 }
-
+.json-object, 
+.json-array {
+  /* inline allows the *-open class to be on the same line as the previous key-value */
+  display: inline;
+}
 /* self-closing */
 .element.empty {}
 .element > .element,
@@ -38,16 +43,18 @@
 .element-value,
 .comment-value,
 .json-object-value,
-.json-array-values
+.json-array-value
 /*.processing-instruction-value*/ {
   margin-left: 0.75em;
 }
-.json-array-values > .json-value {
+.json-array-value > .json-value {
   display: block;
 }
 .element.collapsed .element-value,
 .comment.collapsed .comment-value,
-.processing-instruction.collapsed .processing-instruction-value {
+.processing-instruction.collapsed .processing-instruction-value,
+.json-object.collapsed .json-object-value,
+.json-array.collapsed .json-array-value {
   display: none;
 }
 .element-open, .element-close,
@@ -79,17 +86,22 @@
 .element.collapsed .element-meta {
   display: none;
 }
-.element.collapsed .element-open {
+.element.collapsed .element-open,
+.json-object.collapsed .json-object-open,
+.json-array.collapsed .json-array-open {
   padding-right: 0.05em;
 }
-.element.collapsed .element-close {
+.element.collapsed .element-close,
+.json-object.collapsed .json-object-close,
+.json-array.collapsed .json-array-close {
   padding-left: 0.05em;
 }
 .element.collapsed .element-open:after,
 .comment.collapsed .comment-open:after,
 .processing-instruction.collapsed .processing-instruction-open:after,
-.json-object.collapsed .json-object-open:after {
-  display: inline;
+.json-object.collapsed .json-object-open:after,
+.json-array.collapsed .json-array-open:after {
+  display: inline-block;
   content: "…";
 }
 .element.empty.collapsed .element-open:after {
@@ -172,6 +184,10 @@
   background: rgba(0,0,0,0.5);
   border-radius: 0.5em;
   
+}
+
+.force-inline {
+  display: inline;
 }
 
 /* Colors */

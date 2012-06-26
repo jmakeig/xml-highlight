@@ -149,7 +149,6 @@
           if("element" === result.type || "document" === result.type || "comment" === result.type || "processing-instruction" === result.type) {
             // TODO: Proper truncation
             highlight(result.content, function(output) {
-              //console.log(output);
               accumulator.push(output);
             }, options,
             function(error) { 
@@ -171,6 +170,8 @@
           else if("json" === result.type) {
             highlightJSON(result.content, function(output) {
               accumulator.push(output);
+              // http://stackoverflow.com/questions/11181791/difference-in-display-of-inline-elements-when-toggled-programmatically-and-decla
+              // TODO: Need to fix json-array and object
             }, null, 
             function(error) { 
                 $("#output").html('<div class="error">' + error + '</div>');            
@@ -202,8 +203,11 @@
       // Delegate click events for expand/collapse to the output container, rather
       // than attaching to each individual node
       $("#output").delegate(".toggle, .processing-instruction-close", "click", function(evt) {
-        $(evt.currentTarget).closest(".element, .comment, .processing-instruction").toggleClass("collapsed");
-        $(evt.currentTarget).next(".element-open, .comment-open, .processing-instruction-open").focus();
+        //$(evt.currentTarget).closest(".element, .comment, .processing-instruction, .json-object, .json-array").toggleClass("collapsed");
+        $(this).closest(".element, .comment, .processing-instruction, .json-object, .json-array").toggleClass("collapsed");
+          // http://stackoverflow.com/questions/11181791/difference-in-display-of-inline-elements-when-toggled-programmatically-and-decla
+          //.end().siblings(".json-array-value").toggleClass("force-inline");
+        $(evt.currentTarget).next(".element-open, .comment-open, .processing-instruction-open, .json-object-open, .json-array-open").focus();
         evt.stopPropagation();
       });
       
@@ -504,6 +508,174 @@
       <label for="input-xml">Source</label>
       <select id="input-xml-source">
         <option value='for $i in (1 to 10) return (
+&lt;json type="array" xmlns="http://marklogic.com/xdmp/json/basic">
+  &lt;json type="object">
+    &lt;created__at type="string">Mon Jun 25 22:34:14 +0000 2012&lt;/created__at>
+    &lt;id type="number">217385239943725056&lt;/id>
+    &lt;id__str type="string">217385239943725056&lt;/id__str>
+    &lt;text type="string">Android developer attending Google I/O this week? We are hosting a casual happy hour at our new office - come by! http://t.co/wlOGmrEE   ^JC&lt;/text>
+    &lt;source type="string">web&lt;/source>
+    &lt;truncated type="boolean">false&lt;/truncated>
+    &lt;in__reply__to__status__id type="null"/>
+    &lt;in__reply__to__status__id__str type="null"/>
+    &lt;in__reply__to__user__id type="null"/>
+    &lt;in__reply__to__user__id__str type="null"/>
+    &lt;in__reply__to__screen__name type="null"/>
+    &lt;user type="object">
+      &lt;id type="number">6253282&lt;/id>
+      &lt;id__str type="string">6253282&lt;/id__str>
+      &lt;name type="string">Twitter API&lt;/name>
+      &lt;screen__name type="string">twitterapi&lt;/screen__name>
+      &lt;location type="string">San Francisco, CA&lt;/location>
+      &lt;description type="string">The Real Twitter API. I tweet about API changes, service issues and happily answer questions about Twitter and our API. Do not get an answer? It is on my website.&lt;/description>
+      &lt;url type="string">http://dev.twitter.com&lt;/url>
+      &lt;protected type="boolean">false&lt;/protected>
+      &lt;followers__count type="number">1110275&lt;/followers__count>
+      &lt;friends__count type="number">29&lt;/friends__count>
+      &lt;listed__count type="number">10560&lt;/listed__count>
+      &lt;created__at type="string">Wed May 23 06:01:13 +0000 2007&lt;/created__at>
+      &lt;favourites__count type="number">24&lt;/favourites__count>
+      &lt;utc__offset type="number">-28800&lt;/utc__offset>
+      &lt;time__zone type="string">Pacific Time (US Canada)&lt;/time__zone>
+      &lt;geo__enabled type="boolean">true&lt;/geo__enabled>
+      &lt;verified type="boolean">true&lt;/verified>
+      &lt;statuses__count type="number">3315&lt;/statuses__count>
+      &lt;lang type="string">en&lt;/lang>
+      &lt;contributors__enabled type="boolean">true&lt;/contributors__enabled>
+      &lt;is__translator type="boolean">false&lt;/is__translator>
+      &lt;profile__background__color type="string">C0DEED&lt;/profile__background__color>
+      &lt;profile__background__image__url type="string">http://a0.twimg.com/images/themes/theme1/bg.png&lt;/profile__background__image__url>
+      &lt;profile__background__image__url__https type="string">https://si0.twimg.com/images/themes/theme1/bg.png&lt;/profile__background__image__url__https>
+      &lt;profile__background__tile type="boolean">false&lt;/profile__background__tile>
+      &lt;profile__image__url type="string">http://a0.twimg.com/profile_images/2284174872/7df3h38zabcvjylnyfe3_normal.png&lt;/profile__image__url>
+      &lt;profile__image__url__https type="string">https://si0.twimg.com/profile_images/2284174872/7df3h38zabcvjylnyfe3_normal.png&lt;/profile__image__url__https>
+      &lt;profile__link__color type="string">0084B4&lt;/profile__link__color>
+      &lt;profile__sidebar__border__color type="string">C0DEED&lt;/profile__sidebar__border__color>
+      &lt;profile__sidebar__fill__color type="string">DDEEF6&lt;/profile__sidebar__fill__color>
+      &lt;profile__text__color type="string">333333&lt;/profile__text__color>
+      &lt;profile__use__background__image type="boolean">true&lt;/profile__use__background__image>
+      &lt;show__all__inline__media type="boolean">false&lt;/show__all__inline__media>
+      &lt;default__profile type="boolean">true&lt;/default__profile>
+      &lt;default__profile__image type="boolean">false&lt;/default__profile__image>
+      &lt;following type="null"/>
+      &lt;follow__request__sent type="null"/>
+      &lt;notifications type="null"/>
+    &lt;/user>
+    &lt;geo type="null"/>
+    &lt;coordinates type="null"/>
+    &lt;place type="null"/>
+    &lt;contributors type="array">
+      &lt;item type="number">14927800&lt;/item>
+    &lt;/contributors>
+    &lt;retweet__count type="number">40&lt;/retweet__count>
+    &lt;entities type="object">
+      &lt;hashtags type="array"/>
+      &lt;urls type="array">
+	&lt;json type="object">
+	  &lt;url type="string">http://t.co/wlOGmrEE&lt;/url>
+	  &lt;expanded__url type="string">http://twitterforandroid.eventbrite.com/&lt;/expanded__url>
+	  &lt;display__url type="string">twitterforandroid.eventbrite.com&lt;/display__url>
+	  &lt;indices type="array">
+	    &lt;item type="number">113&lt;/item>
+	    &lt;item type="number">133&lt;/item>
+	  &lt;/indices>
+	&lt;/json>
+      &lt;/urls>
+      &lt;user__mentions type="array"/>
+    &lt;/entities>
+    &lt;favorited type="boolean">false&lt;/favorited>
+    &lt;retweeted type="boolean">false&lt;/retweeted>
+    &lt;possibly__sensitive type="boolean">false&lt;/possibly__sensitive>
+  &lt;/json>
+  &lt;json type="object">
+    &lt;created__at type="string">Fri Jun 15 19:57:54 +0000 2012&lt;/created__at>
+    &lt;id type="number">213722016866508802&lt;/id>
+    &lt;id__str type="string">213722016866508802&lt;/id__str>
+    &lt;text type="string">@ricktagious not seeing any issues; consider reaching out to @support for issues on the site. ^TS&lt;/text>
+    &lt;source type="string">web&lt;/source>
+    &lt;truncated type="boolean">false&lt;/truncated>
+    &lt;in__reply__to__status__id type="number">213670532372115459&lt;/in__reply__to__status__id>
+    &lt;in__reply__to__status__id__str type="string">213670532372115459&lt;/in__reply__to__status__id__str>
+    &lt;in__reply__to__user__id type="number">152138582&lt;/in__reply__to__user__id>
+    &lt;in__reply__to__user__id__str type="string">152138582&lt;/in__reply__to__user__id__str>
+    &lt;in__reply__to__screen__name type="string">ricktagious&lt;/in__reply__to__screen__name>
+    &lt;user type="object">
+      &lt;id type="number">6253282&lt;/id>
+      &lt;id__str type="string">6253282&lt;/id__str>
+      &lt;name type="string">Twitter API&lt;/name>
+      &lt;screen__name type="string">twitterapi&lt;/screen__name>
+      &lt;location type="string">San Francisco, CA&lt;/location>
+      &lt;description type="string">The Real Twitter API. I tweet about API changes, service issues and happily answer questions about Twitter and our API. Do not get an answer? It is on my website.&lt;/description>
+      &lt;url type="string">http://dev.twitter.com&lt;/url>
+      &lt;protected type="boolean">false&lt;/protected>
+      &lt;followers__count type="number">1110275&lt;/followers__count>
+      &lt;friends__count type="number">29&lt;/friends__count>
+      &lt;listed__count type="number">10560&lt;/listed__count>
+      &lt;created__at type="string">Wed May 23 06:01:13 +0000 2007&lt;/created__at>
+      &lt;favourites__count type="number">24&lt;/favourites__count>
+      &lt;utc__offset type="number">-28800&lt;/utc__offset>
+      &lt;time__zone type="string">Pacific Time (US Canada)&lt;/time__zone>
+      &lt;geo__enabled type="boolean">true&lt;/geo__enabled>
+      &lt;verified type="boolean">true&lt;/verified>
+      &lt;statuses__count type="number">3315&lt;/statuses__count>
+      &lt;lang type="string">en&lt;/lang>
+      &lt;contributors__enabled type="boolean">true&lt;/contributors__enabled>
+      &lt;is__translator type="boolean">false&lt;/is__translator>
+      &lt;profile__background__color type="string">C0DEED&lt;/profile__background__color>
+      &lt;profile__background__image__url type="string">http://a0.twimg.com/images/themes/theme1/bg.png&lt;/profile__background__image__url>
+      &lt;profile__background__image__url__https type="string">https://si0.twimg.com/images/themes/theme1/bg.png&lt;/profile__background__image__url__https>
+      &lt;profile__background__tile type="boolean">false&lt;/profile__background__tile>
+      &lt;profile__image__url type="string">http://a0.twimg.com/profile_images/2284174872/7df3h38zabcvjylnyfe3_normal.png&lt;/profile__image__url>
+      &lt;profile__image__url__https type="string">https://si0.twimg.com/profile_images/2284174872/7df3h38zabcvjylnyfe3_normal.png&lt;/profile__image__url__https>
+      &lt;profile__link__color type="string">0084B4&lt;/profile__link__color>
+      &lt;profile__sidebar__border__color type="string">C0DEED&lt;/profile__sidebar__border__color>
+      &lt;profile__sidebar__fill__color type="string">DDEEF6&lt;/profile__sidebar__fill__color>
+      &lt;profile__text__color type="string">333333&lt;/profile__text__color>
+      &lt;profile__use__background__image type="boolean">true&lt;/profile__use__background__image>
+      &lt;show__all__inline__media type="boolean">false&lt;/show__all__inline__media>
+      &lt;default__profile type="boolean">true&lt;/default__profile>
+      &lt;default__profile__image type="boolean">false&lt;/default__profile__image>
+      &lt;following type="null"/>
+      &lt;follow__request__sent type="null"/>
+      &lt;notifications type="null"/>
+    &lt;/user>
+    &lt;geo type="null"/>
+    &lt;coordinates type="null"/>
+    &lt;place type="null"/>
+    &lt;contributors type="array">
+      &lt;item type="number">819797&lt;/item>
+    &lt;/contributors>
+    &lt;retweet__count type="number">10&lt;/retweet__count>
+    &lt;entities type="object">
+      &lt;hashtags type="array"/>
+      &lt;urls type="array"/>
+      &lt;user__mentions type="array">
+	&lt;json type="object">
+	  &lt;screen__name type="string">ricktagious&lt;/screen__name>
+	  &lt;name type="string">Ricky Ribeiro&lt;/name>
+	  &lt;id type="number">152138582&lt;/id>
+	  &lt;id__str type="string">152138582&lt;/id__str>
+	  &lt;indices type="array">
+	    &lt;item type="number">0&lt;/item>
+	    &lt;item type="number">12&lt;/item>
+	  &lt;/indices>
+	&lt;/json>
+	&lt;json type="object">
+	  &lt;screen__name type="string">Support&lt;/screen__name>
+	  &lt;name type="string">Support&lt;/name>
+	  &lt;id type="number">17874544&lt;/id>
+	  &lt;id__str type="string">17874544&lt;/id__str>
+	  &lt;indices type="array">
+	    &lt;item type="number">61&lt;/item>
+	    &lt;item type="number">69&lt;/item>
+	  &lt;/indices>
+	&lt;/json>
+      &lt;/user__mentions>
+    &lt;/entities>
+    &lt;favorited type="boolean">false&lt;/favorited>
+    &lt;retweeted type="boolean">false&lt;/retweeted>
+  &lt;/json>
+&lt;/json>,
 "I’m a string!",
 xdmp:random(),
 current-dateTime(),
@@ -678,7 +850,375 @@ binary { xs:hexBinary("BEEF") },
     </teams>
     <jerseyNumber type=&quot;number&quot;>66</jerseyNumber>
   </json>
-</json>">JSON (hack)</option>
+</json>">JSON</option>
+        <option value="&lt;json type=&quot;object&quot; xmlns=&quot;http://marklogic.com/xdmp/json/basic&quot;>
+  &lt;realm type=&quot;object&quot;>
+    &lt;name type=&quot;string&quot;>Aegwynn&lt;/name>
+    &lt;slug type=&quot;string&quot;>aegwynn&lt;/slug>
+  &lt;/realm>
+  &lt;alliance type=&quot;object&quot;>
+    &lt;auctions type=&quot;array&quot;>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681619755&lt;/auc>
+	&lt;item type=&quot;number&quot;>38817&lt;/item>
+	&lt;owner type=&quot;string&quot;>Draez&lt;/owner>
+	&lt;bid type=&quot;number&quot;>379998&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>399998&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681801939&lt;/auc>
+	&lt;item type=&quot;number&quot;>52979&lt;/item>
+	&lt;owner type=&quot;string&quot;>Rasmussene&lt;/owner>
+	&lt;bid type=&quot;number&quot;>1214980&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>1349980&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>20&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681809788&lt;/auc>
+	&lt;item type=&quot;number&quot;>62323&lt;/item>
+	&lt;owner type=&quot;string&quot;>Seductres&lt;/owner>
+	&lt;bid type=&quot;number&quot;>207502&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>250000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681523070&lt;/auc>
+	&lt;item type=&quot;number&quot;>2840&lt;/item>
+	&lt;owner type=&quot;string&quot;>Furlia&lt;/owner>
+	&lt;bid type=&quot;number&quot;>300000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>300000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>20&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682264398&lt;/auc>
+	&lt;item type=&quot;number&quot;>57191&lt;/item>
+	&lt;owner type=&quot;string&quot;>Bánkfàch&lt;/owner>
+	&lt;bid type=&quot;number&quot;>875000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>877500&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>20&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681836627&lt;/auc>
+	&lt;item type=&quot;number&quot;>43102&lt;/item>
+	&lt;owner type=&quot;string&quot;>Mytraderde&lt;/owner>
+	&lt;bid type=&quot;number&quot;>340000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>358999&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681947339&lt;/auc>
+	&lt;item type=&quot;number&quot;>52247&lt;/item>
+	&lt;owner type=&quot;string&quot;>Bakûr&lt;/owner>
+	&lt;bid type=&quot;number&quot;>75000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>80000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681205656&lt;/auc>
+	&lt;item type=&quot;number&quot;>52244&lt;/item>
+	&lt;owner type=&quot;string&quot;>Idx&lt;/owner>
+	&lt;bid type=&quot;number&quot;>50000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>50000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681493095&lt;/auc>
+	&lt;item type=&quot;number&quot;>45794&lt;/item>
+	&lt;owner type=&quot;string&quot;>Mephlora&lt;/owner>
+	&lt;bid type=&quot;number&quot;>522322&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>549813&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681463966&lt;/auc>
+	&lt;item type=&quot;number&quot;>2841&lt;/item>
+	&lt;owner type=&quot;string&quot;>Furlia&lt;/owner>
+	&lt;bid type=&quot;number&quot;>600000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>600000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>20&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682361567&lt;/auc>
+	&lt;item type=&quot;number&quot;>62671&lt;/item>
+	&lt;owner type=&quot;string&quot;>Conquista&lt;/owner>
+	&lt;bid type=&quot;number&quot;>145032&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>146250&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>5&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681212347&lt;/auc>
+	&lt;item type=&quot;number&quot;>52182&lt;/item>
+	&lt;owner type=&quot;string&quot;>Idx&lt;/owner>
+	&lt;bid type=&quot;number&quot;>40000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>40000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681903104&lt;/auc>
+	&lt;item type=&quot;number&quot;>36903&lt;/item>
+	&lt;owner type=&quot;string&quot;>Don&lt;/owner>
+	&lt;bid type=&quot;number&quot;>230000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>230000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>20&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682170589&lt;/auc>
+	&lt;item type=&quot;number&quot;>11137&lt;/item>
+	&lt;owner type=&quot;string&quot;>Lidda&lt;/owner>
+	&lt;bid type=&quot;number&quot;>37050&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>39000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>MEDIUM&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682171631&lt;/auc>
+	&lt;item type=&quot;number&quot;>52217&lt;/item>
+	&lt;owner type=&quot;string&quot;>Twíxa&lt;/owner>
+	&lt;bid type=&quot;number&quot;>237547&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>238001&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>MEDIUM&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681912479&lt;/auc>
+	&lt;item type=&quot;number&quot;>10939&lt;/item>
+	&lt;owner type=&quot;string&quot;>Cryptology&lt;/owner>
+	&lt;bid type=&quot;number&quot;>88800&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>99900&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682378993&lt;/auc>
+	&lt;item type=&quot;number&quot;>20907&lt;/item>
+	&lt;owner type=&quot;string&quot;>Murksin&lt;/owner>
+	&lt;bid type=&quot;number&quot;>500000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>500000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681062235&lt;/auc>
+	&lt;item type=&quot;number&quot;>12655&lt;/item>
+	&lt;owner type=&quot;string&quot;>Tirillan&lt;/owner>
+	&lt;bid type=&quot;number&quot;>39998&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>66600&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>2&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>SHORT&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682308545&lt;/auc>
+	&lt;item type=&quot;number&quot;>51950&lt;/item>
+	&lt;owner type=&quot;string&quot;>Namahs&lt;/owner>
+	&lt;bid type=&quot;number&quot;>48901&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>49899&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681928918&lt;/auc>
+	&lt;item type=&quot;number&quot;>58091&lt;/item>
+	&lt;owner type=&quot;string&quot;>Jöo&lt;/owner>
+	&lt;bid type=&quot;number&quot;>945250&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>995000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>10&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682335721&lt;/auc>
+	&lt;item type=&quot;number&quot;>35624&lt;/item>
+	&lt;owner type=&quot;string&quot;>Kohleher&lt;/owner>
+	&lt;bid type=&quot;number&quot;>400000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>460000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682306274&lt;/auc>
+	&lt;item type=&quot;number&quot;>43119&lt;/item>
+	&lt;owner type=&quot;string&quot;>Bluewitch&lt;/owner>
+	&lt;bid type=&quot;number&quot;>28120&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>29600&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681539462&lt;/auc>
+	&lt;item type=&quot;number&quot;>40152&lt;/item>
+	&lt;owner type=&quot;string&quot;>Artemya&lt;/owner>
+	&lt;bid type=&quot;number&quot;>1899999&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>1999999&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681867979&lt;/auc>
+	&lt;item type=&quot;number&quot;>53069&lt;/item>
+	&lt;owner type=&quot;string&quot;>Kenam&lt;/owner>
+	&lt;bid type=&quot;number&quot;>522&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>550&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682349914&lt;/auc>
+	&lt;item type=&quot;number&quot;>62653&lt;/item>
+	&lt;owner type=&quot;string&quot;>Dorango&lt;/owner>
+	&lt;bid type=&quot;number&quot;>47935&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>59918&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>2&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681134211&lt;/auc>
+	&lt;item type=&quot;number&quot;>37703&lt;/item>
+	&lt;owner type=&quot;string&quot;>Sartanius&lt;/owner>
+	&lt;bid type=&quot;number&quot;>13600&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>20000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681805003&lt;/auc>
+	&lt;item type=&quot;number&quot;>22452&lt;/item>
+	&lt;owner type=&quot;string&quot;>Nightshiver&lt;/owner>
+	&lt;bid type=&quot;number&quot;>49900&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>99900&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681856928&lt;/auc>
+	&lt;item type=&quot;number&quot;>58086&lt;/item>
+	&lt;owner type=&quot;string&quot;>Kakarótt&lt;/owner>
+	&lt;bid type=&quot;number&quot;>707750&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>745000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681321691&lt;/auc>
+	&lt;item type=&quot;number&quot;>40909&lt;/item>
+	&lt;owner type=&quot;string&quot;>Suliena&lt;/owner>
+	&lt;bid type=&quot;number&quot;>150150&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>160000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682319958&lt;/auc>
+	&lt;item type=&quot;number&quot;>36910&lt;/item>
+	&lt;owner type=&quot;string&quot;>Elliøt&lt;/owner>
+	&lt;bid type=&quot;number&quot;>129900&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>149900&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681937479&lt;/auc>
+	&lt;item type=&quot;number&quot;>40078&lt;/item>
+	&lt;owner type=&quot;string&quot;>Jessebell&lt;/owner>
+	&lt;bid type=&quot;number&quot;>45000&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>45000&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681675169&lt;/auc>
+	&lt;item type=&quot;number&quot;>52771&lt;/item>
+	&lt;owner type=&quot;string&quot;>Draez&lt;/owner>
+	&lt;bid type=&quot;number&quot;>2322748&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>2444998&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681660479&lt;/auc>
+	&lt;item type=&quot;number&quot;>52780&lt;/item>
+	&lt;owner type=&quot;string&quot;>Draez&lt;/owner>
+	&lt;bid type=&quot;number&quot;>8502498&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>8949998&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682228073&lt;/auc>
+	&lt;item type=&quot;number&quot;>56516&lt;/item>
+	&lt;owner type=&quot;string&quot;>Zentarius&lt;/owner>
+	&lt;bid type=&quot;number&quot;>3845030&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>4272250&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>10&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682372474&lt;/auc>
+	&lt;item type=&quot;number&quot;>53072&lt;/item>
+	&lt;owner type=&quot;string&quot;>Conquista&lt;/owner>
+	&lt;bid type=&quot;number&quot;>594146&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>874575&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>20&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681675155&lt;/auc>
+	&lt;item type=&quot;number&quot;>52771&lt;/item>
+	&lt;owner type=&quot;string&quot;>Draez&lt;/owner>
+	&lt;bid type=&quot;number&quot;>2322748&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>2444998&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>1&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1681286361&lt;/auc>
+	&lt;item type=&quot;number&quot;>52979&lt;/item>
+	&lt;owner type=&quot;string&quot;>Schukis&lt;/owner>
+	&lt;bid type=&quot;number&quot;>1403900&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>1555880&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>20&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>LONG&lt;/timeLeft>
+      &lt;/json>
+      &lt;json type=&quot;object&quot;>
+	&lt;auc type=&quot;number&quot;>1682331799&lt;/auc>
+	&lt;item type=&quot;number&quot;>52555&lt;/item>
+	&lt;owner type=&quot;string&quot;>Nelf&lt;/owner>
+	&lt;bid type=&quot;number&quot;>155964&lt;/bid>
+	&lt;buyout type=&quot;number&quot;>155976&lt;/buyout>
+	&lt;quantity type=&quot;number&quot;>12&lt;/quantity>
+	&lt;timeLeft type=&quot;string&quot;>VERY_LONG&lt;/timeLeft>
+      &lt;/json>
+    &lt;/auctions>
+  &lt;/alliance>
+&lt;/json>">JSON 2</option>
+        <option value="&lt;json type=&quot;array&quot; xmlns=&quot;http://marklogic.com/xdmp/json/basic&quot;>
+  &lt;item type=&quot;number&quot;>1&lt;/item>
+  &lt;item type=&quot;string&quot;>A&lt;/item>
+  &lt;item type=&quot;null&quot;/>
+  &lt;json type=&quot;array&quot;>
+    &lt;item type=&quot;number&quot;>3&lt;/item>
+    &lt;item type=&quot;number&quot;>4&lt;/item>
+  &lt;/json>
+  &lt;json type=&quot;object&quot;>
+    &lt;B type=&quot;string&quot;>C&lt;/B>
+    &lt;D type=&quot;array&quot;>
+      &lt;item type=&quot;null&quot;/>
+      &lt;item type=&quot;number&quot;>5&lt;/item>
+    &lt;/D>
+  &lt;/json>
+&lt;/json>">JSON: Nested arrays</option>
       </select>
     </div>
     <div class="control">
