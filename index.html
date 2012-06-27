@@ -4,67 +4,17 @@
   <meta charset="utf-8" />
   <title>xml-highlight</title>
   <script type="text/javascript">
+    // Intentionally global: Used for NPM-style imports in sax.js and clarinet.js.
     exports = {}
-    // Firefox 3.6 doesn't implement the Object.create function. Let's do it ourselves in the case where it doesn't exist already. Requires the non-standard __proto__ property.
-    if(typeof Object.create !== "function") {
-      Object.create = function(proto) {
-        var obj = new Object();
-        obj.__proto__ = proto;
-        return obj;
-      }
-    }
-    function wrapArray(obj) {
-      if(toString.call(obj) === '[object Array]') 
-        return obj;
-      else 
-        return [obj];
-    }
   </script>
   <script type="text/javascript" src="lib/jquery-1.7.2-min.js"></script>
-  <script type="text/javascript">
-    jQuery.fn.center = function() {
-      this.css("position", "absolute");
-      this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
-      this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
-      return this;
-    }
-  </script>
+  <script type="text/javascript" src="utils.js"></script>
   <script type="text/javascript" src="lib/tmpl.js"></script>
   <script type="text/javascript" src="lib/sax.js"></script>
   <script type="text/javascript" src="lib/clarinet.js"></script>
   <script type="text/javascript" src="xml-highlight.js"></script>
   <script type="text/javascript" src="json-highlight.js"></script>
   <script type="text/javascript">
-    /** http://stackoverflow.com/questions/985272/jquery-selecting-text-in-an-element-akin-to-highlighting-with-your-mouse/2838358#2838358 */
-    function selectElementText(el, win) {
-        win = win || window;
-        var doc = win.document, sel, range;
-        if (win.getSelection && doc.createRange) {
-            sel = win.getSelection();
-            range = doc.createRange();
-            range.selectNodeContents(el);
-            sel.removeAllRanges();
-            sel.addRange(range);
-        } else if (doc.body.createTextRange) {
-            range = doc.body.createTextRange();
-            range.moveToElementText(el);
-            range.select();
-        }
-    }
-
-    /** http://bugs.jquery.com/ticket/3368 */
-    function isJustCommandKey(keyEvent) {
-      var isMac = /^Mac/.test(window.navigator.platform);
-      if(isMac) return keyEvent.metaKey && !keyEvent.ctrlKey;
-      else keyEvent.ctlKey;
-    }
-
-    /* Replace < and & for literal dispaly in HTML */
-    function escapeForHTML(str) {
-      if(typeof str === "undefined") return "";
-      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    }
-
     $(document).ready(function(evt) {
       $("#output").keydown(function(e) {
         // Listen to Select All keyboard shortcuts
