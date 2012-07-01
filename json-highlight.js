@@ -39,7 +39,7 @@ function highlightJSON(json, handler, options, errorHandler) {
   }
   // This is UGLY. It goes up the stack and finds the first json-separator and removes it.
   // This is useful for removing the final separator when closing object key-values and array values
-  function popLastSeparator(context) {
+  function popLastSeparator(context /* Only used for debugging */) {
     var len = accumulator.length;
     for(var i = len - 1; i >= 0; i--) {
       if(/json-array/.test(accumulator[i]) || /json-object/.test(accumulator[i])) break;
@@ -94,7 +94,6 @@ function highlightJSON(json, handler, options, errorHandler) {
   
   parser.onkey = function(key) {
     // Got a key in an object, numbers 2 to n. The first key is in the openobject event, curiously.
-    //console.log("key: " + key);
     doKey(key);
   };
   function doKey(key) {
