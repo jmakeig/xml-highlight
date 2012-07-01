@@ -87,8 +87,8 @@ function highlightJSON(json, handler, options, errorHandler) {
     accumulator.push('</div>');
     popKV();
     if(isIn("array")) {
-      accumulator.push('</div>'); // closes .json-array-item
       accumulator.push('<span class="json-separator">, </span>');
+      accumulator.push('</div>'); // closes .json-array-item
     }
   };
   
@@ -140,7 +140,7 @@ function highlightJSON(json, handler, options, errorHandler) {
       }
       //message = '<div class="message">For performance reasons, you’re only looking at the first ' + options.truncate + '-character chunk. To see the full result, output the query as raw text.</div>';
     }
-    var outcomes = testJSON(json, accumulator.join("")); 
+    var outcomes = testJSON(accumulator.join("")) //, ['data[0].firstName === "Wayne"']);
     if(outcomes.length > 0) console.dir(outcomes);
     handler(
       "\n\n<!-- START JSON-HIGHLIGHT -->" + 
@@ -153,28 +153,4 @@ function highlightJSON(json, handler, options, errorHandler) {
     );
   }
   parser.write(-1 === options.truncate ? json : json.substring(0, options.truncate)).close();
-}
-function testJSON(json /* <String> */, html /* String */, tests /* <Array<>> */) {
-  var outcomes = [];
-  var result;
-  try {
-    //console.log($(html).text());
-    result = JSON.parse($(html).text());
-  } catch(err) {
-    outcomes.push("Couldn't parse: " + err.toString());
-    return outcomes;
-  }
-  if(!tests) return outcomes;
-  for(var i = 0; i < tests.length; i++) {
-    try {
-      // This means that tests use "data" as the context for the result, e.g. data[0].firstName === 'Wayne'
-      var data = result; 
-      if(!eval(tests[i])) 
-          outcomes.push(tests[i]);
-    } catch(err) {
-      outcomes.push(err.toString());
-      continue; 
-    }
-  }
-  return outcomes;
 }
