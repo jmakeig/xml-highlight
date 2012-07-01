@@ -116,7 +116,10 @@ function highlightJSON(json, handler, options, errorHandler) {
     stack.pop();
     accumulator.push('</div>'); // closes .json-array
     popKV();
-    if(isIn("array")) accumulator.push('</div>'); // closes .json-array-item
+    if(isIn("array")) {
+      accumulator.push('<span class="json-separator">, </span>');
+      accumulator.push('</div>'); // closes .json-array-item
+    }
   };
   parser.onend = function() {
     if(!parser.error) send();
