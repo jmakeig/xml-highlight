@@ -13,7 +13,7 @@ function testXML(html /* String */, tests /* <Array<String>> */) /* Array<String
   return testStuff("xml", html, tests);
 }
 
-function testStuff(type, html /* String */, tests /* <Array<String>> */) /* Array<String> */ {
+function testStuff(type, html /* String */, test) /* Array<String> */ {
   function makeResult(test, result) {
     return {
       "test": test,
@@ -38,19 +38,24 @@ function testStuff(type, html /* String */, tests /* <Array<String>> */) /* Arra
     return outcomes;
   }
   outcomes.push(makeResult("Parsing " + type, null));
-  if(!tests) return outcomes;
-  for(var i = 0; i < tests.length; i++) {
-    var test = tests[i];
+  if(!test.assertions) return outcomes;
+  for(var i = 0; i < test.assertions.length; i++) {
+    var assertion = test.assertions[i];
     try {
       // This means that tests use "data" as the context for the result, e.g. data[0].firstName === 'Wayne'
       var data = result; 
+      function xpath(expression) {
+        return document.evaluate(expression, result, test.namespaceResolver, XPathResult.ANY_TYPE, null).iterateNext().nodeValue;
+      }
+      //console.dir(eval(assertion));
       //console.dir(data);
-      if(!eval(test)) {
-        var msg = "Failed assertion: " + test;
+
+      if(!eval(assertion)) {
+        var msg = "Failed assertion: " + assertion;
         console.warn(msg);
-        outcomes.push(makeResult(test, msg));
+        outcomes.push(makeResult(assertion, msg));
       } else {
-        outcomes.push(makeResult(test, null));
+        outcomes.push(makeResult(assertion, null));
       }
     } catch(err) {
       outcomes.push(makeResult(null, err.toString()));

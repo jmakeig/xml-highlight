@@ -20,18 +20,37 @@
       {
         "name": "Simple XML",
         "type": "xml",
-        "input": '<asdf>asdf</asdf>',
-        "assertions": null
+        "input": '<asdf attr="a" xmlns="xxx">asdf</asdf>',
+        "assertions": ["xpath('/asdf:asdf/text()') === 'asdf'", 'xpath("/asdf:asdf/@attr") === "a"'], 
+        "tests": function(data) { xpath('/asdf:asdf')}, // TODO
+        "namespaceResolver": function(prefix) {
+          return ({
+            'asdf' : 'xxx'
+          })[prefix] || null;
+        }
       },
       {
         "name": "Simple JSON",
         "type": "json",
         "input": '[ { "lastName": "Gretzky", "firstName": "Wayne", "active": false, "teams": [ "Edmonton", "Los Angeles", "St. Louis", "New York" ], "jerseyNumber": 99 }, { "lastName": "Lemieux", "firstName": "Mario", "active": false, "teams": [ "Pittsburgh" ], "jerseyNumber": 66 } ]',
-        "assertions": ["data.length === 2", "data[0].firstName === 'Wayne'", "data[1].jerseyNumber === 66"]
+        "assertions": ["data.length === 2", "data[0].firstName === 'Wayne'", "data[1].jerseyNumber === 66"],
+        "tests": function(data) { assertEquals(data.length, 2); data[0].firstName === 'Wayne'; data[1].jerseyNumber === 66; } // TODO
+      },
+      {
+        "name": "Auctions (small)",
+        "type": "json",
+        "inputHref": "auctions-small.json",
+        "assertions": ['data.realm.name === "Aegwynn"', 'data.realm.name === "Aegwynn"']
+      },
+      {
+        "name": "Auctions (large)",
+        "type": "json",
+        "inputHref": "auctions-small.json",
+        "assertions": ['asdf === 4']
       }
       ];
       function renderResult(result) {
-        console.dir(result);
+        //console.dir(result);
         var acc = [];
         for(var i = 0; i < result.outcomes.length; i++) {
           var outcome = result.outcomes[i];
@@ -47,8 +66,10 @@
       for(var i = 0; i < tests.length ; i++) {
         var test = tests[i];
         var input;
-        function handleOutcomes(html) {
-          var outcomes = testStuff(test.type, html, test.assertions);
+        function handleOutcomes(html, test) {
+          //console.timeEnd(test.name + " render");
+          //console.time(test.name + " test");
+          var outcomes = testStuff(test.type, html, test);
           var result = {
             "test": test,
             "isPassed": (outcomes.length > 0),
@@ -57,19 +78,46 @@
           //console.dir(test);
           results.push(result);
           renderResult(result);
-        }
-        switch(test.type) {
-          case "json":
-            highlightJSON(test.input, handleOutcomes, null, function(err) { console.error(err)});
-          break;
-          case "xml":
-            highlight(test.input, handleOutcomes, null, function(err) { console.error(err)});
-          break;
-          default: throw test.type + " is not a valid type";
+          console.timeEnd(test.name + " test");
         }
         
-      }
+        function hi(test, input) {
+          console.dir(test);
+          console.time(test.name + " render");
+          switch(test.type) {
+            case "json":
+              highlightJSON(input, function(html) { return handleOutcomes(html, test) }, null, function(err) { console.error(err)});
+            break;
+            case "xml":
+              highlight(input, function(html) { return handleOutcomes(html, test) }, null, function(err) { console.error(err)});
+            break;
+            default: throw test.type + " is not a valid type";
+          }
+        }
 
+        if(test.inputHref) {
+          console.time(test.name + " get data");
+          var xhr = new XMLHttpRequest();
+          xhr.test = test;
+          xhr.onreadystatechange = function() {
+            if(this.readyState === 1) { /* Loading */ }
+            if(this.readyState === 4) {
+              console.timeEnd(test.name + " get data");
+              if (this.status >= 200 && this.status < 300) {
+                //console.log("END REDYSTATE " + this.test.name);
+                hi(this.test, this.responseText);
+              } else {
+                console.error(this.responseText);
+              }
+            }
+          }
+          xhr.open("GET", test.inputHref, true);
+          xhr.setRequestHeader("Accept", "application/json");
+          xhr.send();
+        } else {
+          hi(test, test.input);
+        }
+      }
     });
   </script>
   <style type="text/css">
