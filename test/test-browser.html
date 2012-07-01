@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Test</title>
+  <script type="text/javascript">
+    // Intentionally global: Used for NPM-style imports in sax.js and clarinet.js.
+    exports = {}
+  </script>
+  <script type="text/javascript" src="../lib/jquery-1.7.2-min.js"></script>
+  <script type="text/javascript" src="../utils.js"></script>
+  <script type="text/javascript" src="../lib/sax.js"></script>
+  <script type="text/javascript" src="../lib/clarinet.js"></script>
+  <script type="text/javascript" src="../xml-highlight.js"></script>
+  <script type="text/javascript" src="../json-highlight.js"></script>
+  <script type="text/javascript" src="test-browser.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(evt) {
+      var tests = [
+      {
+        "name": "Simple XML",
+        "type": "xml",
+        "input": '<asdf>asdf</asdf>',
+        "assertions": null
+      },
+      {
+        "name": "Simple JSON",
+        "type": "json",
+        "input": '[ { "lastName": "Gretzky", "firstName": "Wayne", "active": false, "teams": [ "Edmonton", "Los Angeles", "St. Louis", "New York" ], "jerseyNumber": 99 }, { "lastName": "Lemieux", "firstName": "Mario", "active": false, "teams": [ "Pittsburgh" ], "jerseyNumber": 66 } ]',
+        "assertions": ["data.length === 2", "data[0].firstName === 'Wayne'", "data[1].jerseyNumber === 66"]
+      }
+      ];
+      function renderResult(result) {
+        console.dir(result);
+        var acc = [];
+        for(var i = 0; i < result.outcomes.length; i++) {
+          var outcome = result.outcomes[i];
+          acc.push('<tr class="outcome '+(outcome.isPassed ? 'passed' : 'failed')+'">');
+          acc.push('<td class="outcome-test">'+outcome.test+'</td>');
+          acc.push('<td class="outcome-result">'+(outcome.result ? outcome.result : '')+'</td>');
+          acc.push('</tr>'); // closes div.outcome
+        }
+        $("#results").append('<tr class="test"><td colspan="2">'+result.test.name+'</td></tr>' + acc.join(""));
+      }
+      
+      var results = [];
+      for(var i = 0; i < tests.length ; i++) {
+        var test = tests[i];
+        var input;
+        function handleOutcomes(html) {
+          var outcomes = testStuff(test.type, html, test.assertions);
+          var result = {
+            "test": test,
+            "isPassed": (outcomes.length > 0),
+            "outcomes": outcomes
+          }
+          //console.dir(test);
+          results.push(result);
+          renderResult(result);
+        }
+        switch(test.type) {
+          case "json":
+            highlightJSON(test.input, handleOutcomes, null, function(err) { console.error(err)});
+          break;
+          case "xml":
+            highlight(test.input, handleOutcomes, null, function(err) { console.error(err)});
+          break;
+          default: throw test.type + " is not a valid type";
+        }
+        
+      }
+
+    });
+  </script>
+  <style type="text/css">
+    .passed { color: green;}
+    .failed { color: red;}
+    .test { font-weight: bold;}
+    table#results {
+      width: 80%;
+    }
+    td, th {
+      border: solid 1px #ccc;
+      padding: 0.5em;
+    }
+    body {
+      font-family: Helvetica, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<h1>Results</h1>
+<table id="results">
+  <col></col>
+  <col></col>
+</table>
+</body>
+</html>

@@ -140,8 +140,8 @@ function highlightJSON(json, handler, options, errorHandler) {
       //message = '<div class="message">For performance reasons, you’re only looking at the first ' + options.truncate + '-character chunk. To see the full result, output the query as raw text.</div>';
     }
     // FIXME: This is test code. It's expsensive and doesn't belong here
-    var outcomes = testJSON(accumulator.join("")) //, ['data[0].firstName === "Wayne"']);
-    if(outcomes.length > 0) console.dir(outcomes);
+    //var outcomes = testJSON(accumulator.join("")) //, ['data[0].firstName === "Wayne"']);
+    //if(outcomes.length > 0) console.dir(outcomes);
     // FIXME: End test 
     handler(
       "\n\n<!-- START JSON-HIGHLIGHT -->" + 
