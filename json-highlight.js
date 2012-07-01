@@ -31,42 +31,42 @@ function highlightJSON(json, handler, options, errorHandler) {
   // If we're processing a key-value, close its div and pop it off the stack
   function popKV() {
     if(isIn("key-value")) {
-      accumulator.push("</div>");
       stack.pop();
+      //accumulator.push("END-KV " + stack[stack.length - 1]);
+      if(isIn("object")) accumulator.push('<span class="json-separator">, </span>');
+      accumulator.push("</div>");
     }
   }
   // This is UGLY. It goes up the stack and finds the first json-separator and removes it.
   // This is useful for removing the final separator when closing object key-values and array values
-  function popLastSeparator() {
+  function popLastSeparator(context) {
     var len = accumulator.length;
     for(var i = len - 1; i >= 0; i--) {
+      if(/json-array/.test(accumulator[i]) || /json-object/.test(accumulator[i])) break;
       if(/json-separator/.test(accumulator[i])) {
-        accumulator[i] = "<!-- removed json-separator -->";
+        //<span style="background: yellow;">REMOVED from ' + context + '</span>
+        accumulator[i] = '<!-- removed json-separator -->';
         return;
       }
     }
   }
-  
+
   /* Parsers handlers */
-  parser.onready = function() { 
-    //console.log("ready!")
-  }
+  parser.onready = function() { }
   parser.onerror = function(error) {
     console.error(error);
     // TODO: Unroll stack here
     errorHandler(error);
   }
   parser.onvalue = function(v) {
-    //console.log("value: " + v);
-    //console.log(stack.join(", "));
     var quote = '';
     var type = typeof v;
     if("object" === type && !v) type = "null";
     if("string" === type) quote = '"'
-    if(isIn("array")) accumulator.push('<div class="json-array-item">');
+    if(isIn("array")) accumulator.push('<div class="json-array-item">')
     accumulator.push('<span class="json-value">' + quote + '<span class="json-' + type + '">' + v + '</span>' + quote);
-    accumulator.push('<span class="json-separator">, </span>');
-    accumulator.push('</span>');
+    if(isIn("array")) accumulator.push('<span class="json-separator">, </span>');
+    accumulator.push('</span>'); // closes .json-value
     if(isIn("array")) accumulator.push('</div>'); // closes .json-array-item
     popKV();
   };
@@ -80,20 +80,16 @@ function highlightJSON(json, handler, options, errorHandler) {
     if(key) accumulator.push(doKey(key));
   };
   parser.oncloseobject = function () {
-    // closed an object.
-    //console.log("closeobject");
-    //console.log("Popping (object) " + 
-      stack.pop()
-    //);
-    //console.log("> " + stack.join(", "));
+    stack.pop()
     // Hack to remove the last trailing comma on the child key-value pairs
-    popLastSeparator();
+    popLastSeparator("oncloseobject");
     accumulator.push('</div><span class="json-object-close">}</span>');
-    if(isIn("array") || isIn("key-value")) 
-      accumulator.push('<span class="json-separator">, </span>');
     accumulator.push('</div>');
     popKV();
-    if(isIn("array")) accumulator.push('</div>'); // closes .json-array-item
+    if(isIn("array")) {
+      accumulator.push('</div>'); // closes .json-array-item
+      accumulator.push('<span class="json-separator">, </span>');
+    }
   };
   
   parser.onkey = function(key) {
@@ -114,16 +110,11 @@ function highlightJSON(json, handler, options, errorHandler) {
     accumulator.push('<div class="json-array-value">')
   };
   parser.onclosearray = function () {
-    // closed an array.
-    //console.log("closearray");
-    popLastSeparator();
+    if(isIn("array")) popLastSeparator("onclosearray");
     accumulator.push('</div>'); // closing div.json-array-value
     accumulator.push('<span class="json-array-close">]</span>');
     stack.pop();
-    if(isIn("array") || isIn("key-value")) 
-      accumulator.push('<span class="json-separator">, </span>');
-    accumulator.push('</div>');
-    //console.log("> " + stack.join(", "));
+    accumulator.push('</div>'); // closes .json-array
     popKV();
     if(isIn("array")) accumulator.push('</div>'); // closes .json-array-item
   };
@@ -146,6 +137,8 @@ function highlightJSON(json, handler, options, errorHandler) {
       }
       //message = '<div class="message">For performance reasons, you’re only looking at the first ' + options.truncate + '-character chunk. To see the full result, output the query as raw text.</div>';
     }
+    var outcomes = testJSON(json, accumulator.join("")); 
+    if(outcomes.length > 0) console.dir(outcomes);
     handler(
       "\n\n<!-- START JSON-HIGHLIGHT -->" + 
       "<div class='root'>" + 
@@ -157,4 +150,28 @@ function highlightJSON(json, handler, options, errorHandler) {
     );
   }
   parser.write(-1 === options.truncate ? json : json.substring(0, options.truncate)).close();
+}
+function testJSON(json /* <String> */, html /* String */, tests /* <Array<>> */) {
+  var outcomes = [];
+  var result;
+  try {
+    //console.log($(html).text());
+    result = JSON.parse($(html).text());
+  } catch(err) {
+    outcomes.push("Couldn't parse: " + err.toString());
+    return outcomes;
+  }
+  if(!tests) return outcomes;
+  for(var i = 0; i < tests.length; i++) {
+    try {
+      // This means that tests use "data" as the context for the result, e.g. data[0].firstName === 'Wayne'
+      var data = result; 
+      if(!eval(tests[i])) 
+          outcomes.push(tests[i]);
+    } catch(err) {
+      outcomes.push(err.toString());
+      continue; 
+    }
+  }
+  return outcomes;
 }
