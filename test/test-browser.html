@@ -45,8 +45,8 @@
       {
         "name": "Auctions (large)",
         "type": "json",
-        "inputHref": "auctions-small.json",
-        "assertions": ['asdf === 4']
+        "inputHref": "auctions-large.json",
+        "assertions": ['data.alliance.auctions.length === 49548']
       }
       ];
       function renderResult(result) {
@@ -67,8 +67,8 @@
         var test = tests[i];
         var input;
         function handleOutcomes(html, test) {
-          //console.timeEnd(test.name + " render");
-          //console.time(test.name + " test");
+          console.timeEnd(test.name + " render");
+          console.time(test.name + " test");
           var outcomes = testStuff(test.type, html, test);
           var result = {
             "test": test,
@@ -82,7 +82,7 @@
         }
         
         function hi(test, input) {
-          console.dir(test);
+          //console.dir(test);
           console.time(test.name + " render");
           switch(test.type) {
             case "json":

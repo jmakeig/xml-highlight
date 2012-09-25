@@ -42,6 +42,7 @@ function escapeForHTML(str) {
   if(typeof str === "undefined") return "";
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;")
 }
+
 /** Hack to center a modal dialog */
 jQuery.fn.center = function() {
   this.css("position", "absolute");

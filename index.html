@@ -38,7 +38,7 @@
         console.time("fetch results");
         $("#output").append('<div class="status-overlay">Working…</div>');
         var options = getOptions();
-        getInputXML(function(results) {
+        getInput(function(results) {
           console.timeEnd("fetch results");
           console.time("render");
           formatResults(results, options, $("#output"));
@@ -60,7 +60,7 @@
         }
       }
 
-      function getInputXML(
+      function getInput(
         handler /* function(results<Array<Object<type, content>>>) */,
         errorHandler /* function(error) */) {
         var xhr = new XMLHttpRequest();
@@ -95,10 +95,11 @@
         
         for(var i = 0; i < len; i++) {
           var result = results[i];
-          accumulator.push('<div class="result-item">');
+          accumulator.push('<div class="result-item" data-result-raw="asdf asdf">');
           accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
           if("element" === result.type || "document" === result.type || "comment" === result.type || "processing-instruction" === result.type) {
             // TODO: Proper truncation
+            // FIXME: This actually assumes things are happending in order, since it's using the global accumulator variable
             highlight(result.content, function(output) {
               accumulator.push(output);
             }, options,
