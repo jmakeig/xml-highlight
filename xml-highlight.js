@@ -25,7 +25,10 @@
     p.onready = function() {}
     p.onerror = function(error) {
       console.error(error);
-      errorHandler(error);
+      // How do we know if it's a real error? If so, we need to invoke the error handler.
+      //errorHandler(error);
+      // Truncation throws a parse error as well. However, in the case of truncation we just want to clean up and proceed as normal.
+      send();
     }
     p.onopentag = function(node) {
       //console.dir(node.name);
