@@ -7,7 +7,7 @@
     // Intentionally global: Used for NPM-style imports in sax.js and clarinet.js.
     exports = {}
   </script>
-  <script type="text/javascript" src="lib/jquery-1.7.2-min.js"></script>
+  <script type="text/javascript" src="lib/jquery-1.8.2-min.js"></script>
   <script type="text/javascript" src="utils.js"></script>
   <script type="text/javascript" src="lib/tmpl.js"></script>
   <script type="text/javascript" src="lib/sax.js"></script>
@@ -137,7 +137,7 @@
         target.html(accumulator.join(""));
 
         // Clean up
-        target.find(".element::not(:has(.text, .element, .comment, .processing-instruction))").addClass("empty")
+        target.find(".element:not(:has(.text, .element, .comment, .processing-instruction))").addClass("empty")
           // Track down the final text node for the element open to update it with a closing slash
           // This should really be done in the parser? Or should it?
           .find(".element-open").contents().filter(function() {return this.nodeType == 3 && this.nextSibling == null;}).replaceWith("/>");
