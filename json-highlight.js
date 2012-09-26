@@ -59,7 +59,7 @@ function highlightJSON(json, handler, options, errorHandler) {
     errorHandler(error);
   }
   function prepareText(text) {
-    return text
+    return (text || "")
       .replace(/"/gm, '\\"')
       .replace(/\n/gm, "<br/>")
       .replace(/\t/gm, "&nbsp;&nbsp;");
@@ -68,9 +68,12 @@ function highlightJSON(json, handler, options, errorHandler) {
     var quote = '';
     var type = typeof v;
     if("object" === type && !v) type = "null";
-    if("string" === type) quote = '"'
+    if("string" === type) {
+      quote = '"';
+      v = prepareText(v);
+    }
     if(isIn("array")) accumulator.push('<div class="json-array-item">')
-    accumulator.push('<span class="json-value">' + quote + '<span class="json-' + type + '">' + prepareText(v) + '</span>' + quote);
+    accumulator.push('<span class="json-value">' + quote + '<span class="json-' + type + '">' + v + '</span>' + quote);
     if(isIn("array")) accumulator.push('<span class="json-separator">, </span>');
     accumulator.push('</span>'); // closes .json-value
     if(isIn("array")) accumulator.push('</div>'); // closes .json-array-item

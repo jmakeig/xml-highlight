@@ -75,6 +75,7 @@
             }
           }
         }
+        console.log($.param(options));
         xhr.open("POST", "/eval.xqy", true);
         xhr.setRequestHeader("Content-Type", "application/xquery");
         xhr.setRequestHeader("Accept", "application/json");
@@ -119,7 +120,7 @@
           else if("string" === result.type) {
             accumulator.push("<div class='value type-" + result.type + "'>" + escapeForHTML(result.content || " ") + "</div>");
           }
-          else if("json" === result.type) {
+          else if("json" === result.type || "json-basic" === result.type) {
             highlightJSON(result.content, function(output) {
               accumulator.push(output);
               // http://stackoverflow.com/questions/11181791/difference-in-display-of-inline-elements-when-toggled-programmatically-and-decla
@@ -293,11 +294,11 @@
 
       // Global collapse and expand
       $("#collapse-all").click(function(evt) {
-        $(".element, .comment, .processing-instruction").addClass("collapsed");
+        $(".element, .comment, .processing-instruction, .json-object, .json-array").addClass("collapsed");
         $(".root .element").first().removeClass("collapsed");
       });
       $("#expand-all").click(function(evt) {
-        $(".element, .comment, .processing-instruction").removeClass("collapsed");
+        $(".element, .comment, .processing-instruction, .json-object, .json-array").removeClass("collapsed");
       });
 
       $("#hide-close-tags").change(function(evt) {

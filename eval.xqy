@@ -1,8 +1,10 @@
 xquery version "1.0-ml";
 import module namespace json = "http://marklogic.com/xdmp/json" at "/MarkLogic/json/json.xqy";
-declare namespace js="http://marklogic.com/xdmp/json/json-basic";
+declare namespace js="http://marklogic.com/xdmp/json/basic";
 declare namespace local="local";
 declare option xdmp:mapping "false";
+
+declare variable $truncate as xs:int? := xs:int(xdmp:get-request-field("truncate", ()));
 
 declare function local:serialize($results as item()*) as map:map* {
     local:serialize($results, ())
@@ -19,9 +21,8 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
       case json:array
         return "json"
       (: Should we really do this translation automatically? :)
-      (:case element(js:json)
+      case element(js:json)
         return "json-basic"
-      :)
       case document-node()
         return "document"
       case element()
@@ -62,7 +63,10 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
         map:put($m, "type", $type),
         map:put($m, "content", 
           if(("document", "element") = $type) then
-            xdmp:quote(root(document {$r})/node())
+            let $quote := xdmp:quote(root(document {$r})/node())
+            return 
+              if($truncate) then substring($quote, 1, $truncate)
+              else $quote
           else if("text" = $type) then
             data($r)
           else if("binary" = $type) then
@@ -70,8 +74,8 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
             "Binary"
           else if("attribute" = $type) then
             concat(name($r), "=&quot;", data($r), "&quot;")
-          (:else if("json-basic" = $type) then
-            json:transform-to-json($r):)
+          else if("json-basic" = $type) then
+            json:transform-to-json($r)
           else if("json" = $type) then
             xdmp:to-json($r)
           else $r
