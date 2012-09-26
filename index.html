@@ -75,8 +75,10 @@
             }
           }
         }
-        console.log($.param(options));
-        xhr.open("POST", "/eval.xqy", true);
+        // TODO: Ugly 
+        var qs = "";
+        if(getOptions().truncate > 0) qs = "?truncate=" + getOptions().truncate; 
+        xhr.open("POST", "/eval.xqy" + qs, true);
         xhr.setRequestHeader("Content-Type", "application/xquery");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.send($("#input-xml").val());
