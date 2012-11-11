@@ -65,7 +65,8 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
           if(("document", "element") = $type) then
             let $quote := xdmp:quote(root(document {$r})/node())
             return 
-              if($truncate) then substring($quote, 1, $truncate)
+              (: TODO: Is this if condition correct? :)
+              if($truncate gt 0) then substring($quote, 1, $truncate)
               else $quote
           else if("text" = $type) then
             data($r)

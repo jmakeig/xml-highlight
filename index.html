@@ -74,16 +74,21 @@
               errorHandler(this.responseText);
             }
           }
-        }
-        // TODO: Ugly 
-        var qs = "";
-        if(getOptions().truncate > 0) qs = "?truncate=" + getOptions().truncate; 
-        xhr.open("POST", "/eval.xqy" + qs, true);
+        } 
+        var trunc = {"truncate": (getOptions().truncate)}
+        xhr.open("POST", buildURL("/eval.xqy", trunc), true);
         xhr.setRequestHeader("Content-Type", "application/xquery");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.send($("#input-xml").val());
       }
       
+      function buildURL(url, params) {
+        var qs = $.param(params);
+        var conn = "";
+        if(qs) conn = "?";
+        return url + conn + qs;
+      }
+
       function formatResults(results /*Array<Object<type, content>>*/, options, target/*jQuery node*/) {
         // If it's a single result, wrap it in an array
         if(!results.length) { results = [results]; }
