@@ -31,7 +31,7 @@ let $_ := map:put($views, "application/xml", ())
 return
   try {
     (
-      let $_ := xdmp:pretty-print($query)
+      let $_ := xdmp:eval($query, (), <options xmlns="xdmp:eval"><static-check>true</static-check></options>)
       return
       (), (: Send back an intentionally empty response :)
       xdmp:set-response-code(204, "No Content")
