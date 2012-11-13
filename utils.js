@@ -50,3 +50,21 @@ jQuery.fn.center = function() {
   this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
   return this;
 }
+
+/**
+ * Delay the execution of a function for some millisecond duration. 
+ * Cancels any previous invocations in the queue, effectively just running
+ * the last instance called. This is great for handling keystrokes where
+ * you'd like the handler code to run slighly after no more input has been
+ * received.
+ *
+ * @param func The function to be invoked
+ * @param duration The time in milliseconds to wait, defaults to 1000
+ */
+function delay(func, duration) {
+  var timer;
+  return function() {
+    if(timer) clearTimeout(timer);
+    timer = setTimeout(func, duration || 1000);
+  }
+}

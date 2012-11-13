@@ -16,7 +16,47 @@
   <script type="text/javascript" src="json-highlight.js"></script>
   <script type="text/javascript" src="test/test-browser.js"></script>
   <script type="text/javascript">
+  (function() {
+    /**
+     * Checks XQuery syntax (using xdmp:pretty-print).
+     *
+     * @param input The XQuery string to validate
+     * @param handleSuccess The function to invoke if the query is valid
+     * @param handleError The function to invoke if the query is not valid
+     */
+    function staticCheck(input, handleSuccess, handleError) {
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if(this.readyState === 1) { /* Loading */ }
+        if(this.readyState === 4) {
+          if (this.status >= 200 && this.status < 300) {
+            handleSuccess("OK");
+          } else {
+            handleError(JSON.parse(this.responseText).error);
+          }
+        }
+      } 
+      xhr.open("POST", "/check.xqy", true);
+      xhr.setRequestHeader("Content-Type", "application/vnd.marklogic-xdmp");
+      xhr.setRequestHeader("Accept", "application/json");
+      xhr.send(input);
+    }
     $(document).ready(function(evt) {
+      // "input" is a new HTML5 event (Woo-hoo!)
+      $("#input-xml").on("input", delay(
+          function() {
+            var errEl = $("#error-message");
+            // TODO: Put in real handlers
+            //var l = function(t) { console.log(t) }
+            //var e = function(t) { console.error(t) }
+            staticCheck(
+              $("#input-xml").val(),
+              function() { errEl.text("Valid")},
+              function(error) { errEl.text(error.formatString)}
+            );
+          }
+        ));
+
       $("#output").keydown(function(e) {
         // Listen to Select All keyboard shortcuts
         if(65 === e.keyCode && isJustCommandKey(e)) {
@@ -142,6 +182,7 @@
           }
           accumulator.push('</div>'); // div.result-item
         }
+        //console.log(accumulator.join(""));
         target.html(accumulator.join(""));
 
         // Clean up
@@ -326,6 +367,7 @@
       
       $('#run').click();
     });
+  })();
   </script>
   <style type="text/css">
     body {
@@ -1189,6 +1231,7 @@ binary { xs:hexBinary("BEEF") },
     </div>
     <div class="control">
     <div class="label"><label for="input-xml">Input XML</label></div>
+      <div id="error-message">ASDF</div>
       <textarea id="input-xml" spellcheck="false"></textarea>
     </div>
     <h2 id="options">Options</h2>
