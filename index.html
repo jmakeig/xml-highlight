@@ -52,7 +52,8 @@
               function() { errEl.text("Valid")},
               function(error) { errEl.text(error.formatString)}
             );
-          }
+          }, 
+          500
         )
       );
 
@@ -366,6 +367,7 @@
       
       // Run through each of the JSON and XML serializations to make sure they actually parse. This should be a pretty safe bet that all works.
       $("#validate").click(function(evt){
+        var count = 0;
         $(".result-item.json-basic-type .root").each(
           function(i, el) { 
             try {
@@ -373,6 +375,7 @@
               console.log("Validated JSON " + i);
             } catch(err) {
               console.error(err);
+              count++;
             }
           }
         );
@@ -382,10 +385,11 @@
               console.log("Validated XML (element) " + i);
             } catch(err) {
               console.error(err);
+              count++;
             }
           }
         );
-
+        alert("There are " + count + " validation errors.")
       });
       
       $('#run').click();
