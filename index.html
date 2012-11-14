@@ -371,7 +371,7 @@
         $(".result-item.json-basic-type .root").each(
           function(i, el) { 
             try {
-              JSON.parse($(this).text())
+              JSON.parse($(this).text());
               console.log("Validated JSON " + i);
             } catch(err) {
               console.error(err);
@@ -382,6 +382,7 @@
         $(".result-item.element-type .root").each(
           function(i, el) { 
             try {
+              $.parseXML($(this).text());
               console.log("Validated XML (element) " + i);
             } catch(err) {
               console.error(err);
