@@ -42,20 +42,19 @@
       xhr.send(input);
     }
     $(document).ready(function(evt) {
-      // "input" is a new HTML5 event (Woo-hoo!)
-      $("#input-xml").on("input", delay(
-          function() {
+      
+      $("#input-xml").on("input", // "input" is a new HTML5 event (Woo-hoo!)
+        delay(
+          function() { // closure to ecapsulate the error display element
             var errEl = $("#error-message");
-            // TODO: Put in real handlers
-            //var l = function(t) { console.log(t) }
-            //var e = function(t) { console.error(t) }
             staticCheck(
               $("#input-xml").val(),
               function() { errEl.text("Valid")},
               function(error) { errEl.text(error.formatString)}
             );
           }
-        ));
+        )
+      );
 
       $("#output").keydown(function(e) {
         // Listen to Select All keyboard shortcuts
@@ -190,7 +189,8 @@
           // Track down the final text node for the element open to update it with a closing slash
           // This should really be done in the parser? Or should it?
           .find(".element-open").contents().filter(function() {return this.nodeType == 3 && this.nextSibling == null;}).replaceWith("/>");
-        $(".element.empty > .element-value").remove(); // Remove element-values from empty elements
+        $(".element.empty > .element-value, .element.empty > .element-close").remove(); // Remove element-values from empty elements
+
         target.find(".element").each(function(i) {
           var len = $(this).find(".text").text().length;
           //console.log(len + ": " + $(this).find(".text").text());
