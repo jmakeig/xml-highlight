@@ -142,7 +142,7 @@
         
         for(var i = 0; i < len; i++) {
           var result = results[i];
-          accumulator.push('<div class="result-item" data-result-raw="asdf asdf">');
+          accumulator.push('<div class="result-item ' + result.type + '-type">');
           accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
           if("element" === result.type || "document" === result.type || "comment" === result.type || "processing-instruction" === result.type) {
             // TODO: Proper truncation
@@ -364,6 +364,29 @@
       });
       $("#options").next("div").toggle();
       
+      // Run through each of the JSON and XML serializations to make sure they actually parse. This should be a pretty safe bet that all works.
+      $("#validate").click(function(evt){
+        $(".result-item.json-basic-type .root").each(
+          function(i, el) { 
+            try {
+              JSON.parse($(this).text())
+              console.log("Validated JSON " + i);
+            } catch(err) {
+              console.error(err);
+            }
+          }
+        );
+        $(".result-item.element-type .root").each(
+          function(i, el) { 
+            try {
+              console.log("Validated XML (element) " + i);
+            } catch(err) {
+              console.error(err);
+            }
+          }
+        );
+
+      });
       
       $('#run').click();
     });
@@ -1242,6 +1265,7 @@ binary { xs:hexBinary("BEEF") },
     </div>
     <div>
       <button id="run">Highlight</button>
+      <button id="validate">Validate</button>
     </div>
   </div>
   <div id="output-tools">
