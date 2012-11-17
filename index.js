@@ -147,12 +147,20 @@
         if("element" === result.type || "document" === result.type || "comment" === result.type || "processing-instruction" === result.type) {
           // TODO: Proper truncation
           // FIXME: This actually assumes things are happending in order, since it's using the global accumulator variable
+          /*
           highlight(result.content, function(output) {
             accumulator.push(output);
           }, options,
           function(error) { 
               $("#output").html('<div class="error">' + error + '</div>');            
           });
+          */
+          accumulator.push('<div id="element_async_'+i+'""></div>');
+          var worker = new Worker('worker.js'); // + "?" + Math.random());
+          worker.addEventListener('message', function(event) {
+            $("#" + event.data.id).html(event.data.html);
+          });
+          worker.postMessage({"id": 'element_async_' + i, "content": result.content});
         }
         else if("text" === result.type) {
           accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (escapeForHTML(result.content) || "&nbsp;") + "</span></div>");
