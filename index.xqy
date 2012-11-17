@@ -29,9 +29,11 @@ xdmp:set-response-content-type("text/html"),
     <h1>Input</h1>
     <div class="control">
       <label for="input-xml">Source</label>
-      <select id="input-xml-source">{
+      <select id="input-xml-source">
+        <option selected="selected"></option>
+      {
         for $e in xdmp:filesystem-directory($HOME || "test/inputs")/dir:entry
-        return <option value="{xdmp:document-get(string($e/dir:pathname))}">{string($e/dir:filename)}</option>
+        return <option>{string($e/dir:filename)}</option>
       }
       </select>
     </div>

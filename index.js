@@ -339,9 +339,30 @@
     });
 
     $("#input-xml-source").change(function(evt) {
-      $("#input-xml").val($(this).val());
+      var val = $(this).val();
+      $("#output").html("");
+      if("" === val) {
+        $("#input-xml").val("");
+      } else {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          if(this.readyState === 1) { /* Loading */ }
+          if(this.readyState === 4) {
+            if (this.status >= 200 && this.status < 300) {
+              $("#input-xml").val(this.responseText);
+              $("#run").click();
+            } else {
+              console.error(this.responseText);
+              if(errorHandler) errorHandler(this.responseText);
+            }
+          }
+        }
+        xhr.open("GET", "test/inputs/" + val, true);
+        xhr.send();
+      }
     });
-    $("#input-xml").val($("#input-xml-source").val());
+    //$("#input-xml").val($("#input-xml-source").val());
+    //$("#input-xml-source").change();
 
     // UGLY
     $("#options").click(function(evt) {
@@ -377,6 +398,6 @@
       alert("There are " + count + " validation errors.")
     });
     
-    $('#run').click();
+    //$('#run').click();
   });
 })();
