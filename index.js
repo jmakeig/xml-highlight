@@ -387,7 +387,7 @@
             }
           }
         }
-        xhr.open("GET", "test/inputs/" + val, true);
+        xhr.open("GET", "test/inputs/" + val + "?" + Math.random(), true);
         xhr.send();
       }
     });
