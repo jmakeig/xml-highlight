@@ -184,14 +184,27 @@
       //console.log(accumulator.join(""));
       target.html(accumulator.join(""));
 
-      // Clean up
-      target.find(".element:not(:has(.text, .element, .comment, .processing-instruction))").addClass("empty")
-        // Track down the final text node for the element open to update it with a closing slash
-        // This should really be done in the parser? Or should it?
-        .find(".element-open").contents().filter(function() {return this.nodeType == 3 && this.nextSibling == null;}).replaceWith("/>");
-      $(".element.empty > .element-value, .element.empty > .element-close").remove(); // Remove element-values from empty elements
+      /* Clean up ***********************************************************************************************/
 
+      // Empty Elements
+      // ==============
+      // Track down the final text node for the element open to update it with a closing slash
+      // (This should really be done in the parser? Or should it?)
+      // Remove .element-values from empty elements
+      target.find(".element:not(:has(.text, .element, .comment, .processing-instruction))")
+        .addClass("empty")
+        .find(".element-open").contents()
+        .filter(function() {
+          return this.nodeType == 3 && this.nextSibling == null;
+        }).replaceWith("/>");
+      $(".element.empty > .element-value, .element.empty > .element-close").remove(); 
+
+      // Inline "short" text nodes
+      // =========================
+      // For each element if its text contents doesn't contain a line break and it's shorter than the
+      // global shortMax option, give it a .short class to display inline
       target.find(".element").each(function(i) {
+        if($(this).find(".text").children("br").length > 0) return; // if there's a line break, don't treat it as .short
         var len = $(this).find(".text").text().length;
         //console.log(len + ": " + $(this).find(".text").text());
         var el = $(this).closest(".element");

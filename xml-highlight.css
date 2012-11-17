@@ -1,6 +1,7 @@
 .root, .value {
   font-family: Inconsolata, Consolas, monospace;
   font-size: 110%;
+  padding-left: 9px;
 }
 .element, 
 .json-object, 

@@ -61,6 +61,7 @@ textarea:disabled {
 }
 .toggle {
   display: inline-block;
+  margin-left: -9px;
   width: 9px;
   height: 7px;
   background-image: url("/img/minus.png");
