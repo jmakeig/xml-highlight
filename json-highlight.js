@@ -58,12 +58,6 @@ function highlightJSON(json, handler, options, errorHandler) {
     // TODO: Unroll stack here
     errorHandler(error);
   }
-  function prepareText(text) {
-    return (text || "")
-      .replace(/"/gm, '\\"')
-      .replace(/\n/gm, "<br/>")
-      .replace(/\t/gm, "&nbsp;&nbsp;");
-  }
   parser.onvalue = function(v) {
     var quote = '';
     var type = typeof v;

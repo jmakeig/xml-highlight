@@ -15,6 +15,7 @@ function wrapArray(obj) {
   else 
     return [obj];
 }
+
 /** http://stackoverflow.com/questions/985272/jquery-selecting-text-in-an-element-akin-to-highlighting-with-your-mouse/2838358#2838358 */
 function selectElementText(el, win) {
     win = win || window;
@@ -37,10 +38,19 @@ function isJustCommandKey(keyEvent) {
   if(isMac) return keyEvent.metaKey && !keyEvent.ctrlKey;
   else keyEvent.ctlKey;
 }
+
+// Escape text for HTML, including line breaks
+function prepareText(text) {
+  return text
+    .replace(/&/gm, "&amp;")
+    .replace(/</gm, "&lt;")
+    .replace(/[\n\r]/gm, "<br/>")
+    .replace(/\t/gm, "&nbsp;&nbsp;");
+}
 /** Replace < and & for literal dispaly in HTML */
 function escapeForHTML(str) {
   if(typeof str === "undefined") return "";
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;")
+  return prepareText(str);
 }
 
 /** Hack to center a modal dialog */

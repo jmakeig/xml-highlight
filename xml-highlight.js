@@ -58,12 +58,7 @@
       //console.log("Popping " + name);
       stack.pop();
     }
-    function prepareText(text) {
-      return text
-        .replace(/</gm, "&lt;")
-        .replace(/\n/gm, "<br/>")
-        .replace(/\t/gm, "&nbsp;&nbsp;");
-    }
+
     p.ontext = function(text) {
       // Whether to collapse a simple text node (still wonky). Currently implemented at the client
       var shortFlag = "";
