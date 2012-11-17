@@ -27,17 +27,31 @@
     
     $("#input-xml").on("input", // "input" is a new HTML5 event (Woo-hoo!)
       delay(
-        function() { // closure to ecapsulate the error display element
-          var errEl = $("#error-message");
+        function() {
           staticCheck(
             $("#input-xml").val(),
-            function() { errEl.text("Valid")},
-            function(error) { errEl.text(error.formatString)}
+            function() { 
+              $("#input-xml").trigger("validate", [true]);
+            },
+            function(error) { 
+              $("#input-xml").trigger("validate", [false, error]);
+            }
           );
         }, 
         500
       )
     );
+
+    $("#input-xml").on("validate", function(evt, isValid, error){
+      var errEl = $("#error-message");
+      if(isValid) {
+        errEl.text("Valid");
+        $("#run").removeAttr('disabled');
+      } else {
+        errEl.text(error.formatString);
+        $("#run").attr('disabled','disabled');
+      }
+    });
 
     $("#output").keydown(function(e) {
       // Listen to Select All keyboard shortcuts
@@ -60,17 +74,20 @@
       console.time("fetch results");
       $("#output").append('<div class="status-overlay">Working…</div>');
       var options = getOptions();
-      getInput(function(results) {
-        console.timeEnd("fetch results");
-        console.time("render");
-        formatResults(results, options, $("#output"));
-        console.timeEnd("render");
-        //$(".element, .comment").addClass("collapsed");
-        /* Expand the root element only */
-        //$(".root > .element, .root > .comment").removeClass("collapsed");
-      }, function(error) {
-        $("#output").html('<div class="error">' + error + '</div>');
-      });
+      getInput(
+        function(results) {
+          console.timeEnd("fetch results");
+          console.time("render");
+          formatResults(results, options, $("#output"));
+          console.timeEnd("render");
+          $("#output").trigger("results", [results]);
+          //$(".element, .comment").addClass("collapsed");
+          /* Expand the root element only */
+          //$(".root > .element, .root > .comment").removeClass("collapsed");
+        }, function(error) {
+          $("#output").html('<div class="error">' + error + '</div>');
+          $("#output").trigger("results", [error]);
+        });
     });
 
     function getOptions() {
