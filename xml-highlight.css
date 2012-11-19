@@ -1,7 +1,11 @@
-.root, .value {
+.root, .value, .result-item pre {
   font-family: Inconsolata, Consolas, monospace;
   font-size: 110%;
   padding-left: 9px;
+}
+.result-item pre {
+  width: 100%;
+  overflow: auto;
 }
 .element, 
 .json-object, 

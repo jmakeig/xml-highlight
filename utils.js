@@ -78,3 +78,9 @@ function delay(func, duration) {
     timer = setTimeout(func, duration || 1000);
   }
 }
+function buildURL(url, params) {
+  var qs = $.param(params);
+  var conn = "";
+  if(qs) conn = "?";
+  return url + conn + qs;
+}

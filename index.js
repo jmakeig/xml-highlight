@@ -24,7 +24,6 @@
     xhr.send(input);
   }
   $(document).ready(function(evt) {
-    
     $("#input-xml").on("input", // "input" is a new HTML5 event (Woo-hoo!)
       delay(
         function() {
@@ -147,12 +146,13 @@
         if("element" === result.type || "document" === result.type || "comment" === result.type || "processing-instruction" === result.type) {
           // TODO: Proper truncation
           // FIXME: This actually assumes things are happending in order, since it's using the global accumulator variable
-          highlight(result.content, function(output) {
-            accumulator.push(output);
-          }, options,
-          function(error) { 
-              $("#output").html('<div class="error">' + error + '</div>');            
-          });
+          // highlight(result.content, function(output) {
+          //  accumulator.push(output);
+          // }, options,
+          // function(error) { 
+          //    $("#output").html('<div class="error">' + error + '</div>');            
+          // });
+          accumulator.push('<pre class="' + result.type +'-raw">' + escapeForHTML(result.content) + '</pre>');
         }
         else if("text" === result.type) {
           accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (escapeForHTML(result.content) || "&nbsp;") + "</span></div>");
@@ -183,7 +183,15 @@
       }
       //console.log(accumulator.join(""));
       target.html(accumulator.join(""));
+      cleanUp(target, options);
+    }
 
+    /**
+     * DOM-level clean-up code. The implicatiopn is that this level of clean-up can't be farmed out to a Web Worker.
+     * TODO: This should probably be refactored to better encapsulate.
+     */
+    function cleanUp(target, options) {
+      console.log("cleanUp");
       /* Clean up ***********************************************************************************************/
 
       // Empty Elements
@@ -209,7 +217,7 @@
         //console.log(len + ": " + $(this).find(".text").text());
         var el = $(this).closest(".element");
         //el.addClass("simple");
-        if(len < options.shortMax) el.addClass("short");
+        if(len < options.shortMax ) el.addClass("short");
       });
       target.find(".attribute-value:has(br)").addClass("multi");
     }
@@ -223,6 +231,17 @@
         //.end().siblings(".json-array-value").toggleClass("force-inline");
       $(evt.currentTarget).next(".element-open, .comment-open, .processing-instruction-open, .json-object-open, .json-array-open").focus();
       evt.stopPropagation();
+    });
+
+    $("#output").delegate(".element-raw", "click", function(evt){
+      var pre = $(this);
+      highlight(pre.text(), function(output) {
+        $(pre).replaceWith(output);
+        cleanUp($("#output"), getOptions());
+      }, options,
+      function(error) { 
+         $("#output").html('<div class="error">' + error + '</div>');            
+      });
     });
     
     function getDetails(elData, attrData, handler, errorHandler) {
