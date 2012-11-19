@@ -120,13 +120,6 @@
       xhr.send($("#input-xml").val());
     }
     
-    function buildURL(url, params) {
-      var qs = $.param(params);
-      var conn = "";
-      if(qs) conn = "?";
-      return url + conn + qs;
-    }
-
     function formatResults(results /*Array<Object<type, content>>*/, options, target/*jQuery node*/) {
       // If it's a single result, wrap it in an array
       if(!results.length) { results = [results]; }
@@ -236,8 +229,11 @@
     $("#output").delegate(".element-raw", "click", function(evt){
       var pre = $(this);
       highlight(pre.text(), function(output) {
-        $(pre).replaceWith(output);
-        cleanUp($("#output"), getOptions());
+        // Insert the highlighted DOM (output as String, for now) after the raw data (pre)
+        // and then hide the raw data.
+        // FIXME: This is ugly and doesn't accomodate JSON
+        $(pre).after(output).hide();
+        cleanUp($(pre).next(".root"), getOptions());
       }, options,
       function(error) { 
          $("#output").html('<div class="error">' + error + '</div>');            
