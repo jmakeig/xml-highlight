@@ -226,6 +226,7 @@
       evt.stopPropagation();
     });
 
+    // FIXME: This is a hack to swap in the hi-fi version upon clicking the raw version.
     $("#output").delegate(".element-raw", "click", function(evt){
       var pre = $(this);
       highlight(pre.text(), function(output) {

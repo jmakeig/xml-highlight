@@ -6,6 +6,7 @@
 .result-item pre {
   width: 100%;
   overflow: auto;
+  margin: 2px;
 }
 .element, 
 .json-object, 
