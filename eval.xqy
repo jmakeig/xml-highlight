@@ -75,6 +75,8 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
             "Binary"
           else if("attribute" = $type) then
             concat(name($r), "=&quot;", data($r), "&quot;")
+          else if("comment" = $type) then
+            concat("&lt;!-- ", string($r), " -->")
           else if("json-basic" = $type) then
             json:transform-to-json($r)
           else if("json" = $type) then
@@ -86,6 +88,7 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
 };
 
 xdmp:set-response-content-type("application/json"),
+xdmp:set-response-encoding("UTF-8"),
 xdmp:to-json(
   (: This eval is a total hack, is completely unprotected, and has no error handling. Other than that, it works. :)
   local:serialize(

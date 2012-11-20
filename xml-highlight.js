@@ -67,7 +67,7 @@
       }
     }
     p.oncomment = function(comment) {
-      accumulator.push("<div class='comment'><span class='toggle'></span><span class='comment-open' tabindex='" + tabIndex + "'>&lt;!--</span><div class='comment-value'>" + prepareText(comment) + "</div><span class='comment-close'>--&gt;</span></div>");
+      accumulator.push(buildComment(comment, tabIndex));
     }
     p.onprocessinginstruction = function(pi) {
       accumulator.push('<div class="processing-instruction"><span class="toggle"></span><span class="processing-instruction-open" tabindex="' + tabIndex + '">&lt;?</span><span class="processing-instruction-value"><span class="processing-instruction-name">' + pi.name + '</span> <span class="processing-instruction-body"> ' + pi.body + '</span></span><span class="processing-instruction-close">?></span></div>');
@@ -92,10 +92,6 @@
         }
         message = '<div class="message">For performance reasons, you’re only looking at the first ' + options.truncate + '-character chunk. To see the full result, output the query as raw text.</div>';
       }
-      // FIXME: This is test code. It's expsensive and doesn't belong here
-      //var outcomes = testXML(accumulator.join("")) //, ['data[0].firstName === "Wayne"']);
-      //if(outcomes.length > 0) console.dir(outcomes);
-      // FIXME: End test 
       handler(
         "\n\n<!-- START XML-HIGHLIGHT -->" + 
         "<div class='root'>" + 
@@ -107,4 +103,7 @@
       );
     }
     p.write(-1 === options.truncate ? xml : xml.substring(0, options.truncate)).close();
+  }
+  function buildComment(comment, tabIndex) {
+    return "<div class='comment'><span class='toggle'></span><span class='comment-open' tabindex='" + tabIndex + "'>&lt;!--</span><div class='comment-value'>" + prepareText(comment) + "</div><span class='comment-close'>--&gt;</span></div>"
   }

@@ -136,16 +136,28 @@
         var result = results[i];
         accumulator.push('<div class="result-item ' + result.type + '-type">');
         accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
-        if("element" === result.type || "document" === result.type || "comment" === result.type || "processing-instruction" === result.type) {
+        if("element" === result.type || "document" === result.type) {
           // TODO: Proper truncation
           // FIXME: This actually assumes things are happending in order, since it's using the global accumulator variable
-          // highlight(result.content, function(output) {
-          //  accumulator.push(output);
-          // }, options,
-          // function(error) { 
-          //    $("#output").html('<div class="error">' + error + '</div>');            
-          // });
-          accumulator.push('<pre class="' + result.type +'-raw">' + escapeForHTML(result.content) + '</pre>');
+          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-raw-length="'+result.content.length+'">' + escapeForHTML(result.content) + '</pre>');
+          // if(i < 1) {
+          //   highlight(result.content, function(output) {
+          //    accumulator.push(output);
+          //   }, options,
+          //   function(error) { 
+          //      $("#output").html('<div class="error">' + error + '</div>');            
+          //   });
+          // }
+        }
+        else if ("comment" === result.type) {
+          accumulator.push('<div class="root">');
+          accumulator.push(
+            buildComment(result.content.replace(/^<!--\s*/, "").replace(/\s*-->$/, ""), 100)
+          );
+          accumulator.push('</div>');
+        }
+        else if("processing-instruction" === result.type) {
+          accumulator.push("PI");
         }
         else if("text" === result.type) {
           accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (escapeForHTML(result.content) || "&nbsp;") + "</span></div>");
@@ -184,7 +196,6 @@
      * TODO: This should probably be refactored to better encapsulate.
      */
     function cleanUp(target, options) {
-      console.log("cleanUp");
       /* Clean up ***********************************************************************************************/
 
       // Empty Elements
@@ -226,9 +237,26 @@
       evt.stopPropagation();
     });
 
+
     // FIXME: This is a hack to swap in the hi-fi version upon clicking the raw version.
-    $("#output").delegate(".element-raw", "click", function(evt){
+    $("#output").delegate(".element-raw", "click", function(evt) {
+      var accumulator = [];
       var pre = $(this);
+      var id = "" + parseInt(Math.random() * 100000);
+
+      var worker = new Worker('render-worker.js'); // + "?" + Math.random());
+      worker.addEventListener('message', function(evt) {
+        $(pre).after(evt.data.html).hide();
+        // $("#" + event.data.id).html(event.data.html);
+        cleanUp($(pre).next(".root"), getOptions());
+      });
+      worker.addEventListener('error', function(err) {
+        throw err;
+      });
+      worker.postMessage({"id": 'element_async_' + id, "content": $(pre).text()});
+
+      /*
+      // Legacy non-Web Worker
       highlight(pre.text(), function(output) {
         // Insert the highlighted DOM (output as String, for now) after the raw data (pre)
         // and then hide the raw data.
@@ -239,6 +267,7 @@
       function(error) { 
          $("#output").html('<div class="error">' + error + '</div>');            
       });
+      */
     });
     
     function getDetails(elData, attrData, handler, errorHandler) {
