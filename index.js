@@ -487,7 +487,7 @@
     // Run through each of the JSON and XML serializations to make sure they actually parse. This should be a pretty safe bet that all works.
     $("#validate").click(function(evt){
       var count = 0;
-      $(".result-item.json-basic-type .root").each(
+      $(".result-item.json-basic-type .root, .json-basic-raw").each(
         function(i, el) { 
           try {
             JSON.parse($(this).text());
@@ -498,7 +498,7 @@
           }
         }
       );
-      $(".result-item.element-type .root").each(
+      $(".result-item.element-type .root, .element-raw").each(
         function(i, el) { 
           try {
             $.parseXML($(this).text());
