@@ -94,6 +94,7 @@
         "truncate": parseInt($("#truncate").val()),
         "shortMax": parseInt($("#short-max").val()),
         "maxResults": parseInt($("#results-max").val()),
+        "renderEager": 100000,
         "tabIndex": 100
       }
     }
@@ -139,7 +140,7 @@
         if("element" === result.type || "document" === result.type) {
           // TODO: Proper truncation
           // FIXME: This actually assumes things are happending in order, since it's using the global accumulator variable
-          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-raw-length="'+result.content.length+'">' + escapeForHTML(result.content) + '</pre>');
+          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'">' + escapeForHTML(result.content) + '</pre>');
           // if(i < 1) {
           //   highlight(result.content, function(output) {
           //    accumulator.push(output);
@@ -172,6 +173,8 @@
           accumulator.push("<div class='value type-" + result.type + "'>" + escapeForHTML(result.content || " ") + "</div>");
         }
         else if("json" === result.type || "json-basic" === result.type) {
+          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'">' + escapeForHTML(result.content) + '</pre>');
+          /*
           highlightJSON(result.content, function(output) {
             accumulator.push(output);
             // http://stackoverflow.com/questions/11181791/difference-in-display-of-inline-elements-when-toggled-programmatically-and-decla
@@ -180,17 +183,33 @@
           function(error) { 
               $("#output").html('<div class="error">' + error + '</div>');            
           });
+          */
         }
         else {
           accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
         }
         accumulator.push('</div>'); // div.result-item
       }
-      //console.log(accumulator.join(""));
       target.html(accumulator.join(""));
-      cleanUp(target, options);
+      renderEager(target, options);
+      // cleanUp(target, options);
     }
 
+    /**
+     * Pre-render starting from the top. If the total size exceeds the options.renderEager param then stop.
+     */
+    function renderEager(target, options) {
+      var total = 0;
+      target.find(".element-raw, .json-basic-raw").each(function(i) {
+        total += $(this).data("raw-length");
+        console.log(total);
+        if(total < options.renderEager) {
+          renderRaw($(this));
+        } else {
+          return;
+        }
+      });
+    }
     /**
      * DOM-level clean-up code. The implicatiopn is that this level of clean-up can't be farmed out to a Web Worker.
      * TODO: This should probably be refactored to better encapsulate.
@@ -238,13 +257,14 @@
     });
 
 
-    // FIXME: This is a hack to swap in the hi-fi version upon clicking the raw version.
-    $("#output").delegate(".element-raw", "click", function(evt) {
-      var accumulator = [];
-      var pre = $(this);
-      var id = "" + parseInt(Math.random() * 100000);
+    /**
+     * Given an element containing the raw text, render a JSON or element result in a separate worker thread.
+     */
+    function renderRaw(pre) {
+      var id = pre.attr("id");
+      var type = pre.data("type");
 
-      var worker = new Worker('render-worker.js'); // + "?" + Math.random());
+      var worker = new Worker('render-worker.js' + "?" + Math.random());
       worker.addEventListener('message', function(evt) {
         $(pre).after(evt.data.html).hide();
         // $("#" + event.data.id).html(event.data.html);
@@ -253,7 +273,12 @@
       worker.addEventListener('error', function(err) {
         throw err;
       });
-      worker.postMessage({"id": 'element_async_' + id, "content": $(pre).text()});
+      worker.postMessage({"id": 'element_async_' + id, "type": type, "content": $(pre).text()});
+    }
+
+    // FIXME: This is a hack to swap in the hi-fi version upon clicking the raw version.
+    $("#output").delegate(".element-raw, .json-basic-raw", "click", function(evt) {
+      renderRaw($(this));
 
       /*
       // Legacy non-Web Worker

@@ -1,4 +1,5 @@
 var exports = {}
+var window = {}
 
 // Escape text for HTML, including line breaks
 function prepareText(text) {
@@ -15,8 +16,15 @@ function escapeForHTML(str) {
 }
 
 self.importScripts("lib/sax.js", "xml-highlight.js");
+self.importScripts("lib/clarinet.js", "json-highlight.js");
 self.onmessage = function(event) {
-  highlight(event.data.content, function(html) {
-    self.postMessage({"id": event.data.id, "html": html});
-  })
+  if("json-basic" === event.data.type) {
+    highlightJSON(event.data.content, function(html) {
+      self.postMessage({"id": event.data.id, "html": html});
+    });
+  } else {
+    highlight(event.data.content, function(html) {
+      self.postMessage({"id": event.data.id, "html": html});
+    });
+  }
 };

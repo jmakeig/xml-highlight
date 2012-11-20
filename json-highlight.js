@@ -54,7 +54,7 @@ function highlightJSON(json, handler, options, errorHandler) {
   /* Parsers handlers */
   parser.onready = function() { }
   parser.onerror = function(error) {
-    console.error(error);
+    // console.error(error);
     // TODO: Unroll stack here
     errorHandler(error);
   }
