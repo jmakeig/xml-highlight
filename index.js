@@ -94,7 +94,7 @@
         "truncate": parseInt($("#truncate").val()),
         "shortMax": parseInt($("#short-max").val()),
         "maxResults": parseInt($("#results-max").val()),
-        "renderEager": 100000,
+        "renderEager": 9000,
         "tabIndex": 100
       }
     }
@@ -125,6 +125,7 @@
       // If it's a single result, wrap it in an array
       if(!results.length) { results = [results]; }
       var accumulator = [];
+      var total = 0;
       var target = $(target || document.body.append("<div/>"));
 
       // Allow truncation of the total number of results for performance
@@ -135,20 +136,27 @@
       
       for(var i = 0; i < len; i++) {
         var result = results[i];
+        
         accumulator.push('<div class="result-item ' + result.type + '-type">');
         accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
         if("element" === result.type || "document" === result.type) {
+          console.log(i + ": " + total);
           // TODO: Proper truncation
           // FIXME: This actually assumes things are happending in order, since it's using the global accumulator variable
-          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'">' + escapeForHTML(result.content) + '</pre>');
-          // if(i < 1) {
-          //   highlight(result.content, function(output) {
-          //    accumulator.push(output);
-          //   }, options,
-          //   function(error) { 
-          //      $("#output").html('<div class="error">' + error + '</div>');            
-          //   });
-          // }
+          total += result.content.length
+          var style = '';
+          if(total < options.renderEager) {
+            style = ' style="display: none;"'
+          }
+          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'" '+style+'>' + prepareText(result.content) + '</pre>');
+          if(total < options.renderEager) {
+            highlight(result.content, function(output) {
+             accumulator.push(output);
+            }, options,
+            function(error) { 
+               $("#output").html('<div class="error">' + error + '</div>');            
+            });
+          }
         }
         else if ("comment" === result.type) {
           accumulator.push('<div class="root">');
@@ -173,17 +181,23 @@
           accumulator.push("<div class='value type-" + result.type + "'>" + escapeForHTML(result.content || " ") + "</div>");
         }
         else if("json" === result.type || "json-basic" === result.type) {
-          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'">' + escapeForHTML(result.content) + '</pre>');
-          /*
-          highlightJSON(result.content, function(output) {
-            accumulator.push(output);
-            // http://stackoverflow.com/questions/11181791/difference-in-display-of-inline-elements-when-toggled-programmatically-and-decla
-            // TODO: Need to fix json-array and object
-          }, null, 
-          function(error) { 
-              $("#output").html('<div class="error">' + error + '</div>');            
-          });
-          */
+          console.log(i + ": " + total);
+          total += result.content.length
+          var style = '';
+          if(total < options.renderEager) {
+            style = ' style="display: none;"'
+          }
+          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'" '+style+'>' + prepareText(result.content) + '</pre>');
+          if(total < options.renderEager) {
+            highlightJSON(result.content, function(output) {
+              accumulator.push(output);
+              // http://stackoverflow.com/questions/11181791/difference-in-display-of-inline-elements-when-toggled-programmatically-and-decla
+              // TODO: Need to fix json-array and object
+            }, null, 
+            function(error) { 
+                $("#output").html('<div class="error">' + error + '</div>');            
+            });
+          }
         }
         else {
           accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
@@ -191,8 +205,8 @@
         accumulator.push('</div>'); // div.result-item
       }
       target.html(accumulator.join(""));
-      renderEager(target, options);
-      // cleanUp(target, options);
+      // renderEager(target, options);
+      cleanUp(target, options);
     }
 
     /**

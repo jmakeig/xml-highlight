@@ -64,7 +64,7 @@ function highlightJSON(json, handler, options, errorHandler) {
     if("object" === type && !v) type = "null";
     if("string" === type) {
       quote = '"';
-      v = prepareText(v);
+      v = escapeForHTML(v);
     }
     if(isIn("array")) accumulator.push('<div class="json-array-item">')
     accumulator.push('<span class="json-value">' + quote + '<span class="json-' + type + '">' + v + '</span>' + quote);

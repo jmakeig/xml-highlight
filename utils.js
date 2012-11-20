@@ -44,13 +44,14 @@ function prepareText(text) {
   return text
     .replace(/&/gm, "&amp;")
     .replace(/</gm, "&lt;")
-    .replace(/[\n\r]/gm, "<br/>")
+    //.replace(/[\n\r]/gm, "<br/>")
     .replace(/\t/gm, "&nbsp;&nbsp;");
 }
 /** Replace < and & for literal dispaly in HTML */
 function escapeForHTML(str) {
   if(typeof str === "undefined") return "";
-  return prepareText(str);
+  return prepareText(str)
+    .replace(/[\n\r]/gm, "<br/>");
 }
 
 /** Hack to center a modal dialog */

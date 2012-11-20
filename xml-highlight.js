@@ -44,7 +44,7 @@
           }
           ns.push(" <span class='namespace'><span class='xmlns'>xmlns</span>" + prefix + "=&quot;<span class='namespace-uri'>" + node.attributes[a].value + "</span>&quot;</span>")
         } else {
-          attrs.push(" <span class='attribute' title='"+attr.name+" ("+attr.uri+")' data-attribute-name='"+attr.name+"' data-attribute-localname='"+attr.local+"' data-attribute-prefix='"+attr.prefix+"' data-attribute-namespace-uri='"+attr.uri+"' data-attribute-value='"+attr.value+"'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + prepareText(attr.value) + "</span>&quot;</span>");
+          attrs.push(" <span class='attribute' title='"+attr.name+" ("+attr.uri+")' data-attribute-name='"+attr.name+"' data-attribute-localname='"+attr.local+"' data-attribute-prefix='"+attr.prefix+"' data-attribute-namespace-uri='"+attr.uri+"' data-attribute-value='"+attr.value+"'><span class='attribute-name'>" + parsePrefix(a) + "</span>=&quot;<span class='attribute-value'>" + escapeForHTML(attr.value) + "</span>&quot;</span>");
         }
       }
       accumulator.push("<div class='element' data-element-name='"+node.name+"' data-element-prefix='"+node.prefix+"' data-element-localname='"+node.local+"' data-element-namespace-uri='"+node.uri+"'><span class='toggle'></span><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name' title='"+node.name+" ("+node.uri+")'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
@@ -63,7 +63,7 @@
       // Whether to collapse a simple text node (still wonky). Currently implemented at the client
       var shortFlag = "";
       if(!WHITESPACE.test(text)) { // if it's only whitespace. This feels dangerous.
-        accumulator.push("<div class='text" + shortFlag + "'>" + prepareText(text) + "</div>");
+        accumulator.push("<div class='text" + shortFlag + "'>" + escapeForHTML(text) + "</div>");
       }
     }
     p.oncomment = function(comment) {
@@ -105,5 +105,5 @@
     p.write(-1 === options.truncate ? xml : xml.substring(0, options.truncate)).close();
   }
   function buildComment(comment, tabIndex) {
-    return "<div class='comment'><span class='toggle'></span><span class='comment-open' tabindex='" + tabIndex + "'>&lt;!--</span><div class='comment-value'>" + prepareText(comment) + "</div><span class='comment-close'>--&gt;</span></div>"
+    return "<div class='comment'><span class='toggle'></span><span class='comment-open' tabindex='" + tabIndex + "'>&lt;!--</span><div class='comment-value'>" + escapeForHTML(comment) + "</div><span class='comment-close'>--&gt;</span></div>"
   }
