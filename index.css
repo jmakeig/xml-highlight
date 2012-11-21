@@ -45,6 +45,9 @@ textarea:disabled {
   margin-left: 7em;
   margin-top: 0.25em;
 }
+#input-xml-source {
+  width: 32em;
+}
 #output-tools {
   background: #ccc;
   padding: 0.5em;

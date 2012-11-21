@@ -76,9 +76,13 @@
       getInput(
         function(results) {
           console.timeEnd("fetch results");
-          console.time("render");
-          formatResults(results, options, $("#output"));
-          console.timeEnd("render");
+          if(results) {
+            console.time("render");
+            formatResults(results, options, $("#output"));
+            console.timeEnd("render");
+          } else { 
+            $("#output").html("") 
+          }
           $("#output").trigger("results", [results]);
           //$(".element, .comment").addClass("collapsed");
           /* Expand the root element only */
@@ -138,6 +142,8 @@
         var result = results[i];
         
         accumulator.push('<div class="result-item ' + result.type + '-type">');
+        accumulator.push('<div class="result-number">' + (i + 1) + '</div>');
+        if(result.uri) accumulator.push('<div class="result-uri">' + result.uri + '</div>');
         accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
         if("element" === result.type || "document" === result.type) {
           console.log(i + ": " + total);
@@ -148,10 +154,11 @@
           if(total < options.renderEager) {
             style = ' style="display: none;"'
           }
-          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'" '+style+'>' + prepareText(result.content) + '</pre>');
+          accumulator.push('<pre class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'" '+style+'>' + prepareText(result.content) + '</pre>');
           if(total < options.renderEager) {
-            highlight(result.content, function(output) {
+            highlight(result.content, function(output, info) {
              accumulator.push(output);
+             console.dir(info);
             }, options,
             function(error) { 
                $("#output").html('<div class="error">' + error + '</div>');            
@@ -172,6 +179,7 @@
           accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (escapeForHTML(result.content) || "&nbsp;") + "</span></div>");
         }
         else if("attribute" === result.type) {
+          // FIXME: Doesn't handle prefixed attributes whose return type looks like x:href="asdf" xmlns:x="X"
           var tokens = result.content.split("=");
           var name = tokens[0];
           var value = tokens[1].substring(1, tokens[1].length - 1);

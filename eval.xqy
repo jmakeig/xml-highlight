@@ -61,6 +61,9 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
       return (
         xdmp:log($type),
         map:put($m, "type", $type),
+        map:put($m, "uri", 
+          if("document" = $type) then xdmp:node-uri($r) else ()
+        ),
         map:put($m, "content", 
           if(("document", "element") = $type) then
             let $quote := xdmp:quote(root(document {$r})/node())
@@ -74,7 +77,14 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
             (: TODO: What should/can we do with binaries? :)
             "Binary"
           else if("attribute" = $type) then
-            concat(name($r), "=&quot;", data($r), "&quot;")
+            (:concat(name($r), "=&quot;", data($r), "&quot;"):)
+            replace(
+              string-join(
+                tokenize(
+                  xdmp:quote(element a { $r }), "\s")[2 to 3], 
+                  " "), 
+              "/>$", 
+            "")
           else if("comment" = $type) then
             concat("&lt;!-- ", string($r), " -->")
           else if("json-basic" = $type) then

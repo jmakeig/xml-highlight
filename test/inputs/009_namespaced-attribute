@@ -1,0 +1,3 @@
+declare namespace x="XXXXX";
+<a x:href="asdf" xmlns:x="X"/>/@x:href,
+<a x:href="asdf" foo="bar" xmlns:x="X"/>/@*

@@ -161,7 +161,15 @@
 
 
 
-
+.result-number {
+  float: left;
+  width: 3em;
+  text-align: right;
+  margin-top: 0.4em;
+  margin-left: -4em;
+  color: #999;
+  font-size: 80%;
+}
 .result-item.highlight {
   
 }
