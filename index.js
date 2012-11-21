@@ -196,7 +196,9 @@
           if(total < options.renderEager) {
             style = ' style="display: none;"'
           }
-          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'" '+style+'>' + prepareText(result.content) + '</pre>');
+          // TODO: Is parsing and then stringifying too much work here?
+          // console.log(JSON.stringify(JSON.parse(result.content), null, "  "));
+          accumulator.push('<pre id="Result-' + i + '" class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'" '+style+'>' + prepareText(JSON.stringify(JSON.parse(result.content), null, "  ")) + '</pre>');
           if(total < options.renderEager) {
             highlightJSON(result.content, function(output) {
               accumulator.push(output);
