@@ -7,6 +7,7 @@
     // required to clean up the unclosed elements in the case 
     // that the XML is truncated.
     var stack = [];
+    var elements = {};
     var p = new exports.SAXParser(true, {xmlns: true});
     var options = options || {}, 
       truncate = options.truncate || -1,
@@ -49,8 +50,20 @@
       }
       accumulator.push("<div class='element' data-element-name='"+node.name+"' data-element-prefix='"+node.prefix+"' data-element-localname='"+node.local+"' data-element-namespace-uri='"+node.uri+"'><span class='toggle'></span><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name' title='"+node.name+" ("+node.uri+")'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
       accumulator.push("&gt;</span><div class='element-value'>");
+      
+      var key = "{" + (node.uri || "") + "}" + node.name; // Clark notation
+
       //console.log("Pushing " + node.name);
-      stack.push(node.name);
+      stack.push(key);
+
+      // Keep track of elements
+      if(elements[key]) { elements[key].count++ } else { elements[key] = { "count": 1, "paths": {}} } 
+      var stackKey = "/" + stack.slice().join("/");
+      if(elements[key].paths[stackKey]) {
+        elements[key].paths[stackKey].count++;
+      } else {
+        elements[key].paths[stackKey] = { "count": 1 }
+      }
     }
     p.onclosetag = function(name) {
       accumulator.push("</div>"); // element-value
@@ -76,6 +89,7 @@
         //console.dir(arguments);
     }
     p.onend = function() {
+      // console.dir(elements);
       if(!p.error) send();
     }
     function send() {
@@ -99,7 +113,8 @@
           cleanUp.join("") + 
         "</div>"
         + "<!-- END XML-HIGHLIGHT -->\n\n"
-        + message
+        + message,
+        elements
       );
     }
     p.write(-1 === options.truncate ? xml : xml.substring(0, options.truncate)).close();
