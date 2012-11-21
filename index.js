@@ -235,7 +235,7 @@
     /**
      * DOM-level clean-up code. The implicatiopn is that this level of clean-up can't be farmed out to a Web Worker.
      * TODO: This should probably be refactored to better encapsulate.
-     * FIXME: This screws up the indentation of 010_repeated-nesting
+     * TODO: Need to make sure this is idempotent
      */
     function cleanUp(target, options) {
       /* Clean up ***********************************************************************************************/
@@ -259,12 +259,15 @@
       // global shortMax option, give it a .short class to display inline
       target.find(".element").each(function(i) {
         if($(this).find(".text").children("br").length > 0) return; // if there's a line break, don't treat it as .short
+        if($(this).find(".element, .comment, .processing-instruction").length > 0) return; // if it has element children, don't treat it as .short
         var len = $(this).find(".text").text().length;
         //console.log(len + ": " + $(this).find(".text").text());
         var el = $(this).closest(".element");
         //el.addClass("simple");
         if(len < options.shortMax ) el.addClass("short");
       });
+
+      // Special class to flag multi-line attributes
       target.find(".attribute-value:has(br)").addClass("multi");
     }
 
