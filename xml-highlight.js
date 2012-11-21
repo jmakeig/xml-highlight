@@ -8,6 +8,7 @@
     // that the XML is truncated.
     var stack = [];
     var elements = {};
+    var namespaces = {};
     var p = new exports.SAXParser(true, {xmlns: true});
     var options = options || {}, 
       truncate = options.truncate || -1,
@@ -51,7 +52,7 @@
       accumulator.push("<div class='element' data-element-name='"+node.name+"' data-element-prefix='"+node.prefix+"' data-element-localname='"+node.local+"' data-element-namespace-uri='"+node.uri+"'><span class='toggle'></span><span class='element-open' tabindex='" + tabIndex + "'>&lt;<span class='element-name' title='"+node.name+" ("+node.uri+")'>" + parsePrefix(node.name) + "</span><span class='element-meta'>" + attrs.join("") + ns.join("") + '</span>');
       accumulator.push("&gt;</span><div class='element-value'>");
       
-      var key = "{" + (node.uri || "") + "}" + node.name; // Clark notation
+      var key = "{" + (node.uri || "") + "}" + node.local; // Clark notation
 
       //console.log("Pushing " + node.name);
       stack.push(key);
@@ -85,8 +86,12 @@
     p.onprocessinginstruction = function(pi) {
       accumulator.push('<div class="processing-instruction"><span class="toggle"></span><span class="processing-instruction-open" tabindex="' + tabIndex + '">&lt;?</span><span class="processing-instruction-value"><span class="processing-instruction-name">' + pi.name + '</span> <span class="processing-instruction-body"> ' + pi.body + '</span></span><span class="processing-instruction-close">?></span></div>');
     }
-    p.onopennamespace = function(prefix, uri) {
-        //console.dir(arguments);
+    p.onopennamespace = function(ns /* {"prefix", "uri"} */) {
+      if(namespaces[ns.uri]) {
+        namespaces[ns.uri].push(ns.prefix);
+      } else {
+        namespaces[ns.uri] = [ns.prefix];
+      }
     }
     p.onend = function() {
       // console.dir(elements);
@@ -114,7 +119,7 @@
         "</div>"
         + "<!-- END XML-HIGHLIGHT -->\n\n"
         + message,
-        elements
+        {"elements": elements, "namespaces": namespaces}
       );
     }
     p.write(-1 === options.truncate ? xml : xml.substring(0, options.truncate)).close();

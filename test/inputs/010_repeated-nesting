@@ -1,7 +1,8 @@
-<a>
+<a xmlns="GLOBAL">
   <b><c:c xmlns:c="C"><d><e>F</e><d/></d></c:c></b>
-  <a><a><c><e>G</e></c><b/></a></a>
+  <a><zed:a xmlns:zed="A"><c><e>G</e></c><b/></zed:a></a>
   <a:a xmlns:a="A"><a/><a/></a:a>
-  <a/>
-  <a/>
+  <a:a xmlns:a="A-prime"/>
+  <a x:attr="value" xmlns:x="X"/>
+  <p:a xmlns:p="A"/>
 </a>

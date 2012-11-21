@@ -24,8 +24,8 @@ self.onmessage = function(event) {
       self.postMessage({"id": event.data.id, "html": html});
     });
   } else {
-    highlight(event.data.content, function(html) {
-      self.postMessage({"id": event.data.id, "html": html});
+    highlight(event.data.content, function(html, info) {
+      self.postMessage({"id": event.data.id, "html": html, "info": info});
     });
   }
 };

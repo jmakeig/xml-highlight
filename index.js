@@ -146,7 +146,7 @@
         if(result.uri) accumulator.push('<div class="result-uri">' + result.uri + '</div>');
         accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
         if("element" === result.type || "document" === result.type) {
-          console.log(i + ": " + total);
+          // console.log(i + ": " + total);
           // TODO: Proper truncation
           // FIXME: This actually assumes things are happending in order, since it's using the global accumulator variable
           total += result.content.length
@@ -189,7 +189,7 @@
           accumulator.push("<div class='value type-" + result.type + "'>" + escapeForHTML(result.content || " ") + "</div>");
         }
         else if("json" === result.type || "json-basic" === result.type) {
-          console.log(i + ": " + total);
+          // console.log(i + ": " + total);
           total += result.content.length
           var style = '';
           if(total < options.renderEager) {
@@ -235,6 +235,7 @@
     /**
      * DOM-level clean-up code. The implicatiopn is that this level of clean-up can't be farmed out to a Web Worker.
      * TODO: This should probably be refactored to better encapsulate.
+     * FIXME: This screws up the indentation of 010_repeated-nesting
      */
     function cleanUp(target, options) {
       /* Clean up ***********************************************************************************************/
@@ -291,6 +292,7 @@
         $(pre).after(evt.data.html).hide();
         // $("#" + event.data.id).html(event.data.html);
         cleanUp($(pre).next(".root"), getOptions());
+        console.dir(event.data.info);
       });
       worker.addEventListener('error', function(err) {
         throw err;
