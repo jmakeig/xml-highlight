@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 declare namespace dir="http://marklogic.com/xdmp/directory";
-declare option xdmp:output "method=html";
+declare option xdmp:output "method=html"; (: This causes PIs to be serialized incorrectly :)
 (: There's no way to get a file relative to a module, so you'll have to set this path to the location of index.xqy :)
 declare variable $HOME as xs:string := "/Users/jmakeig/Workspaces/xml-highlight/";
 xdmp:set-response-content-type("text/html"),
@@ -59,8 +59,64 @@ xdmp:set-response-content-type("text/html"),
     <span class="total"></span>
     <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
   </div>
-  <div id="node-details"><!-- Populated by rendered #node_details_template --></div>
-  <script type="text/html;template" id="node_details_template" src="templates/node-details.html"></script>
   <div id="output" tabindex="10"></div>
+  <div id="node-details"><!-- Populated by rendered #node_details_template --></div>
+  <script type="text/html;template" id="node_details_template">
+
+    <div class="detail-close">X</div>
+    <h3 class="detail-localname"><?tmpl- element.localname ??></h3>  
+    <div class="detail-localname"><?tmpl- element["namespace-uri"] ??></div>
+    <div class="detail-estimate"><?tmpl- element.estimate ??></div>
+    <h4>Element Range Indexes</h4>
+    <?tmpl if("range-element-indexes" in database) { ??>
+    <table>
+      <tr><th>Type</th><th>Positions</th></tr>
+      <?tmpl
+        var ri = database["range-element-indexes"];
+        for(var i=0; i < ri.length; i++) {
+      ??>
+      <tr>
+        <td>
+          <?tmpl- ri[i]["scalar-type"] ??> 
+          <?tmpl- ri[i].collation ??>
+        </td>
+        <td><?tmpl- ri[i]["range-value-positions"] ??></td>
+      </tr>
+      <?tmpl } ??>
+    </table>
+    <?tmpl } ??>
+    <h4>Fields</h4>
+    <?tmpl if("fields" in database) { ??>
+    <table>
+      <tr><th>Name</th><th>Includes</th><th>Excludes</th><th>Range Indexes</th></tr>
+      <?tmpl
+        var fields = database.fields;
+        for(var i=0; i < fields.length; i++) {
+      ??>
+      <tr>
+        <td><?tmpl- fields[i]["field-name"] ??></td>
+        <td><ul><li></li></ul></td>
+        <td><ul><li></li></ul></td>
+        <td></td>
+      </tr>
+      <?tmpl } ??>
+    </table>
+    <?tmpl } ??>
+  </script>
+  <script type="text/html;template" id="document_info_template">
+    <h3>Info</h3>
+    <table>
+    <?tmpl for(var el in elements) { ??>
+      <tr>
+        <td><?tmpl- el ??></td><td><?tmpl- elements[el].count ??></td>
+        <td>
+          <?tmpl for(var p in elements[el].paths) { ??>
+            <div><?tmpl- p ??></div>
+          <?tmpl } ??>
+        </td>
+      </tr>
+    <?tmpl } ??>
+    </table>
+  </script>
 </body>
 </html>

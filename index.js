@@ -157,7 +157,7 @@
           accumulator.push('<pre class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'" '+style+'>' + prepareText(result.content) + '</pre>');
           if(total < options.renderEager) {
             highlight(result.content, function(output, info) {
-             accumulator.push('<div class="result-info">' + JSON.stringify(info) + '</div>'); 
+             accumulator.push('<div class="result-info">' + tmpl("document_info_template", info) + '</div>'); 
              accumulator.push(output);
              console.dir(info);
             }, options,
@@ -349,12 +349,16 @@
     }
     
     function renderDetails(details, $el, $attr) {
-      tmpl.get($("#node_details_template").attr("src"), function(template) {
-        //console.dir(details);
-        $("#node-details").html(
-          tmpl(template, details.node)
+      // tmpl.get($("#node_details_template").attr("src"), function(template) {
+      //   //console.dir(details);
+      //   $("#node-details").html(
+      //     tmpl(template, details.node)
+      //   ).css({top: $($el).offset().top + "px", right: "2em"});
+      // });
+      console.dir(details);
+      $("#node-details").html(
+          tmpl("node_details_template", details.node)
         ).css({top: $($el).offset().top + "px", right: "2em"});
-      });
     }
     
     $("#output").delegate(".element-name", "click", function(evt) {
