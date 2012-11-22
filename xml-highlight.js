@@ -58,7 +58,16 @@
       stack.push(key);
 
       // Keep track of elements
-      if(elements[key]) { elements[key].count++ } else { elements[key] = { "count": 1, "paths": {}} } 
+      if(elements[key]) { 
+        elements[key].count++ 
+      } else { 
+        elements[key] = { 
+          "localname": node.local, 
+          "namespace-uri": node.uri, 
+          "count": 1, 
+          "paths": {}
+        } 
+      } 
       var stackKey = "/" + stack.slice().join("/");
       if(elements[key].paths[stackKey]) {
         elements[key].paths[stackKey].count++;
