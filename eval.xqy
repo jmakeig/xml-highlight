@@ -66,7 +66,12 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
         ),
         map:put($m, "content", 
           if(("document", "element") = $type) then
-            let $quote := xdmp:quote(root(document {$r})/node())
+            let $quote := xdmp:quote(
+              root(document {$r})/node(), 
+              <options xmlns="xdmp:quote">
+                <indent-untyped>yes</indent-untyped>
+              </options>
+            )
             return 
               (: TODO: Is this if condition correct? :)
               if($truncate gt 0) then substring($quote, 1, $truncate)
