@@ -68,9 +68,13 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
           if(("document", "element") = $type) then
             let $quote := xdmp:quote(
               root(document {$r})/node(), 
-              <options xmlns="xdmp:quote">
+              (: This provides some nice hierarchical indentation, but it's probably not what 
+                 someone would want for "raw" output where they want to see exactly the 
+                 infoset they built
+              :)
+              (:<options xmlns="xdmp:quote">
                 <indent-untyped>yes</indent-untyped>
-              </options>
+              </options>:) ()
             )
             return 
               (: TODO: Is this if condition correct? :)
