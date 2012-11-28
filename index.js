@@ -157,9 +157,10 @@
           accumulator.push('<pre class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'" '+style+'>' + prepareText(result.content) + '</pre>');
           if(total < options.renderEager) {
             highlight(result.content, function(output, info) {
-             accumulator.push('<div class="result-info">' + tmpl("document_info_template", info) + '</div>'); 
+             accumulator.push('<div class="result-info collapsed">' + tmpl("document_info_template", info) + '</div>'); 
              accumulator.push(output);
              console.dir(info);
+             console.log(JSON.stringify(info, null, "  "));
             }, options,
             function(error) { 
                $("#output").html('<div class="error">' + error + '</div>');            
@@ -284,6 +285,8 @@
       $(evt.currentTarget).next(".element-open, .comment-open, .processing-instruction-open, .json-object-open, .json-array-open").focus();
       evt.stopPropagation();
     });
+
+    $("#output").delegate(".result-info h3", "click", function(evt) { $(this).closest(".result-info").toggleClass("collapsed")});
 
 
     /**

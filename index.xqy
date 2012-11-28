@@ -105,18 +105,20 @@ xdmp:set-response-content-type("text/html"),
   </script>
   <script type="text/html;template" id="document_info_template">
     <h3>Info</h3>
-    <table>
-    <?tmpl for(var el in elements) { ??>
-      <tr>
-        <td><?tmpl- el ??></td><td><?tmpl- elements[el].count ??></td>
-        <td>
-          <?tmpl for(var p in elements[el].paths) { ??>
-            <div><?tmpl- p ??></div>
-          <?tmpl } ??>
-        </td>
-      </tr>
-    <?tmpl } ??>
-    </table>
+    <div>
+      <table>
+      <?tmpl for(var el in elements) { ??>
+        <tr>
+          <td><?tmpl- el ??></td><td><?tmpl- elements[el].count ??></td>
+          <td>
+            <?tmpl for(var p in elements[el].paths) { ??>
+              <div><?tmpl- p ??></div>
+            <?tmpl } ??>
+          </td>
+        </tr>
+      <?tmpl } ??>
+      </table>
+    </div>
   </script>
 </body>
 </html>
