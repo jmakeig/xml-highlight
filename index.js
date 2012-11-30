@@ -25,6 +25,12 @@
   }
   $(document).ready(function(evt) {
     
+    var balloon = new Balloon({
+      stackHeaders: true
+    });
+    balloon.inflate(['input', 'outputH', 'errors']);
+
+
     setInterval(function() {
       $("#ErrorLog table tbody").load("log.xqy");
     },

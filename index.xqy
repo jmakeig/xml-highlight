@@ -16,18 +16,20 @@ xdmp:set-response-content-type("text/html"),
   <script type="text/javascript" src="lib/underscore-min.js">//</script>
   <script type="text/javascript" src="lib/jquery-1.8.2-min.js">//</script>
   <script type="text/javascript" src="utils.js">//</script>
+  <script type="text/javascript" src="lib/balloon.js">//</script>
   <script type="text/javascript" src="lib/tmpl.js">//</script>
   <script type="text/javascript" src="lib/sax.js">//</script>
   <script type="text/javascript" src="lib/clarinet.js">//</script>
   <script type="text/javascript" src="xml-highlight.js">//</script>
   <script type="text/javascript" src="json-highlight.js">//</script>
   <script type="text/javascript" src="index.js">//</script>
+  <link type="text/css" rel="stylesheet" href="lib/balloon.css"/>
   <link type="text/css" rel="stylesheet" href="xml-highlight.css"/>
   <link type="text/css" rel="stylesheet" href="index.css"/>
 </head>
 <body>
-  <div>
-    <h1>Input</h1>
+  <section>
+    <div class="h"><h1 id="input">Input</h1></div>
     <div>
       <div class="control">
         <label for="input-xml">Source</label>
@@ -55,28 +57,32 @@ xdmp:set-response-content-type("text/html"),
         <button id="validate">Validate</button>
       </div>
     </div>
-  </div>
-  <h1>Output</h1>
-    <div>
-    <div id="output-tools">
-      <button id="collapse-all">Collapse All</button>
-      <button id="expand-all">Expand All</button>
-      <span class="total"></span>
-      <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
+  </section>
+  <section>
+    <div><h1 id="outputH">Output</h1></div>
+      <div>
+      <div id="output-tools">
+        <button id="collapse-all">Collapse All</button>
+        <button id="expand-all">Expand All</button>
+        <span class="total"></span>
+        <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
+      </div>
+      <div id="output" tabindex="10"></div>
     </div>
-    <div id="output" tabindex="10"></div>
-  </div>
-  <h1>Errors</h1>
-  <div id="ErrorLog">
-    <table>
-      <thead>
-        <col/>
-        <col />
-        <col />
-      </thead>
-      <tbody><!-- --></tbody>
-    </table>
-  </div>
+  </section>
+  <section>
+    <div><h1 id="errors">Errors</h1></div>
+    <div id="ErrorLog">
+      <table>
+        <thead>
+          <col/>
+          <col />
+          <col />
+        </thead>
+        <tbody><!-- --></tbody>
+      </table>
+    </div>
+  </section>
   <div id="node-details"><!-- Populated by rendered #node_details_template --></div>
   <script type="text/html;template" id="node_details_template">
 
