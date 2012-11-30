@@ -24,6 +24,12 @@
     xhr.send(input);
   }
   $(document).ready(function(evt) {
+    
+    setInterval(function() {
+      $("#ErrorLog table tbody").load("log.xqy");
+    },
+    2500)
+
     $("#input-xml").on("input", // "input" is a new HTML5 event (Woo-hoo!)
       delay(
         function() {
@@ -159,8 +165,8 @@
             highlight(result.content, function(output, info) {
              accumulator.push('<div class="result-info collapsed">' + tmpl("document_info_template", info) + '</div>'); 
              accumulator.push(output);
-             console.dir(info);
-             console.log(JSON.stringify(info, null, "  "));
+             // console.dir(info);
+             // console.log(JSON.stringify(info, null, "  "));
             }, options,
             function(error) { 
                $("#output").html('<div class="error">' + error + '</div>');            

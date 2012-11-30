@@ -144,3 +144,21 @@ td, th {
 .result-info.collapsed > div {
   display: none;
 }
+#ErrorLog {
+  width: 100%;
+  max-height: 20em;
+  overflow: auto;
+}
+#ErrorLog table {
+  width: 200%;
+  font-family: Inconsolata, Consolas, monospace;
+}
+#ErrorLog .log-message {
+  white-space: nowrap;
+}
+#ErrorLog .log-date {
+  width: 5em;
+}
+#ErrorLog .log-time {
+  width: 7em;
+}

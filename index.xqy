@@ -13,6 +13,7 @@ xdmp:set-response-content-type("text/html"),
     // Intentionally global: Used for NPM-style imports in sax.js and clarinet.js.
     exports = {{}}
   </script>
+  <script type="text/javascript" src="lib/underscore-min.js">//</script>
   <script type="text/javascript" src="lib/jquery-1.8.2-min.js">//</script>
   <script type="text/javascript" src="utils.js">//</script>
   <script type="text/javascript" src="lib/tmpl.js">//</script>
@@ -60,6 +61,17 @@ xdmp:set-response-content-type("text/html"),
     <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
   </div>
   <div id="output" tabindex="10"></div>
+  <div id="ErrorLog">
+    <h2>Error Log</h2>
+    <table>
+      <thead>
+        <col/>
+        <col />
+        <col />
+      </thead>
+      <tbody><!-- --></tbody>
+    </table>
+  </div>
   <div id="node-details"><!-- Populated by rendered #node_details_template --></div>
   <script type="text/html;template" id="node_details_template">
 
