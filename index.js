@@ -50,7 +50,7 @@
     $("#input-xml").on("validate", function(evt, isValid, error){
       var errEl = $("#error-message");
       if(isValid) {
-        errEl.text("Valid");
+        errEl.html("&nbsp;"); // FIXME: Hack!
         $("#run").removeAttr('disabled');
       } else {
         errEl.text(error.formatString);

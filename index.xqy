@@ -39,8 +39,8 @@ xdmp:set-response-content-type("text/html"),
       </select>
     </div>
     <div class="control">
+    <div id="error-message">&nbsp;</div>
     <div class="label"><label for="input-xml">Input XML</label></div>
-      <div id="error-message">ASDF</div>
       <textarea id="input-xml" spellcheck="false"></textarea>
     </div>
     <h2 id="options">Options</h2>
@@ -60,9 +60,10 @@ xdmp:set-response-content-type("text/html"),
     <span class="total"></span>
     <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
   </div>
+  <h1>Output</h1>
   <div id="output" tabindex="10"></div>
+  <h1>Errors</h1>
   <div id="ErrorLog">
-    <h2>Error Log</h2>
     <table>
       <thead>
         <col/>

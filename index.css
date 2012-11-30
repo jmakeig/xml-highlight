@@ -162,3 +162,11 @@ td, th {
 #ErrorLog .log-time {
   width: 7em;
 }
+#error-message {
+  font-size: 75%;
+  font-weight: bold;
+  margin: 0.5em 0;
+  margin-left: 8em;
+  color: crimson;
+
+}
