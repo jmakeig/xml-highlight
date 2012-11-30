@@ -30,6 +30,10 @@
     },
     2500)
 
+    $("h1").on("click", function(evt) {
+      $(this).next("div").toggle();
+    });
+
     $("#input-xml").on("input", // "input" is a new HTML5 event (Woo-hoo!)
       delay(
         function() {

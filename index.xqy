@@ -28,40 +28,44 @@ xdmp:set-response-content-type("text/html"),
 <body>
   <div>
     <h1>Input</h1>
-    <div class="control">
-      <label for="input-xml">Source</label>
-      <select id="input-xml-source">
-        <option selected="selected"></option>
-      {
-        for $e in xdmp:filesystem-directory($HOME || "test/inputs")/dir:entry
-        return <option>{string($e/dir:filename)}</option>
-      }
-      </select>
-    </div>
-    <div class="control">
-    <div id="error-message">&nbsp;</div>
-    <div class="label"><label for="input-xml">Input XML</label></div>
-      <textarea id="input-xml" spellcheck="false"></textarea>
-    </div>
-    <h2 id="options">Options</h2>
     <div>
-      <div class="control"><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span class="guide">Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
-      <div class="control"><label for="results-max">Maximum number of results</label> <input id="results-max" value="-1"/> <span class="guide">The maximum number of results to display.</span></div>
-      <div class="control"><label for="short-max">Maximum inline size</label> <input id="short-max" value="100"/> <span class="guide">The maximum number of characters in an element to cause that element’s value to display inline.</span></div>
+      <div class="control">
+        <label for="input-xml">Source</label>
+        <select id="input-xml-source">
+          <option selected="selected"></option>
+        {
+          for $e in xdmp:filesystem-directory($HOME || "test/inputs")/dir:entry
+          return <option>{string($e/dir:filename)}</option>
+        }
+        </select>
+      </div>
+      <div class="control">
+      <div id="error-message">&nbsp;</div>
+      <div class="label"><label for="input-xml">Input XML</label></div>
+        <textarea id="input-xml" spellcheck="false"></textarea>
+      </div>
+      <h2 id="options">Options</h2>
+      <div>
+        <div class="control"><label for="truncate">Truncate</label> <input id="truncate" value="-1"/> <span class="guide">Truncate to approximately this number of characters. <code>-1</code> for no truncation.</span></div>
+        <div class="control"><label for="results-max">Maximum number of results</label> <input id="results-max" value="-1"/> <span class="guide">The maximum number of results to display.</span></div>
+        <div class="control"><label for="short-max">Maximum inline size</label> <input id="short-max" value="100"/> <span class="guide">The maximum number of characters in an element to cause that element’s value to display inline.</span></div>
+      </div>
+      <div>
+        <button id="run">Highlight</button>
+        <button id="validate">Validate</button>
+      </div>
     </div>
-    <div>
-      <button id="run">Highlight</button>
-      <button id="validate">Validate</button>
-    </div>
-  </div>
-  <div id="output-tools">
-    <button id="collapse-all">Collapse All</button>
-    <button id="expand-all">Expand All</button>
-    <span class="total"></span>
-    <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
   </div>
   <h1>Output</h1>
-  <div id="output" tabindex="10"></div>
+    <div>
+    <div id="output-tools">
+      <button id="collapse-all">Collapse All</button>
+      <button id="expand-all">Expand All</button>
+      <span class="total"></span>
+      <input type="checkbox" id="hide-close-tags"/><label for="hide-close-tags">Hide close tags?</label>
+    </div>
+    <div id="output" tabindex="10"></div>
+  </div>
   <h1>Errors</h1>
   <div id="ErrorLog">
     <table>

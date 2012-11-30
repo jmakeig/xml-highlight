@@ -168,5 +168,7 @@ td, th {
   margin: 0.5em 0;
   margin-left: 8em;
   color: crimson;
-
+}
+h1 {
+  cursor: pointer;
 }
