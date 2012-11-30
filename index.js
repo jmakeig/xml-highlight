@@ -34,7 +34,10 @@
     setInterval(function() {
       $("#ErrorLog table tbody").load("log.xqy");
     },
-    2500)
+    2500);
+    $("#errors-clear").on("click", function(evt){
+      $("#ErrorLog table tbody").html("");
+    });
 
     $("h1").on("click", function(evt) {
       $(this).next("div").toggle();

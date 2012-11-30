@@ -1,5 +1,5 @@
 declare variable $ERROR_LOG as xs:string := "/Users/jmakeig/Library/Application Support/MarkLogic/Data/Logs/ErrorLog.txt";
-declare variable $ERROR_LENGTH as xs:int := 250;
+declare variable $ERROR_LENGTH as xs:int := 100;
 for $line at $i in
   tokenize(
     xdmp:document-get($ERROR_LOG), 
