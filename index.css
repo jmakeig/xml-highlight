@@ -1,7 +1,10 @@
 body {
-  padding: 0;
+  padding: 1em 2em;
   margin: 0;
   font-family: Helvetica, sans-serif;
+}
+section {
+  margin: 0.5em 0;
 }
 h1, h2, h3, h4, h5, h6 {
   line-height: 1.25;
@@ -149,6 +152,8 @@ td, th {
 }
 #ErrorLog table {
   width: 200%;
+}
+#ErrorLog table td {
   font-family: Inconsolata, Consolas, monospace;
 }
 #ErrorLog .log-message {
@@ -167,7 +172,97 @@ td, th {
   margin-left: 8em;
   color: crimson;
 }
+
+td.log-level {
+  text-align: center;
+}
+
+
+#ErrorLog table tr td:first-child {
+  border-left: solid 20px;
+}
+
+#ErrorLog table tr.level-emergency td:first-child {
+  border-left-color: #43000C;
+}
+#ErrorLog table tr.level-alert td:first-child {
+  border-left-color: #720013;
+}
+#ErrorLog table tr.level-critical td:first-child {
+  border-left-color: #9B001C;
+}
+#ErrorLog table tr.level-error td:first-child {
+  border-left-color: #CF0638;
+}
+
+#ErrorLog table tr.level-warning td:first-child {
+  border-left-color: #FA6632;
+}
+#ErrorLog table tr.level-notice td:first-child {
+  border-left-color: #0A6789;
+}
+#ErrorLog table tr.level-info td:first-child {
+  border-left-color: #0A6789;
+}
+
+#ErrorLog table tr.level-config td:first-child {
+  border-left-color: #FECD23;
+}
+
+#ErrorLog table tr.level-debug td:first-child {
+  border-left-color: #0A996F;
+}
+
+#ErrorLog table tr.level-fine td:first-child {
+  border-left-color: #DEE7E7;
+}
+#ErrorLog table tr.level-finer td:first-child {
+  border-left-color: #DEE7E7;
+}
+#ErrorLog table tr.level-finest td:first-child {
+  border-left-color: #DEE7E7;
+}
+
+
+
+
+/*
+.log-level .debug,
+.log-level .info,
+.log-level .notice,
+.log-level .warning,
+.log-level .error {
+  text-indent: -1000px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  width: 20px;
+  height: 20px;
+}
+.log-level .debug {
+  color: #333;
+  background-image: url("img/debug.png");
+}
+.log-level .info {
+  color: #333;
+  background-image: url("img/info.png");
+}
+.log-level .notice {
+  color: blue;
+  background-image: url("img/notice.png");
+}
+.log-level .error {
+  color: crimson;
+  background-image: url("img/error.png");
+}
+.log-level .warning {
+  color: orange;
+  background-image: url("img/warning.png");
+}
+*/
+
+
 h1 {
+/*
   box-sizing: border-box;
   font-size: 1em;
   font-weight: normal;
@@ -176,6 +271,7 @@ h1 {
   cursor: pointer;
   width: 100%;
   padding: 0.25em 1em;
+*/
 }
 h2 {
   font-size: 1em;

@@ -1,0 +1,4 @@
+let $levels := ('emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'config', 'debug', 'fine', 'finer', 'finest')
+for $l in $levels
+return
+  xdmp:log($l, $l)

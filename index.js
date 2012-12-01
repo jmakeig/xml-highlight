@@ -24,25 +24,47 @@
     xhr.send(input);
   }
   $(document).ready(function(evt) {
-    
+    // Sticky headers
+    // TODO: These should be sticky to the bottom as well as the top
+    // take a look at accordion widgets for this, perhaps.
+/*
     var balloon = new Balloon({
       stackHeaders: true
     });
     balloon.inflate(['input', 'outputH', 'errors']);
-
-
+*/
+    // First crack at CodeMirror integration. 
+    // TODO: Figure out how to listen to CM updates to sync with 
+    // the textarea
+/*
+    var cm = CodeMirror.fromTextArea($("#input-xml")[0], {
+      "mode": "xquery",
+      "theme": "xquery",
+      "onChange": function() {
+        //$("#input-xml").val(this.value);
+        console.log(this.value);
+      }
+    });
+*/
+    // Periodically reload the error log. 
+    // FIXME: This should act more like tail -f than poll-n-replace.
     setInterval(function() {
       $("#ErrorLog table tbody").load("log.xqy");
     },
     2500);
+/*
     $("#errors-clear").on("click", function(evt){
       $("#ErrorLog table tbody").html("");
     });
+*/
 
+/*
     $("h1").on("click", function(evt) {
-      $(this).next("div").toggle();
+      $(this).closest("section").children("div").not("div>h1").toggle();
     });
-
+*/
+    // Listen for changes to the XQuery input ask for server-side validation
+    // and trigger a "validate" event.
     $("#input-xml").on("input", // "input" is a new HTML5 event (Woo-hoo!)
       delay(
         function() {
@@ -59,7 +81,6 @@
         500
       )
     );
-
     $("#input-xml").on("validate", function(evt, isValid, error){
       var errEl = $("#error-message");
       if(isValid) {

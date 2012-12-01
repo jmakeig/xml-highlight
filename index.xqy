@@ -22,8 +22,12 @@ xdmp:set-response-content-type("text/html"),
   <script type="text/javascript" src="lib/clarinet.js">//</script>
   <script type="text/javascript" src="xml-highlight.js">//</script>
   <script type="text/javascript" src="json-highlight.js">//</script>
+  <script type="text/javascript" src="lib/codemirror.js">//</script>
+  <script type="text/javascript" src="lib/xquery.js">//</script>
   <script type="text/javascript" src="index.js">//</script>
   <link type="text/css" rel="stylesheet" href="lib/balloon.css"/>
+  <link type="text/css" rel="stylesheet" href="lib/codemirror.css"/>
+  <link type="text/css" rel="stylesheet" href="lib/xquery.css"/>
   <link type="text/css" rel="stylesheet" href="xml-highlight.css"/>
   <link type="text/css" rel="stylesheet" href="index.css"/>
 </head>
@@ -73,12 +77,18 @@ xdmp:set-response-content-type("text/html"),
   <section>
     <div><h1 id="errors">Errors</h1></div>
     <div id="ErrorLog">
-      <button id="errors-clear">Clear</button>
+      <!--<button id="errors-clear">Clear</button>-->
       <table>
+        <col/>
+        <col />
+        <col />
         <thead>
-          <col/>
-          <col />
-          <col />
+          <tr>
+            <th class="log-date">Date</th>
+            <th class="log-time">Time</th>
+            <!--<th class="log-level">Level</th>-->
+            <th class="log-message">Message</th>
+          </tr>
         </thead>
         <tbody><!-- --></tbody>
       </table>

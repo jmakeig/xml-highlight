@@ -8,21 +8,29 @@ for $line at $i in
 where string-length($line) > 0
 order by $i descending
 return 
-  if(starts-with(xdmp:get-request-header("Accept"), "text/html")) then (
-    xdmp:set-response-content-type("text/html"),
-    <tr data-timestamp="{xs:dateTime(substring($line, 1, 10) || 'T' || substring($line, 12, 12))}">
-      <td class="log-date">{substring($line, 1, 10)}</td>
-      <td class="log-time">{substring($line, 12, 12)}</td>
-      <td class="log-message">{substring($line, 25)}</td>
-    </tr>
-  ) else if(starts-with(xdmp:get-request-header("Accept"), "application/xml")) then (
-    xdmp:set-response-content-type("application/xml"),
-    <line timestamp="{xs:dateTime(substring($line, 1, 10) || 'T' || substring($line, 12, 12))}">
-      <date>{substring($line, 1, 10)}</date>
-      <time>{substring($line, 12, 12)}</time>
-      <message>{substring($line, 25)}</message>
-    </line>
-  ) else (
-    xdmp:set-response-content-type("text/plain"),
-    $line
-  )
+  let $date := substring($line, 1, 10)
+  let $time := substring($line, 12, 12)
+    let $m := substring($line, 25)
+  let $level := substring-before($m, ":")
+  let $message := substring-after($m, ":")
+  return
+    if(starts-with(xdmp:get-request-header("Accept"), "text/html")) then (
+      xdmp:set-response-content-type("text/html"),
+      <tr data-timestamp="{xs:dateTime($date || 'T' || $time)}" class="level-{lower-case($level)}">
+        <td class="log-date" data-date="{$date}">{$date}</td>
+        <td class="log-time" data-time="{$time}">{$time}</td>
+        <!--<td class="log-level" data-level="{lower-case($level)}"><span class="{lower-case($level)}">{$level}</span></td>-->
+        <td class="log-message">{$message}</td>
+      </tr>
+    ) else if(starts-with(xdmp:get-request-header("Accept"), "application/xml")) then (
+      xdmp:set-response-content-type("application/xml"),
+      <line timestamp="{xs:dateTime($date || 'T' || $time)}">
+        <date>{$date}</date>
+        <time>{$time}</time>
+        <level>{$level}</level>
+        <message>{$message}</message>
+      </line>
+    ) else (
+      xdmp:set-response-content-type("text/plain"),
+      $line
+    )

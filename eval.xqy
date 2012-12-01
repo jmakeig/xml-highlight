@@ -1,5 +1,6 @@
 xquery version "1.0-ml";
 import module namespace json = "http://marklogic.com/xdmp/json" at "/MarkLogic/json/json.xqy";
+declare namespace qry="http://marklogic.com/cts/query";
 declare namespace js="http://marklogic.com/xdmp/json/basic";
 declare namespace local="local";
 declare option xdmp:mapping "false";
@@ -23,6 +24,8 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
       (: Should we really do this translation automatically? :)
       case element(js:json)
         return "json-basic"
+      case element(qry:query-plan)
+        return "query-plan"
       case document-node()
         return "document"
       case element()
@@ -100,6 +103,8 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
             json:transform-to-json($r)
           else if("json" = $type) then
             xdmp:to-json($r)
+          else if("query-plan" = $type) then
+            "Query plan!"
           else $r
         ),
         $m

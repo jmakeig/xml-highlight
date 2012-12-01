@@ -1,0 +1,6 @@
+xdmp:plan(
+  cts:search(
+    collection(),
+    cts:and-query(())
+  )
+)
