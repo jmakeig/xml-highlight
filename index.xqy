@@ -78,16 +78,26 @@ xdmp:set-response-content-type("text/html"),
     <div><h1 id="errors">Errors</h1></div>
     <div id="ErrorLog">
       <!--<button id="errors-clear">Clear</button>-->
+      <!--
+      <div>
+        <ol class="log-levels">{
+        for $level in ('emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'config', 'debug', 'fine', 'finer', 'finest')
+        return <li><label><input type="checkbox" checked="checked"/><span class="{$level}">{$level}</span></label></li>
+      }</ol></div>
+      -->
       <table>
-        <col/>
+        <col class="log-level" />
+        <col class="log-date" />
+        <col class="log-time" />
         <col />
-        <col />
+        <col class="log-message" />
         <thead>
           <tr>
-            <th class="log-date">Date</th>
-            <th class="log-time">Time</th>
-            <!--<th class="log-level">Level</th>-->
-            <th class="log-message">Message</th>
+            <th scope="col"><!--Level--></th>
+            <th scope="col">Date</th>
+            <th scope="col">Time</th>
+            <th scope="col">Level</th>
+            <th scope="col">Message</th>
           </tr>
         </thead>
         <tbody><!-- --></tbody>

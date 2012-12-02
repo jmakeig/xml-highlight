@@ -17,10 +17,11 @@ return
     if(starts-with(xdmp:get-request-header("Accept"), "text/html")) then (
       xdmp:set-response-content-type("text/html"),
       <tr data-timestamp="{xs:dateTime($date || 'T' || $time)}" class="level-{lower-case($level)}">
-        <td class="log-date" data-date="{$date}">{$date}</td>
-        <td class="log-time" data-time="{$time}">{$time}</td>
-        <!--<td class="log-level" data-level="{lower-case($level)}"><span class="{lower-case($level)}">{$level}</span></td>-->
-        <td class="log-message">{$message}</td>
+        <td class="log-level {lower-case($level)}" data-level="{lower-case($level)}">{$level}</td>
+        <td data-date="{$date}">{$date}</td>
+        <td data-time="{$time}">{$time}</td>
+        <td data-level="{$level}">{$level}</td>
+        <td>{$message}</td>
       </tr>
     ) else if(starts-with(xdmp:get-request-header("Accept"), "application/xml")) then (
       xdmp:set-response-content-type("application/xml"),

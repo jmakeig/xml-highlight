@@ -14,22 +14,22 @@ h1, h2, h3, h4, h5, h6 {
 .control {
   margin: 1em 0;
 }
-label {
+.control label {
   display: inline-block;
   vertical-align: top;
   width: 6em;
   float: left;
   margin-top: 2px;
 }
-input[type=checkbox] + label {
+.control input[type=checkbox] + label {
   width: 12em;
   margin-left: 0.25em;
   float: none;
 }
-input, select {
+.control input, select {
   width: 12em;
 }
-input[type=checkbox] {
+.control input[type=checkbox] {
   width: auto;
 }
 textarea {
@@ -146,25 +146,8 @@ td, th {
 .result-info.collapsed > div {
   display: none;
 }
-#ErrorLog {
-  width: 100%;
-  overflow: auto;
-}
-#ErrorLog table {
-  width: 200%;
-}
-#ErrorLog table td {
-  font-family: Inconsolata, Consolas, monospace;
-}
-#ErrorLog .log-message {
-  white-space: nowrap;
-}
-#ErrorLog .log-date {
-  width: 5em;
-}
-#ErrorLog .log-time {
-  width: 7em;
-}
+
+
 #error-message {
   font-size: 65%;
   font-weight: bold;
@@ -173,57 +156,79 @@ td, th {
   color: crimson;
 }
 
-td.log-level {
-  text-align: center;
+
+#ErrorLog {
+  width: 100%;
+  overflow: auto;
+}
+#ErrorLog table {
+  width: auto;
+}
+#ErrorLog table td {
+  font-family: Inconsolata, Consolas, monospace;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+col.log-level {
+  width: 1em;
+}
+col.log-date {
+  width: 6em;
+}
+col.log-time {
+  width: 8em;
 }
 
 
-#ErrorLog table tr td:first-child {
-  border-left: solid 20px;
+.log-level {
+  text-indent: -1000px;
+}
+.emergency {
+  background-color: #43000C;
+}
+.alert {
+  background-color: #720013;
+}
+.critical {
+  background-color: #9B001C;
+}
+.error {
+  background-color: #CF0638;
+}
+.warning {
+  background-color: #FA6632;
+}
+.notice {
+  background-color: #0A6789;
+}
+.info {
+  background-color: #0A6789;
+}
+.config {
+  background-color: #FECD23;
+}
+.debug {
+  background-color: #0A996F;
+}
+.fine {
+  background-color: #DEE7E7;
+}
+.finer {
+  background-color: #DEE7E7;
+}
+.finest {
+  background-color: #DEE7E7;
 }
 
-#ErrorLog table tr.level-emergency td:first-child {
-  border-left-color: #43000C;
+.log-levels {
+  list-style: none;
+  padding: 0;
 }
-#ErrorLog table tr.level-alert td:first-child {
-  border-left-color: #720013;
+.log-levels li {
+  display: inline-block;
+  margin-right: 1em;
 }
-#ErrorLog table tr.level-critical td:first-child {
-  border-left-color: #9B001C;
-}
-#ErrorLog table tr.level-error td:first-child {
-  border-left-color: #CF0638;
-}
-
-#ErrorLog table tr.level-warning td:first-child {
-  border-left-color: #FA6632;
-}
-#ErrorLog table tr.level-notice td:first-child {
-  border-left-color: #0A6789;
-}
-#ErrorLog table tr.level-info td:first-child {
-  border-left-color: #0A6789;
-}
-
-#ErrorLog table tr.level-config td:first-child {
-  border-left-color: #FECD23;
-}
-
-#ErrorLog table tr.level-debug td:first-child {
-  border-left-color: #0A996F;
-}
-
-#ErrorLog table tr.level-fine td:first-child {
-  border-left-color: #DEE7E7;
-}
-#ErrorLog table tr.level-finer td:first-child {
-  border-left-color: #DEE7E7;
-}
-#ErrorLog table tr.level-finest td:first-child {
-  border-left-color: #DEE7E7;
-}
-
-
 
 
 /*
