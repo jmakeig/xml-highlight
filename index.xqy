@@ -21,12 +21,13 @@ xdmp:set-response-content-type("text/html"),
   <script type="text/javascript" src="lib/clarinet.js">//</script>
   <script type="text/javascript" src="xml-highlight.js">//</script>
   <script type="text/javascript" src="json-highlight.js">//</script>
-  <script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8">//</script>
+  <script  type="text/javascript" src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js">//</script>
   <script type="text/javascript" src="index.js">//</script>
   <link type="text/css" rel="stylesheet" href="xml-highlight.css"/>
   <link type="text/css" rel="stylesheet" href="index.css"/>
 </head>
 <body>
+  <div id="Navigation"><a href="#input">Input</a> <a href="#output">Output</a> <a href="#errors">Errors</a></div>
   <section>
     <div class="h"><h1 id="input">Input</h1></div>
     <div>
@@ -59,8 +60,8 @@ xdmp:set-response-content-type("text/html"),
     </div>
   </section>
   <section>
-    <div><h1 id="outputH">Output</h1></div>
-      <div>
+    <h1 id="out">Output</h1>
+    <div>
       <div id="output-tools">
         <button id="collapse-all">Collapse All</button>
         <button id="expand-all">Expand All</button>
@@ -104,59 +105,59 @@ xdmp:set-response-content-type("text/html"),
   <script type="text/html;template" id="node_details_template">
 
     <div class="detail-close">X</div>
-    <h3 class="detail-localname"><?tmpl- element.localname ??></h3>  
-    <div class="detail-localname"><?tmpl- element["namespace-uri"] ??></div>
-    <div class="detail-estimate"><?tmpl- element.estimate ??></div>
+    <h3 class="detail-localname"><?_- element.localname ??></h3>  
+    <div class="detail-localname"><?_- element["namespace-uri"] ??></div>
+    <div class="detail-estimate"><?_- element.estimate ??></div>
     <h4>Element Range Indexes</h4>
-    <?tmpl if("range-element-indexes" in database) { ??>
+    <?_ if("range-element-indexes" in database) { ??>
     <table>
       <tr><th>Type</th><th>Positions</th></tr>
-      <?tmpl
+      <?_
         var ri = database["range-element-indexes"];
         for(var i=0; i < ri.length; i++) {
       ??>
       <tr>
         <td>
-          <?tmpl- ri[i]["scalar-type"] ??> 
-          <?tmpl- ri[i].collation ??>
+          <?_- ri[i]["scalar-type"] ??> 
+          <?_- ri[i].collation ??>
         </td>
-        <td><?tmpl- ri[i]["range-value-positions"] ??></td>
+        <td><?_- ri[i]["range-value-positions"] ??></td>
       </tr>
-      <?tmpl } ??>
+      <?_ } ??>
     </table>
-    <?tmpl } ??>
+    <?_ } ??>
     <h4>Fields</h4>
-    <?tmpl if("fields" in database) { ??>
+    <?_ if("fields" in database) { ??>
     <table>
       <tr><th>Name</th><th>Includes</th><th>Excludes</th><th>Range Indexes</th></tr>
-      <?tmpl
+      <?_
         var fields = database.fields;
         for(var i=0; i < fields.length; i++) {
       ??>
       <tr>
-        <td><?tmpl- fields[i]["field-name"] ??></td>
+        <td><?_- fields[i]["field-name"] ??></td>
         <td><ul><li></li></ul></td>
         <td><ul><li></li></ul></td>
         <td></td>
       </tr>
-      <?tmpl } ??>
+      <?_ } ??>
     </table>
-    <?tmpl } ??>
+    <?_ } ??>
   </script>
   <script type="text/html;template" id="document_info_template">
     <h3>Info</h3>
     <div>
       <table>
-      <?tmpl for(var el in elements) { ??>
+      <?_ for(var el in elements) { ??>
         <tr>
-          <td><?tmpl- el ??></td><td><?tmpl- elements[el].count ??></td>
+          <td><?_- el ??></td><td><?_- elements[el].count ??></td>
           <td>
-            <?tmpl for(var p in elements[el].paths) { ??>
-              <div><?tmpl- p ??></div>
-            <?tmpl } ??>
+            <?_ for(var p in elements[el].paths) { ??>
+              <div><?_- p ??></div>
+            <?_ } ??>
           </td>
         </tr>
-      <?tmpl } ??>
+      <?_ } ??>
       </table>
     </div>
   </script>
