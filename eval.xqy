@@ -97,6 +97,8 @@ declare function local:serialize($results as item()*, $output-type as xs:string?
                   " "), 
               "/>$", 
             "")
+          else if("processing-instruction" = $type) then
+            (xdmp:quote($r), xdmp:log($r))
           else if("comment" = $type) then
             concat("&lt;!-- ", string($r), " -->")
           else if("json-basic" = $type) then

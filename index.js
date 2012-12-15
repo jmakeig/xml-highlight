@@ -37,7 +37,7 @@
     // editor.getSession().on("change", function(e) {
     //   console.dir(this);
     // });
-    editor.getSession().setValue("let $m := 'asdf'\nreturn $m");
+    editor.getSession().setValue("");
 
     // Periodically reload the error log. 
     // FIXME: This should act more like tail -f than poll-n-replace.
@@ -45,20 +45,7 @@
       $("#ErrorLog table tbody").load("log.xqy");
     },
     2500);
-    $("#ErrorsFilter").on("input", delay(function(evt){
-      console.dir(this);
-    }, $("#ErrorsFilter")));
-/*
-    $("#errors-clear").on("click", function(evt){
-      $("#ErrorLog table tbody").html("");
-    });
-*/
 
-/*
-    $("h1").on("click", function(evt) {
-      $(this).closest("section").children("div").not("div>h1").toggle();
-    });
-*/
     // Listen for changes to the XQuery input ask for server-side validation
     // and trigger a "validate" event.
     //$("#input-xml").on("input", // "input" is a new HTML5 event (Woo-hoo!)
@@ -216,7 +203,7 @@
           accumulator.push('</div>');
         }
         else if("processing-instruction" === result.type) {
-          accumulator.push("PI");
+          accumulator.push(escapeForHTML(result.content));
         }
         else if("text" === result.type) {
           accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (escapeForHTML(result.content) || "&nbsp;") + "</span></div>");
@@ -399,7 +386,7 @@
       //     tmpl(template, details.node)
       //   ).css({top: $($el).offset().top + "px", right: "2em"});
       // });
-      console.dir(details);
+      // console.dir(details);
       $("#node-details").html(
           tmpl("node_details_template", details.node)
         ).css({top: $($el).offset().top + "px", right: "2em"});
