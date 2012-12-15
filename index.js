@@ -24,28 +24,21 @@
     xhr.send(input);
   }
   $(document).ready(function(evt) {
-    // Sticky headers
-    // TODO: These should be sticky to the bottom as well as the top
-    // take a look at accordion widgets for this, perhaps.
-/*
-    var balloon = new Balloon({
-      stackHeaders: true
-    });
-    balloon.inflate(['input', 'outputH', 'errors']);
-*/
-    // First crack at CodeMirror integration. 
-    // TODO: Figure out how to listen to CM updates to sync with 
-    // the textarea
-/*
-    var cm = CodeMirror.fromTextArea($("#input-xml")[0], {
-      "mode": "xquery",
-      "theme": "xquery",
-      "onChange": function() {
-        //$("#input-xml").val(this.value);
-        console.log(this.value);
-      }
-    });
-*/
+    var editor = ace.edit("input-xml");
+    editor.setTheme("ace/theme/eclipse");
+    editor.getSession().setMode("ace/mode/xquery");
+    editor.setShowInvisibles(false);
+    editor.setShowPrintMargin(false);
+    editor.setDisplayIndentGuides(true);
+    editor.getSession().setUseSoftTabs(true);
+    editor.getSession().setTabSize(2);
+    editor.getSession().setNewLineMode("unix");
+    // Example change event handler
+    // editor.getSession().on("change", function(e) {
+    //   console.dir(this);
+    // });
+    editor.getSession().setValue("let $m := 'asdf'\nreturn $m");
+
     // Periodically reload the error log. 
     // FIXME: This should act more like tail -f than poll-n-replace.
     setInterval(function() {
@@ -68,11 +61,13 @@
 */
     // Listen for changes to the XQuery input ask for server-side validation
     // and trigger a "validate" event.
-    $("#input-xml").on("input", // "input" is a new HTML5 event (Woo-hoo!)
+    //$("#input-xml").on("input", // "input" is a new HTML5 event (Woo-hoo!)
+    editor.getSession().on("change",
       delay(
         function() {
           staticCheck(
-            $("#input-xml").val(),
+            // $("#input-xml").val(),
+            editor.getSession().getValue(),
             function() { 
               $("#input-xml").trigger("validate", [true]);
             },
@@ -80,7 +75,7 @@
               $("#input-xml").trigger("validate", [false, error]);
             }
           );
-        }, 
+        } , 
         500
       )
     );
@@ -167,7 +162,8 @@
       xhr.open("POST", buildURL("/eval.xqy", trunc), true);
       xhr.setRequestHeader("Content-Type", "application/xquery");
       xhr.setRequestHeader("Accept", "application/json");
-      xhr.send($("#input-xml").val());
+      //xhr.send($("#input-xml").val());
+      xhr.send(editor.getSession().getValue());
     }
     
     function formatResults(results /*Array<Object<type, content>>*/, options, target/*jQuery node*/) {
@@ -524,14 +520,16 @@
       var val = $(this).val();
       $("#output").html("");
       if("" === val) {
-        $("#input-xml").val("");
+        //$("#input-xml").val("");
+        editor.getSession().setValue("");
       } else {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
           if(this.readyState === 1) { /* Loading */ }
           if(this.readyState === 4) {
             if (this.status >= 200 && this.status < 300) {
-              $("#input-xml").val(this.responseText);
+              //$("#input-xml").val(this.responseText);
+              editor.getSession().setValue(this.responseText);
               $("#run").click();
             } else {
               console.error(this.responseText);

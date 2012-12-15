@@ -267,3 +267,19 @@ h1 {
 h2 {
   font-size: 1em;
 }
+
+
+.ace_editor { 
+  position: relative;
+  width: 1200px;
+  height: 250px;
+  border: solid 1px #ccc;
+}
+.ace_editor {
+  font-family: Inconsolata, monospace;
+  font-size: 20px;
+  line-height: auto;
+}
+.ace-eclipse .ace_gutter {
+  display: none;
+}

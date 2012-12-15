@@ -16,18 +16,13 @@ xdmp:set-response-content-type("text/html"),
   <script type="text/javascript" src="lib/underscore-min.js">//</script>
   <script type="text/javascript" src="lib/jquery-1.8.2-min.js">//</script>
   <script type="text/javascript" src="utils.js">//</script>
-  <script type="text/javascript" src="lib/balloon.js">//</script>
   <script type="text/javascript" src="lib/tmpl.js">//</script>
   <script type="text/javascript" src="lib/sax.js">//</script>
   <script type="text/javascript" src="lib/clarinet.js">//</script>
   <script type="text/javascript" src="xml-highlight.js">//</script>
   <script type="text/javascript" src="json-highlight.js">//</script>
-  <script type="text/javascript" src="lib/codemirror.js">//</script>
-  <script type="text/javascript" src="lib/xquery.js">//</script>
+  <script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8">//</script>
   <script type="text/javascript" src="index.js">//</script>
-  <link type="text/css" rel="stylesheet" href="lib/balloon.css"/>
-  <link type="text/css" rel="stylesheet" href="lib/codemirror.css"/>
-  <link type="text/css" rel="stylesheet" href="lib/xquery.css"/>
   <link type="text/css" rel="stylesheet" href="xml-highlight.css"/>
   <link type="text/css" rel="stylesheet" href="index.css"/>
 </head>
@@ -48,7 +43,8 @@ xdmp:set-response-content-type("text/html"),
       <div class="control">
       <div id="error-message">&nbsp;</div>
       <div class="label"><label for="input-xml">Input XML</label></div>
-        <textarea id="input-xml" spellcheck="false"></textarea>
+        <!--<textarea id="input-xml" spellcheck="false"></textarea>-->
+        <div id="input-xml"></div>
       </div>
       <h2 id="options">Options</h2>
       <div>
@@ -77,7 +73,6 @@ xdmp:set-response-content-type("text/html"),
   <section>
     <div><h1 id="errors">Errors</h1></div>
     <div id="ErrorLog">
-      <input type="text" id="ErrorsFilter"/>
       <!--<button id="errors-clear">Clear</button>-->
       <!--
       <div>
