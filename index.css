@@ -283,3 +283,17 @@ h2 {
 .ace-eclipse .ace_gutter {
   display: none;
 }
+
+
+#Navigation {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1em;
+  background: yellow; 
+  height: 2em; 
+}
+body {
+  margin-top: 1em;
+}
