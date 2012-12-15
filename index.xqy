@@ -77,6 +77,7 @@ xdmp:set-response-content-type("text/html"),
   <section>
     <div><h1 id="errors">Errors</h1></div>
     <div id="ErrorLog">
+      <input type="text" id="ErrorsFilter"/>
       <!--<button id="errors-clear">Clear</button>-->
       <!--
       <div>

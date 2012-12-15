@@ -52,6 +52,9 @@
       $("#ErrorLog table tbody").load("log.xqy");
     },
     2500);
+    $("#ErrorsFilter").on("input", delay(function(evt){
+      console.dir(this);
+    }, $("#ErrorsFilter")));
 /*
     $("#errors-clear").on("click", function(evt){
       $("#ErrorLog table tbody").html("");
@@ -121,7 +124,9 @@
             formatResults(results, options, $("#output"));
             console.timeEnd("render");
           } else { 
-            $("#output").html("") 
+            // No results
+            // FIXME: This probably isn't the correct place to put this
+            $("#output").html("Nada, zip, zilch.") 
           }
           $("#output").trigger("results", [results]);
           //$(".element, .comment").addClass("collapsed");

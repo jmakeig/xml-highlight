@@ -12,6 +12,8 @@
 .json-object, 
 .json-array {
   cursor: default;
+  border-left: dotted 1px #ccc;
+  padding-left: 4px;
 }
 .json-object, 
 .json-array {
@@ -202,6 +204,22 @@
 
 .force-inline {
   display: inline;
+}
+
+.toggle, .element-name, .attribute-name {
+  cursor: pointer;
+}
+.toggle {
+  display: inline-block;
+  margin-left: -11px;
+  width: 9px;
+  height: 7px;
+  background-image: url("/img/minus.png");
+  background-repeat: no-repeat;
+  background-position: 0 -2px;
+}
+.collapsed .toggle {
+  background-image: url("/img/plus.png");
 }
 
 /* Colors */

@@ -72,11 +72,11 @@ jQuery.fn.center = function() {
  * @param func The function to be invoked
  * @param duration The time in milliseconds to wait, defaults to 1000
  */
-function delay(func, duration) {
+function delay(func, duration, scope) {
   var timer;
   return function() {
     if(timer) clearTimeout(timer);
-    timer = setTimeout(func, duration || 1000);
+    timer = setTimeout($.proxy(func, scope || window), duration || 1000);
   }
 }
 function buildURL(url, params) {
