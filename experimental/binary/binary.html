@@ -25,7 +25,7 @@ body {
     <video id="video" controls>
   </div>
   <div>
-    <a id="anchor" download="asdf">Download</a>
+    <a id="anchor">Download</a>
   </div>
 </body>
 <script type="text/javascript">
@@ -119,7 +119,7 @@ body {
   }
 
   var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
+  xhr.onreadystatechange = function(evt) {
     if(this.readyState === 4) {
       var payload = JSON.parse(this.responseText)
       var bytes = Base64Binary.decode(payload.value)
@@ -129,8 +129,11 @@ body {
         document.getElementById("image").src = src
       else if(payload.type.match(/^video\//))
         document.getElementById("video").innerHTML = '<source src="'+ src + '" type="' + payload.type + '"/>'
-      else
-        document.getElementById("anchor").href = src
+      else {
+        var anchor = document.getElementById("anchor")
+          anchor.href = src
+          anchor.download = payload.name
+      }
 
     }
   }

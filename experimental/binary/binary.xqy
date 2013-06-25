@@ -11,6 +11,7 @@ let $b := doc(xdmp:get-request-field("doc"))
 return
   let $_ := (
     map:put($m, "type", xdmp:uri-content-type(xdmp:node-uri($b))), 
+    map:put($m, "name", tokenize(xdmp:node-uri($b), "/")[last()]), 
     map:put($m, "value", (: force serialization :) xs:base64Binary($b))
   )
   return (
