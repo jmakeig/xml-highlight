@@ -116,7 +116,7 @@ body {
       var payload = JSON.parse(this.responseText)
       var bytes = Base64Binary.decode(payload.value)
       var blob = new Blob([bytes], {"type": payload.type})
-      var src = window.URL.createObjectURL(blob)
+      var src = (window.URL || window.webkitURL).createObjectURL(blob)
       if(payload.type.match(/^image\//))
         document.getElementById("image").src = src
       else if(payload.type.match(/^video\//))
