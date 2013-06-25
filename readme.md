@@ -1,1 +1,1 @@
-![xml-highlight](jmakeig.github.com/xml-highlight/docs/assets/xml-highlight.png)
+![xml-highlight](https://raw.github.com/jmakeig/xml-highlight/master/docs/assets/xml-highlight.png)
