@@ -19,13 +19,13 @@ body {
     <li><a href="binary.html?doc=/Hadoop+Ancestry.pdf">PDF</a></li>
   </ul>
   <div>
-    <img id="image">
-  </div>
-  <div>
-    <video id="video" controls>
-  </div>
-  <div>
     <a id="anchor">Download</a>
+  </div>
+  <div>
+    <img id="image" />
+  </div>
+  <div>
+    <video id="video" controls />
   </div>
 </body>
 <script type="text/javascript">
@@ -129,11 +129,10 @@ body {
         document.getElementById("image").src = src
       else if(payload.type.match(/^video\//))
         document.getElementById("video").innerHTML = '<source src="'+ src + '" type="' + payload.type + '"/>'
-      else {
-        var anchor = document.getElementById("anchor")
-          anchor.href = src
-          anchor.download = payload.name
-      }
+      
+      var anchor = document.getElementById("anchor")
+        anchor.href = src
+        anchor.download = payload.name
 
     }
   }
