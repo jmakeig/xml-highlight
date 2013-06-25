@@ -5,34 +5,35 @@
   <title>Binary Loader</title>
 </head>
 <body>
-  <img id="asdf">
+  <img id="image">
+  <video id="video" controls>
 </body>
 <script type="text/javascript">
-  /* <https://github.com/danguer/blog-examples/blob/master/js/base64-binary.js> */
   /*
-  Copyright (c) 2011, Daniel Guerrero
-  All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-      * Redistributions of source code must retain the above copyright
-        notice, this list of conditions and the following disclaimer.
-      * Redistributions in binary form must reproduce the above copyright
-        notice, this list of conditions and the following disclaimer in the
-        documentation and/or other materials provided with the distribution.
-
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL DANIEL GUERRERO BE LIABLE FOR ANY
-  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   * Copyright (c) 2011, Daniel Guerrero
+   * All rights reserved.
+   * 
+   * <https://github.com/danguer/blog-examples/blob/master/js/base64-binary.js>
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *     * Redistributions of source code must retain the above copyright
+   *       notice, this list of conditions and the following disclaimer.
+   *     * Redistributions in binary form must reproduce the above copyright
+   *       notice, this list of conditions and the following disclaimer in the
+   *       documentation and/or other materials provided with the distribution.
+   * 
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+   * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+   * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   * DISCLAIMED. IN NO EVENT SHALL DANIEL GUERRERO BE LIABLE FOR ANY
+   * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+   * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+   * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+   * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+   * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    */
-
   /**
    * Uses the new array typed in javascript to binary base64 encode/decode
    * at the moment just decodes a binary base64 encoded
@@ -43,7 +44,6 @@
    * https://developer.mozilla.org/en/JavaScript_typed_arrays/ArrayBuffer
    * https://developer.mozilla.org/en/JavaScript_typed_arrays/Uint8Array
    */
-
   var Base64Binary = {
     _keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
 
@@ -101,15 +101,16 @@
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if(this.readyState === 4) {
-      // console.log(this.responseText)
       var payload = JSON.parse(this.responseText)
-      var binary64 = payload.value
-      var binaryType = payload.type
-      var bytes = Base64Binary.decode(binary64)
-      // var bytes = new Uint8Array(JSON.parse(this.responseText).value)
-      var blob = new Blob([bytes], {"type": binaryType})
-      var src = window.URL.createObjectURL(blob);
-      document.getElementById("asdf").src = src
+      var bytes = Base64Binary.decode(payload.value)
+      var blob = new Blob([bytes], {"type": payload.type})
+      var src = window.URL.createObjectURL(blob)
+      if(payload.type.match(/^image\//))
+        document.getElementById("image").src = src
+      else if(payload.type.match(/^video\//))
+        document.getElementById("video").innerHTML = '<source src="'+ src + '" type="' + payload.type + '"/>'
+      else
+        console.log(payload.type)
     }
   }
   xhr.open("GET", "binary.xqy")

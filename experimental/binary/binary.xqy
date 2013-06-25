@@ -7,6 +7,7 @@ declare option xdmp:mapping "true";
 
 let $m := map:map()
 let $b := doc("/hang-in-there.jpg")/node()
+let $b := doc("/video.mp4")/node()
 
 (:return xdmp:subbinary($b, 0):)
 
@@ -17,5 +18,6 @@ return
   )
   return (
     xdmp:set-response-content-type("application/json"),
+    xdmp:add-response-header("Cache-Control", "no-cache"),
     xdmp:to-json($m)
   )
