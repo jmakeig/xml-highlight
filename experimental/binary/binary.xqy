@@ -6,10 +6,7 @@ declare option xdmp:mapping "true";
 (: <http://stackoverflow.com/questions/10473932/browser-html-force-download-of-image-from-src-dataimage-jpegbase64/10473992#10473992> :)
 
 let $m := map:map()
-let $b := doc("/hang-in-there.jpg")/node()
-let $b := doc("/video.mp4")/node()
-
-(:return xdmp:subbinary($b, 0):)
+let $b := doc(xdmp:get-request-field("doc"))
 
 return
   let $_ := (

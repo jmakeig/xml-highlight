@@ -3,8 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <title>Binary Loader</title>
+  <style type="text/css">
+body {
+  margin: 1em 2em;
+  font-size: 16px;
+  font-family: Helvetica, sans-serif;
+}
+  </style>
 </head>
 <body>
+  <h1>Inline Binary Loader</h1>
+  <ul>
+    <li><a href="binary.html?doc=/hang-in-there.jpg">Image</a></li>
+    <li><a href="binary.html?doc=/video.mp4">Video</a></li>
+  </ul>
   <img id="image">
   <video id="video" controls>
 </body>
@@ -113,8 +125,8 @@
         console.log(payload.type)
     }
   }
-  xhr.open("GET", "binary.xqy")
-  //xhr.responseType = "arraybuffer"
+  // Pass the query string through to the XQuery
+  xhr.open("GET", "binary.xqy?" + document.location.search.split("?")[1])
   xhr.send()
 
 
