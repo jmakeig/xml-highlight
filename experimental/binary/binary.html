@@ -16,9 +16,17 @@ body {
   <ul>
     <li><a href="binary.html?doc=/hang-in-there.jpg">Image</a></li>
     <li><a href="binary.html?doc=/video.mp4">Video</a></li>
+    <li><a href="binary.html?doc=/Hadoop+Ancestry.pdf">PDF</a></li>
   </ul>
-  <img id="image">
-  <video id="video" controls>
+  <div>
+    <img id="image">
+  </div>
+  <div>
+    <video id="video" controls>
+  </div>
+  <div>
+    <a id="anchor" download="asdf">Download</a>
+  </div>
 </body>
 <script type="text/javascript">
   /*
@@ -122,7 +130,8 @@ body {
       else if(payload.type.match(/^video\//))
         document.getElementById("video").innerHTML = '<source src="'+ src + '" type="' + payload.type + '"/>'
       else
-        console.log(payload.type)
+        document.getElementById("anchor").href = src
+
     }
   }
   // Pass the query string through to the XQuery
