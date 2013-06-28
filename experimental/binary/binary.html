@@ -9,6 +9,10 @@ body {
   font-size: 16px;
   font-family: Helvetica, sans-serif;
 }
+object[type^="application/pdf"] {
+  width: 800px;
+  height: 800px;
+}
   </style>
 </head>
 <body>
@@ -29,6 +33,7 @@ body {
   <div>
     <video id="video" controls />
   </div>
+  <div id="pdf"></div>
 </body>
 <script type="text/javascript">
   /*
@@ -131,6 +136,8 @@ body {
         document.getElementById("image").src = src
       else if(payload.type.match(/^video\//))
         document.getElementById("video").innerHTML = '<source src="'+ src + '" type="' + payload.type + '"/>'
+      else if(payload.type.match(/^application\/pdf;?/))
+        document.getElementById("pdf").innerHTML = '<object type="application/pdf" data="'+src+'"></object>'
       
       var anchor = document.getElementById("anchor")
         anchor.href = src
