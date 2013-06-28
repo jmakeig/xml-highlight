@@ -27,12 +27,8 @@ object[type^="application/pdf"] {
   <div>
     <a id="anchor">Download</a>
   </div>
-  <div>
-    <img id="image" />
-  </div>
-  <div>
-    <video id="video" controls />
-  </div>
+  <div id="image"></div>
+  <div id="video"></div>
   <div id="pdf"></div>
 </body>
 <script type="text/javascript">
@@ -133,9 +129,9 @@ object[type^="application/pdf"] {
       var blob = new Blob([bytes], {"type": payload.type})
       var src = (window.URL || window.webkitURL).createObjectURL(blob)
       if(payload.type.match(/^image\//))
-        document.getElementById("image").src = src
+        document.getElementById("image").innerHTML = '<img src="'+src+'"/>'
       else if(payload.type.match(/^video\//))
-        document.getElementById("video").innerHTML = '<source src="'+ src + '" type="' + payload.type + '"/>'
+        document.getElementById("video").innerHTML = '<video controls /><source src="'+ src + '" type="' + payload.type + '"/></video>'
       else if(payload.type.match(/^application\/pdf;?/))
         document.getElementById("pdf").innerHTML = '<object type="application/pdf" data="'+src+'"></object>'
       
