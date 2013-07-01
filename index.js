@@ -239,6 +239,9 @@
             });
           }
         }
+        else if("base64Binary" === result.type) {
+          console.dir(result)
+        }
         else {
           accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
         }
