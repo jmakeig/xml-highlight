@@ -20,7 +20,7 @@ declare function local:serialize-content($r as item()) as item()* {
         let $b := map:map()
         return (
           map:put($b, "mimeType", if(xdmp:node-uri($r)) then xdmp:uri-content-type(xdmp:node-uri($r)) else ()), 
-          map:put($b, "fileName", if(xdmp:node-uri($r)) then tokenize(xdmp:node-uri($r), "/")[last()] else ()),
+          map:put($b, "fileName", if(xdmp:node-uri($r)) then tokenize(xdmp:node-uri($r), "/")[last()] else "binary-" || xdmp:random()),
           map:put($b, "base64", xs:base64Binary($r)),
           map:put($b, "size", xdmp:binary-size($r)),
           $b
