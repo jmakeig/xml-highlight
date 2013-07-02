@@ -29,9 +29,9 @@ declare function local:serialize-content($r as item()) as item()* {
     case attribute()
       return replace(
         string-join(
-          tokenize(
-            xdmp:quote(element a { $r }), "\s")[2 to 3], 
-            " "), 
+          tokenize(xdmp:quote(element a { $r }), "\s")
+            [2 (: attribute :) to 3 (: namespace :)], 
+        " "), 
         "/>$", 
       "")
     case comment()
