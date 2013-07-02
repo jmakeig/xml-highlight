@@ -15,6 +15,7 @@ xdmp:set-response-content-type("text/html"),
   </script>
   <script type="text/javascript" src="lib/underscore-min.js">//</script>
   <script type="text/javascript" src="lib/jquery-1.8.2-min.js">//</script>
+  <script type="text/javascript" src="lib/base64.js">//</script>
   <script type="text/javascript" src="utils.js">//</script>
   <script type="text/javascript" src="lib/tmpl.js">//</script>
   <script type="text/javascript" src="lib/sax.js">//</script>

@@ -18,13 +18,13 @@ declare function local:serialize-content($r as item()) as item()* {
     case binary()
       return 
         let $b := map:map()
-        let $_ := (
-          map:put($b, "mime-type", if(xdmp:node-uri($r)) then xdmp:uri-content-type(xdmp:node-uri($r)) else ()), 
-          map:put($b, "file-name", if(xdmp:node-uri($r)) then tokenize(xdmp:node-uri($r), "/")[last()] else ()),
+        return (
+          map:put($b, "mimeType", if(xdmp:node-uri($r)) then xdmp:uri-content-type(xdmp:node-uri($r)) else ()), 
+          map:put($b, "fileName", if(xdmp:node-uri($r)) then tokenize(xdmp:node-uri($r), "/")[last()] else ()),
           map:put($b, "base64", xs:base64Binary($r)),
-          map:put($b, "size", xdmp:binary-size($r))
+          map:put($b, "size", xdmp:binary-size($r)),
+          $b
         )
-        return $b
     case attribute()
       return replace(
         string-join(

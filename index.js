@@ -241,6 +241,18 @@
         }
         else if("base64Binary" === result.type) {
           console.dir(result)
+          var bytes = Base64Binary.decode(result.content.base64)
+          var blob = new Blob([bytes], {"type": result.content.mimeType})
+          var src = (window.URL || window.webkitURL).createObjectURL(blob)
+          // TODO: Which other mime-types should we support here? Flash, audio.
+          if(result.content.mimeType.match(/^image\//))
+            accumulator.push('<img title="' + result.content.fileName + '" src="' + src + '"/>')
+          else if(result.content.mimeType.match(/^video\//))
+            accumulator.push('<video controls><source src="'+ src + '" type="' + result.content.mimeType + '"/></video>')
+          else if(result.content.mimeType.match(/^application\/pdf;?/))
+            accumulator.push('<object type="application/pdf" data="'+src+'"></object>')
+          
+          accumulator.push('<a href="' + src + '" download="' + result.content.fileName +'">Download</a>')
         }
         else {
           accumulator.push("<div class='value type-" + result.type + "'>" + (result.content || "&nbsp;") + "</div>");
