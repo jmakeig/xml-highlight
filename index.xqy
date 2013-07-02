@@ -28,7 +28,7 @@ xdmp:set-response-content-type("text/html"),
   <link type="text/css" rel="stylesheet" href="index.css"/>
 </head>
 <body>
-  <div id="Navigation"><a href="#input">Input</a> <a href="#output">Output</a> <a href="#errors">Errors</a></div>
+  <!--<div id="Navigation"><a href="#input">Input</a> <a href="#output">Output</a> <a href="#errors">Errors</a></div>-->
   <section>
     <div class="h"><h1 id="input">Input</h1></div>
     <div>

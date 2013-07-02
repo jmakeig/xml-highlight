@@ -87,6 +87,7 @@ textarea:disabled {
   font-weight: bold;
 }
 .result-item {
+  position: relative;
   padding: 0.5em 0;
   padding-right: 4em;
   border-top: solid 1px #ccc;
@@ -271,7 +272,7 @@ h2 {
 
 .ace_editor { 
   position: relative;
-  width: 1200px;
+  width: 1400px;
   height: 250px;
   border: solid 1px #ccc;
 }
