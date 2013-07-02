@@ -172,7 +172,8 @@
         accumulator.push('<div class="result-item ' + result.type + '-type">');
         accumulator.push('<div class="result-number">' + (i + 1) + '</div>');
         if(result.uri) accumulator.push('<div class="result-uri">' + result.uri + '</div>');
-        accumulator.push('<div class="result-type">' + (result.type || "empty") + '</div>');
+        // Display the type. If it's a document-node() display that fact as well. document-node()/node() is what's used for rendering, though.
+        accumulator.push('<div class="result-type">' + (result.isDocument ? 'Document > ' : '') + (result.type || "empty") + '</div>');
         if("element" === result.type || "document" === result.type) {
           // console.log(i + ": " + total);
           // TODO: Proper truncation
