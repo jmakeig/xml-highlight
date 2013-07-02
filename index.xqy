@@ -146,7 +146,8 @@ xdmp:set-response-content-type("text/html"),
     <?_ } ??>
   </script>
   <script type="text/html;template" id="document_info_template">
-    <h3>Info</h3>
+    <!-- FIXME: What's the best way to actually show this? -->
+    <h3><?_- (uri ? uri : "Synth") ??></h3>
     <div>
       <table>
       <?_ for(var el in elements) { ??>

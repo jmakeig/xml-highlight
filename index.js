@@ -186,13 +186,11 @@
           accumulator.push('<pre class="' + result.type +'-raw" data-type="' + result.type + '" data-raw-length="'+result.content.length+'" '+style+'>' + prepareText(result.content) + '</pre>');
           if(total < options.renderEager) {
             highlight(result.content, function(output, info) {
-             accumulator.push('<div class="result-info collapsed">' + tmpl("document_info_template", info) + '</div>'); 
-             accumulator.push(output);
-             // console.dir(info);
-             // console.log(JSON.stringify(info, null, "  "));
+              accumulator.push('<div class="result-info collapsed">' + tmpl("document_info_template", $.extend({"uri": result.uri}, info)) + '</div>')
+              accumulator.push(output)
             }, options,
             function(error) { 
-               $("#output").html('<div class="error">' + error + '</div>');            
+               $("#output").html('<div class="error">' + error + '</div>')
             });
           }
         }
