@@ -208,11 +208,28 @@
           accumulator.push("<div class='value type-" + result.type + "'><span class='text'>" + (escapeForHTML(result.content) || "&nbsp;") + "</span></div>");
         }
         else if("attribute" === result.type) {
+          console.dir(result)
           // FIXME: Doesn't handle prefixed attributes whose return type looks like x:href="asdf" xmlns:x="X"
-          var tokens = result.content.split("=");
-          var name = tokens[0];
-          var value = tokens[1].substring(1, tokens[1].length - 1);
-          accumulator.push("<span class='root'><span class='attribute free-standing'><span class='attribute-name'>" + name + "</span>=&quot;<span class='attribute-value'>" + escapeForHTML(value) + "</span>&quot;</span></span>");
+          // var tokens = result.content.split("=");
+          // var name = tokens[0];
+          // var value = tokens[1].substring(1, tokens[1].length - 1);
+          // accumulator.push("<span class='root'><span class='attribute free-standing'><span class='attribute-name'>" + name + "</span>=&quot;<span class='attribute-value'>" + escapeForHTML(value) + "</span>&quot;</span></span>");
+          /*
+          <span class="element-meta"> 
+            <span class="attribute" title="x:href (XXXXX)" data-attribute-name="x:href" data-attribute-localname="href" data-attribute-prefix="x" data-attribute-namespace-uri="XXXXX" data-attribute-value="XXXXX binding">
+              <span class="attribute-name">
+                <span class="namespace-prefix">x</span>:<span class="local-name">href</span>
+              </span>="
+              <span class="attribute-value">XXXXX binding</span>"
+            </span> 
+            <span class="namespace">
+              <span class="xmlns">xmlns</span>:
+              <span class="namespace-prefix">x</span>="
+              <span class="namespace-uri">XXXXX</span>"
+            </span>
+          </span>
+          */
+          accumulator.push('<span class="naked-attribute"><span class="attribute" title="x:href (XXXXX)" data-attribute-name="x:href" data-attribute-localname="href" data-attribute-prefix="x" data-attribute-namespace-uri="XXXXX" data-attribute-value="XXXXX binding"><span class="attribute-name"><span class="namespace-prefix">x</span>:<span class="local-name">href</span></span>="<span class="attribute-value">XXXXX binding</span>"</span>  <span class="namespace"><span class="xmlns">xmlns</span>:<span class="namespace-prefix">x</span>="<span class="namespace-uri">XXXXX</span>" </span></span>')
         }
         else if("string" === result.type) {
           accumulator.push("<div class='value type-" + result.type + "'>" + escapeForHTML(result.content || " ") + "</div>");

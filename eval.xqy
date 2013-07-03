@@ -27,13 +27,13 @@ declare function local:serialize-content($r as item()) as item()* {
           $b
         )
     case attribute()
-      return replace(
-        string-join(
-          tokenize(xdmp:quote(element a { $r }), "\s")
-            [2 (: attribute :) to 3 (: namespace :)], 
-        " "), 
-        "/>$", 
-      "")
+      return
+        (: Serializes the attribute in the context of a parent element and then strips off the element cruft for a "naked" attribute. :)
+        replace(
+          replace(
+            xdmp:quote(element a { $r }, ()), 
+            "^<a ", ""),
+          "/>$", "")
     case comment()
       return concat("&lt;!-- ", string($r), " -->")
     case json:object

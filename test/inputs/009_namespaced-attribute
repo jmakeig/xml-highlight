@@ -1,3 +1,12 @@
 declare namespace x="XXXXX";
-<a x:href="asdf" xmlns:x="X"/>/@x:href,
-<a x:href="asdf" foo="bar" xmlns:x="X"/>/@*
+<a x:href="XXXXX binding"/>,
+<a href="no namespace"/>/@*, (: href="no namespace" :)
+<a x:href="XXXXX binding"/>/@*, (: x:href="XXXXX binding" xmlns:x="XXXXX"  :)
+<a x:href="YYYYY binding, redeclaration of x prefix" xmlns:x="YYYYY"/>/@*, (: x:href="YYYYY binding, redeclaration of x prefix" xmlns:x="YYYYY"  :)
+<a x:href="XXXXX binding, first attr" foo="no namespace, second attr"/>/@*, (: x:href="XXXXX binding, first attr" xmlns:x="XXXXX"  :)
+  (: foo="no namespace, second attr" :)
+<a empty=""/>/@*, (:  empty="" :)
+<a multi-line="Here is one line
+Here is another"/>/@*, (: multi-line="Here is one line
+Here is another"  :)
+<a escape='Escaped "double quotes" and namespace declaration xmlns:x="NOPE"'/>/@* (:  escape="Escaped &quot;double quotes&quot; and namespace declaration xmlns:x=&quot;NOPE&quot;" :)

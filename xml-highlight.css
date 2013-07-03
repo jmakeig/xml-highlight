@@ -230,7 +230,7 @@
 .json-array {
   color: blue;
 }
-.element-open, .element-close, .attribute-value,
+.element-open, .element-close, 
 .json-object-open, .json-object-close,
 .json-array-open, .json-array-close {
   background: #f2f6f8;
