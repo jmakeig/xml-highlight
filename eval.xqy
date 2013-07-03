@@ -28,12 +28,15 @@ declare function local:serialize-content($r as item()) as item()* {
         )
     case attribute()
       return
-        (: Serializes the attribute in the context of a parent element and then strips off the element cruft for a "naked" attribute. :)
-        replace(
-          replace(
-            xdmp:quote(element a { $r }, ()), 
-            "^<a ", ""),
-          "/>$", "")
+        let $a := map:map()
+        return (
+          map:put($a, "name", name($r)),
+          map:put($a, "localName", local-name($r)),
+          map:put($a, "prefix", if(contains(name($r), ":")) then tokenize(name($r), ":")[1] else ()),
+          map:put($a, "namespaceURI", namespace-uri($r)),
+          map:put($a, "value", data($r)),
+          $a
+        )
     case comment()
       return concat("&lt;!-- ", string($r), " -->")
     case json:object

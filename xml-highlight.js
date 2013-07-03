@@ -136,3 +136,33 @@
   function buildComment(comment, tabIndex) {
     return "<div class='comment'><span class='toggle'></span><span class='comment-open' tabindex='" + tabIndex + "'>&lt;!--</span><div class='comment-value'>" + escapeForHTML(comment) + "</div><span class='comment-close'>--&gt;</span></div>"
   }
+
+  function buildAttribute(attr) {
+    /*
+        attr = {name: "", localName: "", prefix: "", namespaceURI: "", value: ""}
+    */
+    /*
+    <span class="element-meta"> 
+      <span class="attribute" title="x:href (XXXXX)" data-attribute-name="x:href" data-attribute-localname="href" data-attribute-prefix="x" data-attribute-namespace-uri="XXXXX" data-attribute-value="XXXXX binding">
+        <span class="attribute-name">
+          <span class="namespace-prefix">x</span>:<span class="local-name">href</span>
+        </span>="
+        <span class="attribute-value">XXXXX binding</span>"
+      </span> 
+      <span class="namespace">
+        <span class="xmlns">xmlns</span>:
+        <span class="namespace-prefix">x</span>="
+        <span class="namespace-uri">XXXXX</span>"
+      </span>
+    </span>
+    */
+    //var attr = result.content
+    var accumulator = []
+    accumulator.push('<div class="root">')
+    accumulator.push('<span class="naked-attribute"><span class="attribute" title="'+attr.name+' ('+(attr.namespaceURI ? '('+attr.namespaceURI+')' : '')+')" data-attribute-name="'+attr.name+'" data-attribute-localname="'+attr.localName+'" data-attribute-prefix="'+attr.prefix+'" data-attribute-namespace-uri="'+attr.prefix+'" data-attribute-value="'+attr.value+'"><span class="attribute-name">')
+    if(attr.prefix) accumulator.push('<span class="namespace-prefix">'+attr.prefix+'</span>:')
+    accumulator.push('<span class="local-name">'+attr.localName+'</span></span>="<span class="attribute-value">'+escapeForHTML(attr.value)+'</span>"</span>')
+    if(attr.namespaceURI) accumulator.push(' <span class="namespace"><span class="xmlns">xmlns</span>:<span class="namespace-prefix">'+attr.prefix+'</span>="<span class="namespace-uri">'+attr.namespaceURI+'</span>"</span>')
+    accumulator.push('</span></div>')
+    return accumulator.join('')
+  }
