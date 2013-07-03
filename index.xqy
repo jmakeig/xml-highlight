@@ -33,12 +33,16 @@ xdmp:set-response-content-type("text/html"),
     <div class="h"><h1 id="input">Input</h1></div>
     <div>
       <div class="control">
-        <label for="input-xml">Source</label>
+        <label for="input-xml">Pre-sets</label>
         <select id="input-xml-source">
           <option selected="selected"></option>
         {
+          try {
           for $e in xdmp:filesystem-directory($HOME || "test/inputs")/dir:entry
           return <option>{string($e/dir:filename)}</option>
+          } catch($error) {
+            xdmp:log($HOME || " could not be opened for reading. Proceeding without any pre-sets.", "warning")
+          }
         }
         </select>
       </div>
