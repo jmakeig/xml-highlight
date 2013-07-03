@@ -42,4 +42,4 @@ let $json := '{
   {"auc":1682331799,"item":52555,"owner":"Nelf","bid":155964,"buyout":155976,"quantity":12,"timeLeft":"VERY_LONG"}]}
 }'
 return 
-  json:transform-from-json($json)
+  xdmp:from-json($json)
