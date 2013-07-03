@@ -122,11 +122,12 @@
 .attribute-name,
 .json-key-name {}
 .attribute-value {
-  display: inline-block;
-  vertical-align: top;
+  /* FIXME: I think all of this crap was for multi-line attributes. */
+  /* display: inline-block;
+  vertical-align: top; */
   /*margin-top: 0.2em;*/
-  line-height: 1;
   /*padding: 0 0.2em;*/
+  line-height: 1;
   border-bottom-left-radius: 0.5em;
   border-bottom-right-radius: 0.5em;
 }
