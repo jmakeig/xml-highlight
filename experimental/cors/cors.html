@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>CORS</title>
+  <script type="text/javascript">
+function testCORS() {
+  var url = "http://localhost:8855/experimental/cors/cors-server.xqy"
+  var request = new XMLHttpRequest()
+  if(!"withCredentials" in request) throw "Unable to create CORS request"
+  request.onload = function() {
+    // console.log(this.response); // The response will have the parsed data based on the request.contentType when this is implemented
+    console.dir(JSON.parse(this.responseText))
+  }
+  request.open('PUT', url, true)
+  request.withCredentials = true // Send auth and cookies
+  request.setRequestHeader("Accept", "application/json")
+  // request.responseType = "json" // This will eventually work to automatically parse JSON
+  request.send()
+}
+  </script>
+</head>
+<body>
+  <button onclick="testCORS()">CORS</button>
+</body>
+</html>
