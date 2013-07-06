@@ -12,6 +12,9 @@ function testCORS() {
     // console.log(this.response); // The response will have the parsed data based on the request.contentType when this is implemented
     console.dir(JSON.parse(this.responseText))
   }
+  request.onerror = function(error) {
+    console.dir(error)
+  }
   request.open('PUT', url, true)
   request.withCredentials = true // Send auth and cookies
   request.setRequestHeader("Accept", "application/json")
@@ -22,5 +25,8 @@ function testCORS() {
 </head>
 <body>
   <button onclick="testCORS()">CORS</button>
+  <ul>
+    <li><a href="https://developer.mozilla.org/en-US/docs/HTTP/Access_control_CORS">HTTP access control (CORS)</a> (Mozilla Developer Network, May 2013)</li>
+  </ul>
 </body>
 </html>
