@@ -95,6 +95,17 @@ textarea:disabled {
 .result-item:first-child {
   border: none;
 }
+.result-item.binary-type audio,
+.result-item.binary-type video,
+.result-item.binary-type object,
+.result-item.binary-type img {
+  display: block;
+  border: solid 1px;
+}
+.result-item.binary-type object[type^="application/pdf"] {
+  width: 100%;
+  min-height: 24em;
+} 
 /* Hide all closing tags for readability, except inline ones where it would be ambiguous. */
 .hide-close-tags .element-close {
   display: none;

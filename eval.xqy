@@ -92,7 +92,7 @@ declare function local:item-type($r as item()?) as xs:string {
         case xs:QName
           return "QName"
         case binary()
-          return "base64Binary"
+          return "binary"
         case comment()
           return "comment"
         case processing-instruction()

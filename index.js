@@ -234,7 +234,7 @@
             });
           }
         }
-        else if("base64Binary" === result.type) {
+        else if("binary" === result.type) {
           console.dir(result)
           var bytes = Base64Binary.decode(result.content.base64)
           var blob = new Blob([bytes], {"type": result.content.mimeType})
